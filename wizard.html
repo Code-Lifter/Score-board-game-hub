@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wizard Smart Scorepad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* FONTS & THEME */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Rye&family=Lato:wght@400;700&display=swap');
+        
+        body { 
+            font-family: 'Lato', sans-serif; 
+            background-color: #f1f5f9; 
+            overscroll-behavior-y: none;
+        }
+
+        .font-header { font-family: 'Rye', serif; }
+        .font-serif-title { font-family: 'Playfair Display', serif; }
+
+        /* INPUT STYLING */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .score-input {
+            font-family: 'Lato', sans-serif;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .score-input:focus {
+            background-color: #fff;
+            outline: 2px solid #6366f1;
+            z-index: 10;
+        }
+
+        /* Winner highlighting animation */
+        @keyframes pulse-gold {
+            0%, 100% { color: #fbbf24; text-shadow: 0 0 5px rgba(251, 191, 36, 0.5); }
+            50% { color: #f59e0b; text-shadow: 0 0 15px rgba(245, 158, 11, 0.8); }
+        }
+        .winner-text {
+            animation: pulse-gold 2s infinite;
+        }
+        
+        /* Modal Transition */
+        .modal { transition: opacity 0.25s ease; }
+        .hidden-modal { opacity: 0; pointer-events: none; }
+
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Custom cell layout */
+        .wizard-cell {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border-bottom: 1px solid #e2e8f0;
+            position: relative;
+        }
+        .input-group {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .bid-input {
+            background-color: #eff6ff; /* Light Blue */
+            color: #1e40af;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+        
+        /* NEW: Dealer Highlight Style */
+        .bid-input.dealer-active {
+            background-color: #fef9c3 !important; /* Yellow-100 */
+            color: #854d0e !important; /* Yellow-800 */
+            border-bottom: 1px dashed #eab308;
+        }
+
+        .actual-input {
+            background-color: #fff;
+            color: #0f172a;
+        }
+        
+        /* Indicators */
+        .delta-badge {
+            position: absolute;
+            right: 2px;
+            bottom: 2px;
+            font-size: 0.6rem;
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-weight: bold;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        
+        .forbidden-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.6rem;
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+            padding: 1px 4px;
+            border-radius: 4px;
+            font-weight: bold;
+            z-index: 20;
+            pointer-events: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        /* Illegal State (Total Bids == Round Count) */
+        .row-error .bid-input {
+            background-color: #fef2f2 !important; /* Red tint overrides yellow */
+            color: #991b1b !important;
+        }
+        .row-error {
+            border-left: 4px solid #ef4444;
+        }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex flex-col overflow-hidden bg-slate-900">
+
+    <div class="max-w-lg mx-auto bg-white w-full h-full shadow-xl flex flex-col relative">
+        
+        <div class="bg-indigo-950 text-indigo-50 py-3 text-center border-b-4 border-indigo-500 shadow-md z-30 flex-none relative overflow-hidden">
+            <h1 class="font-header text-2xl tracking-[0.15em] relative inline-block text-amber-100">
+                WIZARD
+                <i class="fas fa-hat-wizard absolute -left-10 top-1 text-indigo-400 opacity-80 text-xl"></i>
+                <i class="fas fa-wand-magic-sparkles absolute -right-8 top-1 text-amber-400 opacity-80 text-sm"></i>
+            </h1>
+            <p class="text-indigo-300 text-[10px] uppercase tracking-widest mt-0">Smart Scorepad</p>
+        </div>
+
+        <div class="bg-indigo-50 p-3 border-b border-indigo-200 flex justify-between items-center z-20 shadow-sm flex-none">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center bg-white rounded border border-indigo-200 px-2 py-1">
+                    <i class="fas fa-users text-indigo-400 text-xs mr-2"></i>
+                    <select id="playerCount" class="bg-transparent text-indigo-900 font-bold focus:outline-none text-sm cursor-pointer" onchange="changePlayerCount()">
+                        <option value="3">3 Players</option>
+                        <option value="4" selected>4 Players</option>
+                        <option value="5">5 Players</option>
+                        <option value="6">6 Players</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="openResetModal()" class="text-xs font-bold text-red-600 uppercase tracking-wider border border-red-200 bg-red-50 px-3 py-1.5 rounded hover:bg-red-600 hover:text-white transition-colors shadow-sm">
+                <i class="fas fa-rotate-right mr-1"></i> New Game
+            </button>
+        </div>
+        
+        <div class="bg-indigo-950 text-white z-30 border-t-4 border-indigo-600 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] flex-none">
+     <table class="w-full table-fixed">
+        <tfoot id="tableFooter">
+            </tfoot>
+     </table>
+</div>
+        <div class="flex-grow bg-slate-50 overflow-y-auto no-scrollbar relative">
+            <table class="w-full border-collapse table-fixed" id="scoreTable">
+                <thead class="sticky top-0 z-10 shadow-sm">
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+
+        
+        
+        <div class="bg-indigo-100 p-2 text-[10px] text-indigo-800 text-center uppercase tracking-wide flex-none border-t border-indigo-200 flex justify-center items-center gap-2">
+            <i class="fas fa-scroll"></i>
+            <span id="ruleText">Deck of 60 Cards</span>
+        </div>
+
+    </div>
+
+    <div id="resetModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden-modal modal">
+        <div class="bg-white rounded-lg shadow-2xl p-6 w-80 text-center modal-content border border-indigo-100">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-magic text-indigo-600 text-xl"></i>
+            </div>
+            <h3 class="font-header text-xl text-slate-800 mb-2">Reset...</h3>
+            <div class="flex flex-col gap-2">
+                <button onclick="confirmReset(true)" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition-colors text-sm">Score</button>
+                <button onclick="confirmReset(false)" class="w-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold py-2 px-4 rounded transition-colors text-sm">Score & Names</button>
+                <button onclick="closeResetModal()" class="mt-2 text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-widest">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let state = {
+            playerCount: 4,
+            playerNames: ["", "", "", "", "", ""],
+            bids: {},   
+            actuals: {} 
+        };
+
+        function init() {
+            loadState();
+            renderUI();
+        }
+
+        function saveState() {
+            localStorage.setItem('wizard_state_v2', JSON.stringify(state));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('wizard_state_v2');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    state = { ...state, ...parsed };
+                    while(state.playerNames.length < 6) state.playerNames.push("");
+                } catch (e) { console.error(e); }
+            }
+            document.getElementById('playerCount').value = state.playerCount;
+        }
+
+        function getRoundCount() {
+            return Math.floor(60 / state.playerCount);
+        }
+
+        function changePlayerCount() {
+            state.playerCount = parseInt(document.getElementById('playerCount').value);
+            saveState();
+            renderUI();
+        }
+
+        function updateName(idx, val) {
+            state.playerNames[idx] = val;
+            saveState();
+        }
+
+        function updateData(type, rIdx, pIdx, val) {
+            const key = `${rIdx}-${pIdx}`;
+            const targetObj = type === 'bid' ? state.bids : state.actuals;
+            
+            // Smart Limit: Can't enter more than the round number
+            if (val !== "" && parseInt(val) > rIdx) {
+                val = rIdx; 
+                // Force update input value immediately if user typed too high
+                const el = document.activeElement;
+                if(el) el.value = val;
+            }
+
+            if (val === "" || val === null) {
+                delete targetObj[key];
+            } else {
+                targetObj[key] = parseInt(val);
+            }
+            
+            saveState();
+            
+            // If we updated a bid, we must re-evaluate the "Forbidden Bid" logic for that row
+            if (type === 'bid') {
+                renderRowValidation(rIdx);
+            }
+            
+            // Re-render scoring
+            renderRowDelta(rIdx);
+            renderTotals();
+        }
+
+        // --- GAME LOGIC ---
+        function calculateRoundScore(bid, actual) {
+            if (bid === undefined || actual === undefined || isNaN(bid) || isNaN(actual)) return null;
+            if (bid === actual) return 20 + (10 * bid);
+            return -(10 * Math.abs(bid - actual));
+        }
+
+        function getPlayerTotal(pIdx) {
+            let total = 0;
+            const roundCount = getRoundCount();
+            for(let r = 1; r <= roundCount; r++) {
+                const score = calculateRoundScore(state.bids[`${r}-${pIdx}`], state.actuals[`${r}-${pIdx}`]);
+                if (score !== null) total += score;
+            }
+            return total;
+        }
+
+        // --- RENDERERS ---
+        function renderUI() {
+            const rounds = getRoundCount();
+            document.getElementById('ruleText').innerText = `Deck of 60 Cards • ${rounds} Rounds • Total Bids ≠ Round`;
+            renderHeader();
+            renderBody(rounds);
+            renderTotals();
+        }
+
+        function renderHeader() {
+            const thead = document.querySelector('#scoreTable thead');
+            let html = `
+                <tr class="bg-indigo-100 h-10 border-b border-indigo-200">
+                    <th class="p-1 text-center w-[12%] border-r border-indigo-300/50">
+                        <span class="font-serif-title italic text-indigo-400 text-[10px]">Rnd</span>
+                    </th>
+            `;
+            for (let i = 0; i < state.playerCount; i++) {
+                html += `
+                    <th class="p-1 border-l border-indigo-300/50 bg-indigo-50 relative group transition-colors focus-within:bg-white">
+                        <input type="text" value="${state.playerNames[i]}" oninput="updateName(${i}, this.value)"
+                            class="w-full bg-transparent text-center font-bold text-indigo-900 placeholder-indigo-300 focus:outline-none text-xs md:text-sm truncate px-1 uppercase tracking-wide"
+                            placeholder="P ${i+1}">
+                    </th>`;
+            }
+            html += `</tr>`;
+            thead.innerHTML = html;
+        }
+
+        function renderBody(rounds) {
+            const tbody = document.getElementById('tableBody');
+            let html = '';
+            
+            for (let r = 1; r <= rounds; r++) {
+                // Dealer logic: rotates clockwise. (Round 1 = Player 0 deals, Round 2 = Player 1, etc.)
+                const dealerIndex = (r - 1) % state.playerCount;
+
+                html += `<tr id="row-${r}" class="bg-white h-16 border-b border-indigo-100 transition-colors duration-300">`;
+                
+                // Round Info
+                html += `
+                    <td class="p-1 text-center border-r border-indigo-100 bg-indigo-50/50">
+                        <div class="flex flex-col items-center justify-center">
+                            <span class="font-header text-indigo-900 text-lg leading-none">${r}</span>
+                            <span class="text-[9px] text-indigo-400 uppercase leading-tight">Cards</span>
+                        </div>
+                    </td>
+                `;
+
+                // Player Cells
+                for (let p = 0; p < state.playerCount; p++) {
+                    const bid = state.bids[`${r}-${p}`] ?? '';
+                    const actual = state.actuals[`${r}-${p}`] ?? '';
+                    
+                    const isDealer = (p === dealerIndex);
+                    
+                    // UPDATED: No more icon, now we just calculate a class string
+                    const dealerClass = isDealer ? 'dealer-active' : '';
+
+                    // Container for the forbidden bid badge
+                    const forbiddenContainer = isDealer ? `<div id="forbidden-${r}" class="hidden forbidden-badge"></div>` : '';
+
+                    html += `
+                        <td class="p-0 border-l border-indigo-100 relative">
+                            ${forbiddenContainer}
+                            <div class="wizard-cell">
+                                <div class="input-group h-1/2 border-b border-dashed border-indigo-100">
+                                    <input type="number" pattern="[0-9]*" inputmode="numeric" 
+                                        min="0" max="${r}"
+                                        value="${bid}" placeholder="Bid"
+                                        onchange="updateData('bid', ${r}, ${p}, this.value)"
+                                        class="score-input bid-input ${dealerClass} w-full h-full text-indigo-600 text-xs placeholder-indigo-200">
+                                </div>
+                                <div class="input-group h-1/2 relative">
+                                    <input type="number" pattern="[0-9]*" inputmode="numeric" 
+                                        value="${actual}" placeholder="Got"
+                                        onchange="updateData('actual', ${r}, ${p}, this.value)"
+                                        class="score-input actual-input w-full h-full text-slate-800 text-lg placeholder-slate-200">
+                                    <div id="delta-${r}-${p}" class="hidden"></div>
+                                </div>
+                            </div>
+                        </td>
+                    `;
+                }
+                html += `</tr>`;
+            }
+            tbody.innerHTML = html;
+            
+            // Post-render: calculate validations and scores
+            setTimeout(() => {
+                for (let r = 1; r <= rounds; r++) {
+                    renderRowValidation(r);
+                    renderRowDelta(r);
+                }
+            }, 0);
+        }
+
+        // --- VALIDATION: The "Smarter" Part ---
+        function renderRowValidation(rIdx) {
+            const dealerIndex = (rIdx - 1) % state.playerCount;
+            let currentTotalBids = 0;
+            let bidsCount = 0;
+
+            // 1. Calculate sum of bids so far
+            for (let p = 0; p < state.playerCount; p++) {
+                const val = state.bids[`${rIdx}-${p}`];
+                if (val !== undefined && !isNaN(val)) {
+                    currentTotalBids += val;
+                    bidsCount++;
+                }
+            }
+
+            const row = document.getElementById(`row-${rIdx}`);
+            const forbiddenBadge = document.getElementById(`forbidden-${rIdx}`);
+            
+            // 2. CHECK: Illegal State (Total Bids == Round Number)
+            // Only flag as error if ALL players have bid
+            if (bidsCount === state.playerCount) {
+                if (currentTotalBids === rIdx) {
+                    row.classList.add('row-error');
+                } else {
+                    row.classList.remove('row-error');
+                }
+            } else {
+                row.classList.remove('row-error');
+            }
+
+            // 3. CHECK: Predict what the Dealer CANNOT bid
+            // Logic: Forbidden = RoundNum - (Sum of non-dealer bids)
+            // This is only useful to show if the dealer hasn't bid yet, or to remind them.
+            
+            let otherPlayersSum = 0;
+            let othersCount = 0;
+            
+            for (let p = 0; p < state.playerCount; p++) {
+                if (p !== dealerIndex) {
+                    const val = state.bids[`${rIdx}-${p}`];
+                    if (val !== undefined) {
+                        otherPlayersSum += val;
+                        othersCount++;
+                    }
+                }
+            }
+
+            // We can only definitely say what is forbidden if all NON-dealers have bid
+            if (othersCount === state.playerCount - 1 && forbiddenBadge) {
+                const forbiddenVal = rIdx - otherPlayersSum;
+                if (forbiddenVal >= 0) {
+                    forbiddenBadge.innerText = `≠ ${forbiddenVal}`;
+                    forbiddenBadge.classList.remove('hidden');
+                } else {
+                    // If forbidden is negative (e.g. round 5, others bid 6), 
+                    // then dealer can bid anything (0+), so no restriction applies.
+                    forbiddenBadge.classList.add('hidden');
+                }
+            } else if (forbiddenBadge) {
+                forbiddenBadge.classList.add('hidden');
+            }
+        }
+
+        function renderRowDelta(rIdx) {
+            for (let p = 0; p < state.playerCount; p++) {
+                const bid = state.bids[`${rIdx}-${p}`];
+                const actual = state.actuals[`${rIdx}-${p}`];
+                const container = document.getElementById(`delta-${rIdx}-${p}`);
+                if (container) {
+                    const score = calculateRoundScore(bid, actual);
+                    if (score !== null) {
+                        const isPos = score >= 0;
+                        container.className = `delta-badge ${isPos ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+                        container.innerHTML = isPos ? `+${score}` : `${score}`;
+                    } else {
+                        container.className = 'hidden';
+                    }
+                }
+            }
+        }
+
+        function renderTotals() {
+            const tfoot = document.getElementById('tableFooter');
+            let totals = [];
+            let maxScore = -9999;
+            for (let p = 0; p < state.playerCount; p++) {
+                const sum = getPlayerTotal(p);
+                totals.push(sum);
+                if (sum > maxScore) maxScore = sum;
+            }
+            let html = `<tr class="h-14"><td class="bg-indigo-950 p-2 text-right w-[12%] border-r border-indigo-700"><span class="text-[0.6rem] uppercase tracking-widest font-bold text-indigo-400 block">Total</span></td>`;
+            for (let p = 0; p < state.playerCount; p++) {
+                const isWinner = totals[p] === maxScore;
+                const winnerClass = isWinner ? 'winner-text font-bold text-2xl' : 'text-indigo-200 text-lg';
+                const crown = isWinner ? '<div class="absolute -top-3 left-1/2 transform -translate-x-1/2 text-amber-400 text-xs"><i class="fas fa-crown"></i></div>' : '';
+                html += `<td class="p-1 text-center border-l border-indigo-700 font-header relative">${crown}<span class="${winnerClass} transition-all duration-500">${totals[p]}</span></td>`;
+            }
+            html += `</tr>`;
+            tfoot.innerHTML = html;
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('resetModal');
+        function openResetModal() { modal.classList.remove('hidden-modal'); }
+        function closeResetModal() { modal.classList.add('hidden-modal'); }
+        function confirmReset(keepNames) {
+            state.bids = {}; state.actuals = {};
+            if (!keepNames) state.playerNames = ["", "", "", "", "", ""];
+            saveState(); renderUI(); closeResetModal();
+        }
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeResetModal(); });
+
+        init();
+    </script>
+</body>
+</html>

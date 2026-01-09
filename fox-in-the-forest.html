@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox in the Forest Scorekeeper</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lato:wght@400;700&display=swap');
+        
+        /* Reset and Base Settings for Full Screen */
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrolling */
+            font-family: 'Lato', sans-serif;
+            background-color: #1c1917; /* Stone 900 */
+            background-image: radial-gradient(circle at center, #292524 0%, #1c1917 100%);
+            /* Prevent bounce on iOS */
+            overscroll-behavior: none;
+        }
+        
+        h1, h2, h3, .fantasy-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Custom Range Slider */
+        input[type=range] {
+            background: transparent; 
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            /* Responsive thumb size based on height */
+            height: 4vh; 
+            width: 4vh;
+            max-width: 30px;
+            max-height: 30px;
+            border-radius: 50%;
+            background: #f59e0b; /* Amber 500 */
+            border: 2px solid #fff;
+            cursor: pointer;
+            transform: translateY(-50%);
+            margin-top: 2px; /* Slight alignment fix */
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #44403c;
+            border-radius: 2px;
+        }
+
+        /* Animations */
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .pop-anim { animation: pop 0.2s ease-out; }
+
+        /* Status colors */
+        .status-greedy { color: #ef4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+        .status-victorious { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+        .status-humble { color: #10b981; text-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+        .status-normal { color: #a8a29e; }
+        
+        .card-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23292524' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* Number Input styling */
+        .treasure-input { appearance: textfield; -moz-appearance: textfield; }
+        .treasure-input::-webkit-outer-spin-button, 
+        .treasure-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        ::placeholder { color: #a8a29e; opacity: 0.6; }
+
+        /* Utility for center absolute */
+        .center-abs {
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <div class="fixed top-0 left-0 w-[10vw] h-[10vw] border-t-4 border-l-4 border-amber-600 rounded-tl-3xl opacity-30 pointer-events-none z-0"></div>
+    <div class="fixed bottom-0 right-0 w-[10vw] h-[10vw] border-b-4 border-r-4 border-amber-600 rounded-br-3xl opacity-30 pointer-events-none z-0"></div>
+
+    <div class="h-[100dvh] w-full flex flex-col relative z-10 max-w-lg mx-auto bg-stone-100 shadow-2xl card-bg border-x border-stone-800">
+        
+        <header class="h-[10%] flex items-center justify-center bg-stone-900 border-b-4 border-amber-700 px-4 shrink-0">
+            <h1 class="font-bold tracking-widest uppercase text-amber-500 whitespace-nowrap" style="font-size: min(6vw, 4vh);">
+                The Fox in the Forest
+            </h1>
+        </header>
+
+        <div class="h-[90%] w-full relative">
+            
+            <div id="setupScreen" class="h-full w-full flex flex-col justify-center px-8 space-y-[4vh]">
+                <div class="text-center space-y-2">
+                    <h2 class="font-bold text-stone-800 fantasy-font text-2xl">Prepare</h2>
+                    <p class="text-stone-500 text-sm">Who dares enter the woods?</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="group">
+                        <label class="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">First Traveler</label>
+                        <input type="text" id="p1NameInput" placeholder="Woodcutter" class="w-full bg-stone-200 p-3 rounded font-serif text-lg text-stone-800 border-2 border-transparent focus:border-amber-600 focus:bg-white outline-none transition-all placeholder-stone-400">
+                    </div>
+                    <div class="group">
+                        <label class="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Second Traveler</label>
+                        <input type="text" id="p2NameInput" placeholder="The Fox" class="w-full bg-stone-200 p-3 rounded font-serif text-lg text-stone-800 border-2 border-transparent focus:border-amber-600 focus:bg-white outline-none transition-all placeholder-stone-400">
+                    </div>
+                </div>
+
+                <div class="flex justify-center space-x-2">
+                    <button onclick="startGame(16)" class="flex-1 py-3 border-2 border-stone-300 rounded text-stone-500 hover:border-amber-600 hover:text-amber-600 font-bold text-xs">SHORT (16)</button>
+                    <button onclick="startGame(21)" class="flex-1 py-3 bg-stone-800 text-amber-500 rounded border-2 border-stone-800 hover:bg-stone-900 font-bold shadow-lg text-sm">Standard (21)</button>
+                    <button onclick="startGame(35)" class="flex-1 py-3 border-2 border-stone-300 rounded text-stone-500 hover:border-amber-600 hover:text-amber-600 font-bold text-xs">LONG (35)</button>
+                </div>
+            </div>
+
+            <div id="gameplayScreen" class="hidden h-full flex flex-col">
+                
+                <div class="flex-none h-[18%] flex bg-stone-800 text-stone-100 relative shadow-inner">
+                    <div class="w-1/2 flex flex-col justify-center items-center border-r border-stone-700 transition-colors duration-500 relative" id="p1ScoreBg">
+                        <div id="p1Display" class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">P1</div>
+                        <div id="p1CurrentScore" class="text-4xl fantasy-font font-bold text-white">0</div>
+                        <div id="p1LeaderIndicator" class="absolute bottom-2 h-1 w-8 bg-amber-500 opacity-0 transition-opacity"></div>
+                    </div>
+                    <div class="w-1/2 flex flex-col justify-center items-center transition-colors duration-500 relative" id="p2ScoreBg">
+                        <div id="p2Display" class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">P2</div>
+                        <div id="p2CurrentScore" class="text-4xl fantasy-font font-bold text-white">0</div>
+                        <div id="p2LeaderIndicator" class="absolute bottom-2 h-1 w-8 bg-amber-500 opacity-0 transition-opacity"></div>
+                    </div>
+                    
+                    <div class="absolute center-abs bg-stone-900 border-2 border-amber-600 rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-10">
+                        <span id="roundNumber" class="text-amber-500 font-bold font-serif text-sm">1</span>
+                    </div>
+                </div>
+
+                <div class="flex-grow flex flex-col justify-evenly px-4 py-2 bg-stone-100">
+                    
+                    <div class="text-center shrink-0">
+                        <h3 class="text-stone-400 text-[10px] font-bold uppercase tracking-[0.2em]">Tricks Won</h3>
+                    </div>
+
+                    <div class="shrink-0 px-2">
+                        <div class="flex justify-between items-baseline mb-1 fantasy-font">
+                            <span id="p1TricksDisplay" class="text-3xl text-stone-800 transition-colors">6</span>
+                            <span class="text-stone-300 text-xs font-sans font-light">VS</span>
+                            <span id="p2TricksDisplay" class="text-3xl text-stone-800 transition-colors">7</span>
+                        </div>
+                        <div class="relative h-6 flex items-center">
+                            <input type="range" id="tricksSlider" min="0" max="13" value="6" class="w-full relative z-20" oninput="updateTrickCalc()">
+                        </div>
+                        <div class="flex justify-between px-1 text-[8px] text-stone-300 font-mono mt-1">
+                            <span>0</span><span>13</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 shrink-0">
+                        <div id="p1Card" class="bg-white rounded-lg p-3 shadow-md border-2 border-stone-200 transition-all duration-300 transform flex flex-col justify-between h-[18vh] min-h-[120px]">
+                            <div>
+                                <div class="text-[10px] text-stone-400 font-bold uppercase mb-1 truncate" id="p1NameCard">P1</div>
+                                <div class="flex items-end justify-between">
+                                    <div class="flex flex-col">
+                                        <span id="p1StatusText" class="text-[10px] font-bold uppercase mb-0 status-normal">Normal</span>
+                                        <span class="text-2xl font-bold fantasy-font leading-none" id="p1PointsResult">3</span>
+                                    </div>
+                                    <span class="text-[10px] text-stone-400">Pts</span>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t border-stone-100 pt-1 mt-1">
+                                <label class="text-[8px] font-bold text-amber-600 uppercase tracking-wider block mb-1">Treasure (7s)</label>
+                                <div class="flex items-center justify-between bg-stone-50 rounded px-1 border border-stone-200 h-6">
+                                    <button onclick="adjustBonus('p1', -1)" class="text-stone-400 hover:text-stone-800 font-bold w-4">-</button>
+                                    <input type="number" id="p1Bonus" value="0" readonly class="treasure-input w-6 text-center bg-transparent font-bold text-stone-700 text-xs">
+                                    <button onclick="adjustBonus('p1', 1)" class="text-stone-400 hover:text-stone-800 font-bold w-4">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="p2Card" class="bg-white rounded-lg p-3 shadow-md border-2 border-stone-200 transition-all duration-300 transform flex flex-col justify-between h-[18vh] min-h-[120px]">
+                            <div>
+                                <div class="text-[10px] text-stone-400 font-bold uppercase mb-1 truncate" id="p2NameCard">P2</div>
+                                <div class="flex items-end justify-between">
+                                    <div class="flex flex-col">
+                                        <span id="p2StatusText" class="text-[10px] font-bold uppercase mb-0 status-victorious">Win</span>
+                                        <span class="text-2xl font-bold fantasy-font leading-none" id="p2PointsResult">6</span>
+                                    </div>
+                                    <span class="text-[10px] text-stone-400">Pts</span>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t border-stone-100 pt-1 mt-1">
+                                <label class="text-[8px] font-bold text-amber-600 uppercase tracking-wider block mb-1">Treasure (7s)</label>
+                                <div class="flex items-center justify-between bg-stone-50 rounded px-1 border border-stone-200 h-6">
+                                    <button onclick="adjustBonus('p2', -1)" class="text-stone-400 hover:text-stone-800 font-bold w-4">-</button>
+                                    <input type="number" id="p2Bonus" value="0" readonly class="treasure-input w-6 text-center bg-transparent font-bold text-stone-700 text-xs">
+                                    <button onclick="adjustBonus('p2', 1)" class="text-stone-400 hover:text-stone-800 font-bold w-4">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="shrink-0 space-y-2">
+                        <button onclick="submitRound()" class="w-full bg-stone-800 active:bg-stone-900 text-amber-500 font-bold py-3 rounded-lg shadow-lg border border-stone-700 uppercase tracking-widest text-sm transition-transform active:scale-95">
+                            Commit Round
+                        </button>
+                        
+                        <button onclick="confirmReset()" class="w-full text-stone-400 hover:text-red-500 text-[10px] font-bold uppercase tracking-widest py-2">
+                            Reset Game
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="victoryModal" class="absolute inset-0 bg-black bg-opacity-90 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+        <div class="bg-white rounded-xl p-8 w-full max-w-sm text-center border-4 border-amber-500 shadow-2xl relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-50 opacity-50"></div>
+            <div class="relative z-10">
+                <h2 class="text-4xl fantasy-font font-bold text-amber-600 mb-2 drop-shadow-sm">Victory!</h2>
+                <div class="h-1 w-16 bg-stone-800 mx-auto mb-4"></div>
+                <p class="text-stone-500 text-xs uppercase tracking-widest mb-1">The winner is</p>
+                <p id="winnerText" class="text-2xl font-bold text-stone-800 mb-6 fantasy-font">Player Name</p>
+                
+                <div class="flex justify-center space-x-6 mb-6 text-stone-600">
+                    <div class="text-center">
+                        <div id="finalP1Name" class="text-[10px] font-bold uppercase tracking-widest">P1</div>
+                        <div id="finalP1Score" class="text-xl font-bold">0</div>
+                    </div>
+                    <div class="text-xl text-stone-300 font-light">/</div>
+                    <div class="text-center">
+                        <div id="finalP2Name" class="text-[10px] font-bold uppercase tracking-widest">P2</div>
+                        <div id="finalP2Score" class="text-xl font-bold">0</div>
+                    </div>
+                </div>
+                <button onclick="fullReset()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded shadow-lg w-full uppercase tracking-widest text-sm">New Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIG & STATE ---
+        let gameState = {
+            winScore: 21,
+            p1Name: "Woodcutter",
+            p2Name: "The Fox",
+            round: 1,
+            scores: { p1: 0, p2: 0 },
+            isGameOver: false,
+            activeGame: false
+        };
+
+        const els = {
+            setupScreen: document.getElementById('setupScreen'),
+            gameplayScreen: document.getElementById('gameplayScreen'),
+            p1NameInput: document.getElementById('p1NameInput'),
+            p2NameInput: document.getElementById('p2NameInput'),
+            p1Display: document.getElementById('p1Display'),
+            p2Display: document.getElementById('p2Display'),
+            p1NameCard: document.getElementById('p1NameCard'),
+            p2NameCard: document.getElementById('p2NameCard'),
+            p1CurrentScore: document.getElementById('p1CurrentScore'),
+            p2CurrentScore: document.getElementById('p2CurrentScore'),
+            roundNumber: document.getElementById('roundNumber'),
+            tricksSlider: document.getElementById('tricksSlider'),
+            p1TricksDisplay: document.getElementById('p1TricksDisplay'),
+            p2TricksDisplay: document.getElementById('p2TricksDisplay'),
+            p1PointsResult: document.getElementById('p1PointsResult'),
+            p2PointsResult: document.getElementById('p2PointsResult'),
+            p1StatusText: document.getElementById('p1StatusText'),
+            p2StatusText: document.getElementById('p2StatusText'),
+            p1Card: document.getElementById('p1Card'),
+            p2Card: document.getElementById('p2Card'),
+            victoryModal: document.getElementById('victoryModal'),
+            winnerText: document.getElementById('winnerText'),
+            finalP1Name: document.getElementById('finalP1Name'),
+            finalP1Score: document.getElementById('finalP1Score'),
+            finalP2Name: document.getElementById('finalP2Name'),
+            finalP2Score: document.getElementById('finalP2Score'),
+            p1LeaderIndicator: document.getElementById('p1LeaderIndicator'),
+            p2LeaderIndicator: document.getElementById('p2LeaderIndicator'),
+            p1Bonus: document.getElementById('p1Bonus'),
+            p2Bonus: document.getElementById('p2Bonus')
+        };
+
+        // --- LOAD ON STARTUP ---
+        window.onload = function() {
+            const savedData = localStorage.getItem('foxForestState');
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    if (parsed.activeGame) {
+                        gameState = parsed;
+                        els.setupScreen.classList.add('hidden');
+                        els.gameplayScreen.classList.remove('hidden');
+                        els.p1Display.innerText = gameState.p1Name.substring(0, 8);
+                        els.p2Display.innerText = gameState.p2Name.substring(0, 8);
+                        els.p1NameCard.innerText = gameState.p1Name;
+                        els.p2NameCard.innerText = gameState.p2Name;
+                        updateUI();
+                        updateTrickCalc();
+                    }
+                } catch (e) {
+                    localStorage.removeItem('foxForestState');
+                }
+            }
+        };
+
+        function saveGame() {
+            localStorage.setItem('foxForestState', JSON.stringify(gameState));
+        }
+
+        function startGame(points) {
+            gameState.winScore = points;
+            gameState.p1Name = els.p1NameInput.value.trim() || "Woodcutter";
+            gameState.p2Name = els.p2NameInput.value.trim() || "The Fox";
+            gameState.activeGame = true;
+
+            els.p1Display.innerText = gameState.p1Name.substring(0, 8);
+            els.p2Display.innerText = gameState.p2Name.substring(0, 8);
+            els.p1NameCard.innerText = gameState.p1Name;
+            els.p2NameCard.innerText = gameState.p2Name;
+
+            els.setupScreen.classList.add('hidden');
+            els.gameplayScreen.classList.remove('hidden');
+
+            saveGame();
+            updateUI();
+            updateTrickCalc();
+        }
+
+        function confirmReset() {
+            if (confirm("Reset current game?")) fullReset();
+        }
+
+        function fullReset() {
+            gameState = {
+                winScore: 21,
+                p1Name: "Woodcutter",
+                p2Name: "The Fox",
+                round: 1,
+                scores: { p1: 0, p2: 0 },
+                isGameOver: false,
+                activeGame: false
+            };
+            localStorage.removeItem('foxForestState');
+            els.tricksSlider.value = 6;
+            els.p1Bonus.value = 0;
+            els.p2Bonus.value = 0;
+            els.p1NameInput.value = "";
+            els.p2NameInput.value = "";
+            els.victoryModal.classList.add('hidden');
+            els.gameplayScreen.classList.add('hidden');
+            els.setupScreen.classList.remove('hidden');
+        }
+
+        function adjustBonus(player, amount) {
+            const el = document.getElementById(player + 'Bonus');
+            let val = parseInt(el.value) + amount;
+            if (val < 0) val = 0;
+            if (val > 3) val = 3; 
+            el.value = val;
+        }
+
+        function calculatePoints(tricks) {
+            if (tricks <= 3) return { points: 6, status: "Humble", style: "status-humble", bg: "border-green-400" };
+            if (tricks === 4) return { points: 1, status: "Normal", style: "status-normal", bg: "border-stone-200" };
+            if (tricks === 5) return { points: 2, status: "Defeated", style: "status-normal", bg: "border-stone-200" };
+            if (tricks === 6) return { points: 3, status: "Normal", style: "status-normal", bg: "border-stone-200" };
+            if (tricks >= 7 && tricks <= 9) return { points: 6, status: "Victorious", style: "status-victorious", bg: "border-amber-400" };
+            if (tricks >= 10) return { points: 0, status: "Greedy", style: "status-greedy", bg: "border-red-400" };
+            return { points: 0, status: "-", style: "", bg: "" };
+        }
+
+        function updateTrickCalc() {
+            const p1Tricks = parseInt(els.tricksSlider.value);
+            const p2Tricks = 13 - p1Tricks;
+            const r1 = calculatePoints(p1Tricks);
+            const r2 = calculatePoints(p2Tricks);
+            updateCard(els.p1Card, els.p1PointsResult, els.p1StatusText, r1);
+            updateCard(els.p2Card, els.p2PointsResult, els.p2StatusText, r2);
+            els.p1TricksDisplay.innerText = p1Tricks;
+            els.p2TricksDisplay.innerText = p2Tricks;
+        }
+
+        function updateCard(cardEl, pointEl, statusEl, result) {
+            pointEl.innerText = result.points > 0 ? "+" + result.points : result.points;
+            statusEl.innerText = result.status;
+            statusEl.className = `text-[10px] font-bold uppercase mb-0 ${result.style}`;
+            cardEl.className = `bg-white rounded-lg p-3 shadow-md border-2 transition-all duration-300 transform flex flex-col justify-between h-[18vh] min-h-[120px] ${result.bg}`;
+            if(result.status === "Greedy") {
+                cardEl.classList.add("bg-red-50");
+            } else if (result.status === "Humble" || result.status === "Victorious") {
+                cardEl.classList.add("bg-amber-50");
+            } else {
+                cardEl.classList.remove("bg-red-50", "bg-amber-50");
+            }
+        }
+
+        function submitRound() {
+            const p1Tricks = parseInt(els.tricksSlider.value);
+            const p2Tricks = 13 - p1Tricks;
+            const r1 = calculatePoints(p1Tricks);
+            const r2 = calculatePoints(p2Tricks);
+            const p1BonusVal = parseInt(els.p1Bonus.value) || 0;
+            const p2BonusVal = parseInt(els.p2Bonus.value) || 0;
+
+            gameState.scores.p1 += (r1.points + p1BonusVal);
+            gameState.scores.p2 += (r2.points + p2BonusVal);
+
+            checkWin();
+
+            if (!gameState.isGameOver) {
+                gameState.round++;
+                els.roundNumber.classList.add('pop-anim');
+                setTimeout(() => els.roundNumber.classList.remove('pop-anim'), 200);
+                els.tricksSlider.value = 6;
+                els.p1Bonus.value = 0;
+                els.p2Bonus.value = 0;
+                updateTrickCalc();
+                updateUI();
+                saveGame();
+            } else {
+                saveGame();
+            }
+        }
+
+        function checkWin() {
+            if (gameState.scores.p1 >= gameState.winScore || gameState.scores.p2 >= gameState.winScore) {
+                gameState.isGameOver = true;
+                let winner = "";
+                if (gameState.scores.p1 > gameState.scores.p2) winner = gameState.p1Name;
+                else if (gameState.scores.p2 > gameState.scores.p1) winner = gameState.p2Name;
+                else winner = "Tie!"; 
+
+                els.winnerText.innerText = winner;
+                els.finalP1Name.innerText = gameState.p1Name;
+                els.finalP2Name.innerText = gameState.p2Name;
+                els.finalP1Score.innerText = gameState.scores.p1;
+                els.finalP2Score.innerText = gameState.scores.p2;
+                els.victoryModal.classList.remove('hidden');
+            }
+        }
+
+        function updateUI() {
+            els.roundNumber.innerText = gameState.round;
+            els.p1CurrentScore.innerText = gameState.scores.p1;
+            els.p2CurrentScore.innerText = gameState.scores.p2;
+            els.p1LeaderIndicator.style.opacity = gameState.scores.p1 > gameState.scores.p2 ? "1" : "0";
+            els.p2LeaderIndicator.style.opacity = gameState.scores.p2 > gameState.scores.p1 ? "1" : "0";
+        }
+
+        updateTrickCalc();
+    </script>
+</body>
+</html>

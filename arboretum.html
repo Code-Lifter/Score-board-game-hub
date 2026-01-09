@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arboretum Smart Scorepad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* FONTS & THEME */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Rye&family=Lato:wght@400;700&display=swap');
+        
+        body { 
+            font-family: 'Lato', sans-serif; 
+            background-color: #f1f5f9; 
+            overscroll-behavior-y: none;
+        }
+
+        .font-header { font-family: 'Rye', serif; }
+        .font-serif-title { font-family: 'Playfair Display', serif; }
+
+        /* INPUT STYLING */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .score-input {
+            font-family: 'Playfair Display', serif;
+            font-weight: bold;
+            color: #1e3a8a;
+            background: transparent;
+            font-size: 1.15rem; /* Large enough to prevent iOS zoom */
+        }
+        
+        .score-input:focus {
+            background-color: #fff;
+            outline: none;
+        }
+
+        /* Winner highlighting animation */
+        @keyframes pulse-gold {
+            0%, 100% { color: #fbbf24; text-shadow: 0 0 5px rgba(251, 191, 36, 0.5); }
+            50% { color: #f59e0b; text-shadow: 0 0 15px rgba(245, 158, 11, 0.8); }
+        }
+        .winner-text {
+            animation: pulse-gold 2s infinite;
+        }
+        
+        /* Modal Transition */
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .hidden-modal {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .hidden-modal .modal-content {
+            transform: scale(0.95);
+        }
+
+        /* Hide scrollbar for cleaner look but allow scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <div class="max-w-lg mx-auto bg-white w-full h-full shadow-xl flex flex-col relative">
+        
+        <!-- Header -->
+        <div class="bg-slate-900 text-amber-50 py-3 text-center border-b-4 border-slate-500 shadow-md z-30 flex-none relative">
+            <h1 class="font-header text-2xl tracking-[0.15em] relative inline-block">
+                ARBORETUM
+                <i class="fas fa-tree absolute -left-8 top-1 text-emerald-600 opacity-80 text-lg"></i>
+                <i class="fas fa-leaf absolute -right-6 top-0 text-amber-500 opacity-80 text-sm transform rotate-45"></i>
+            </h1>
+            <p class="text-slate-400 text-[10px] uppercase tracking-widest mt-0">Smart Scorepad</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="bg-slate-100 p-3 border-b border-slate-300 flex justify-between items-center z-20 shadow-sm flex-none">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center bg-white rounded border border-slate-300 px-2 py-1">
+                    <i class="fas fa-users text-slate-400 text-xs mr-2"></i>
+                    <select id="playerCount" class="bg-transparent text-slate-700 font-bold focus:outline-none text-sm cursor-pointer" onchange="changePlayerCount()">
+                        <option value="2">2 Players</option>
+                        <option value="3">3 Players</option>
+                        <option value="4" selected>4 Players</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="openResetModal()" class="text-xs font-bold text-red-600 uppercase tracking-wider border border-red-200 bg-red-50 px-3 py-1.5 rounded hover:bg-red-600 hover:text-white transition-colors shadow-sm">
+                <i class="fas fa-rotate-right mr-1"></i> New Game
+            </button>
+        </div>
+        <!-- Footer / Totals -->
+        <div class="bg-slate-800 text-white z-30 border-t-4 border-slate-600 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] flex-none">
+             <table class="w-full table-fixed">
+                <tfoot id="tableFooter">
+                    <!-- Footer injected by JS -->
+                </tfoot>
+             </table>
+        </div>
+
+        <!-- Scrollable Score Area -->
+        <div class="flex-grow bg-blue-50/30 overflow-y-auto no-scrollbar relative">
+            <table class="w-full border-collapse table-fixed" id="scoreTable">
+                <thead class="sticky top-0 z-10 shadow-sm">
+                    <!-- Header injected by JS -->
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Body injected by JS -->
+                </tbody>
+            </table>
+        </div>
+        
+        
+        <!-- Rules Banner -->
+        <div class="bg-slate-200 p-2 text-[10px] text-slate-500 text-center uppercase tracking-wide flex-none border-t border-slate-300 flex justify-center items-center gap-2">
+            <i class="fas fa-book-open"></i>
+            <span id="ruleText">Official Rules: Use all 10 species.</span>
+        </div>
+
+    </div>
+
+    <!-- Custom Modal -->
+    <div id="resetModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden-modal modal">
+        <div class="bg-white rounded-lg shadow-2xl p-6 w-80 text-center modal-content border border-slate-200">
+            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
+            </div>
+            <h3 class="font-header text-xl text-slate-800 mb-2">Reset...</h3>
+            
+            <div class="flex flex-col gap-2">
+                <button onclick="confirmReset(true)" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors text-sm">
+                    Scores
+                </button>
+                <button onclick="confirmReset(false)" class="w-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold py-2 px-4 rounded transition-colors text-sm">
+                    Score & Names
+                </button>
+                <button onclick="closeResetModal()" class="mt-2 text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-widest">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allTrees = [
+            { name: "Blue Spruce", color: "#2563EB", text: "text-blue-600" },
+            { name: "Cassia", color: "#F59E0B", text: "text-amber-500" },
+            { name: "Cherry Blossom", color: "#EC4899", text: "text-pink-500" },
+            { name: "Dogwood", color: "#6B7280", text: "text-gray-500" },
+            { name: "Jacaranda", color: "#9333EA", text: "text-purple-600" },
+            { name: "Maple", color: "#EA580C", text: "text-orange-600" },
+            { name: "Oak", color: "#78350F", text: "text-amber-900" },
+            { name: "Royal Poinciana", color: "#DC2626", text: "text-red-600" },
+            { name: "Tulip Poplar", color: "#65A30D", text: "text-lime-600" },
+            { name: "Willow", color: "#166534", text: "text-green-700" }
+        ];
+
+        // State
+        let state = {
+            playerCount: 4,
+            scores: {},
+            playerNames: ["", "", "", ""]
+        };
+
+        // Initialize
+        function init() {
+            loadState();
+            renderUI();
+        }
+
+        // Persistence
+        function saveState() {
+            localStorage.setItem('arboretum_state', JSON.stringify(state));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('arboretum_state');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    // Merge saved state carefully to avoid breaking if schema changes
+                    state = { ...state, ...parsed };
+                    // Ensure arrays are correct length based on saved count
+                    if (state.playerNames.length < 4) {
+                        while(state.playerNames.length < 4) state.playerNames.push("");
+                    }
+                } catch (e) {
+                    console.error("Failed to load state", e);
+                }
+            }
+            // Sync selector
+            document.getElementById('playerCount').value = state.playerCount;
+        }
+
+        function getActiveTreeCount() {
+            if (state.playerCount === 3) return 8;
+            if (state.playerCount === 2) return 6;
+            return 10;
+        }
+
+        function changePlayerCount() {
+            state.playerCount = parseInt(document.getElementById('playerCount').value);
+            saveState();
+            renderUI();
+        }
+
+        function updateName(idx, val) {
+            state.playerNames[idx] = val;
+            saveState();
+        }
+
+        function updateScore(treeIdx, playerIdx, val) {
+            const key = `${treeIdx}-${playerIdx}`;
+            if (val === "" || val === null) {
+                delete state.scores[key];
+            } else {
+                state.scores[key] = parseInt(val);
+            }
+            saveState();
+            renderTotals(); // Only re-render footer for performance
+        }
+
+        // UI Rendering
+        function renderUI() {
+            const treeCount = getActiveTreeCount();
+            
+            // Update Rules Text
+            let ruleMsg = "Official Rules: Use all 10 species.";
+            if (state.playerCount === 3) ruleMsg = "Official Rules: Use 8 species (Remove Tulip & Willow).";
+            if (state.playerCount === 2) ruleMsg = "Official Rules: Use 6 species (Remove bottom 4).";
+            document.getElementById('ruleText').innerText = ruleMsg;
+
+            renderHeader();
+            renderBody(treeCount);
+            renderTotals();
+        }
+
+        function renderHeader() {
+            const thead = document.querySelector('#scoreTable thead');
+            let html = `
+                <tr class="bg-slate-200 h-10 border-b border-slate-300">
+                    <th class="p-2 text-left w-[25%] border-r border-slate-300/50">
+                        <span class="font-serif-title italic text-slate-500 text-xs pl-1">Species</span>
+                    </th>
+            `;
+            
+            for (let i = 0; i < state.playerCount; i++) {
+                html += `
+                    <th class="p-1 border-l border-slate-300/50 bg-slate-100 relative group transition-colors focus-within:bg-white">
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                value="${state.playerNames[i]}" 
+                                oninput="updateName(${i}, this.value)"
+                                class="w-full bg-transparent text-center font-bold text-slate-700 placeholder-slate-400 focus:outline-none text-xs md:text-sm truncate px-1 uppercase tracking-wide"
+                                placeholder="Player ${i+1}"
+                            >
+                            <i class="fas fa-pen absolute right-0 top-1 text-[8px] text-slate-300 opacity-0 group-hover:opacity-100 pointer-events-none"></i>
+                        </div>
+                    </th>
+                `;
+            }
+            html += `</tr>`;
+            thead.innerHTML = html;
+        }
+
+        function renderBody(treeCount) {
+            const tbody = document.getElementById('tableBody');
+            let html = '';
+            
+            for (let i = 0; i < treeCount; i++) {
+                const tree = allTrees[i];
+                const rowBg = i % 2 === 0 ? 'bg-white' : 'bg-slate-50';
+                
+                html += `<tr class="${rowBg} border-b border-slate-100 h-14">`;
+                
+                // Species Label
+                html += `
+                    <td class="p-1 text-left border-r border-slate-200/50 relative overflow-hidden">
+                        <div class="absolute left-0 top-0 bottom-0 w-1" style="background-color: ${tree.color}"></div>
+                        <div class="flex flex-col justify-center pl-3">
+                            <span class="font-serif-title text-slate-800 text-[0.7rem] font-bold leading-tight ${tree.text}">${tree.name}</span>
+                        </div>
+                    </td>
+                `;
+
+                // Inputs
+                for (let p = 0; p < state.playerCount; p++) {
+                    const val = state.scores[`${i}-${p}`] ?? '';
+                    html += `
+                        <td class="p-0 border-l border-slate-200/50 text-center align-middle relative">
+                            <input 
+                                type="number" 
+                                pattern="[0-9]*" 
+                                inputmode="numeric" 
+                                min="0"
+                                value="${val}"
+                                placeholder="-"
+                                onchange="updateScore(${i}, ${p}, this.value)"
+                                onfocus="this.select()"
+                                class="score-input w-full h-full text-center rounded-none transition-all p-0"
+                            >
+                        </td>
+                    `;
+                }
+                html += `</tr>`;
+            }
+            tbody.innerHTML = html;
+        }
+
+        function renderTotals() {
+            const tfoot = document.getElementById('tableFooter');
+            const treeCount = getActiveTreeCount();
+            
+            // Calculate sums
+            let totals = [];
+            let maxScore = -1;
+
+            for (let p = 0; p < state.playerCount; p++) {
+                let sum = 0;
+                for(let t = 0; t < treeCount; t++) {
+                    sum += (state.scores[`${t}-${p}`] || 0);
+                }
+                totals.push(sum);
+                if (sum > maxScore && sum > 0) maxScore = sum;
+            }
+
+            let html = `
+                <tr class="h-14">
+                    <td class="bg-slate-800 p-2 text-right w-[25%] border-r border-slate-600">
+                        <span class="text-[0.65rem] uppercase tracking-widest font-bold text-slate-400 block">Total</span>
+                        <span class="text-[0.5rem] text-slate-500">SCORE</span>
+                    </td>
+            `;
+
+            for (let p = 0; p < state.playerCount; p++) {
+                const score = totals[p];
+                const isWinner = score === maxScore && score > 0;
+                const winnerClass = isWinner ? 'winner-text font-bold text-2xl' : 'text-slate-300 text-lg';
+                const crown = isWinner ? '<div class="absolute -top-3 left-1/2 transform -translate-x-1/2 text-amber-400 text-xs"><i class="fas fa-crown"></i></div>' : '';
+
+                html += `
+                    <td class="p-1 text-center border-l border-slate-600 font-header relative">
+                        ${crown}
+                        <span class="${winnerClass} transition-all duration-500">${score}</span>
+                    </td>
+                `;
+            }
+            html += `</tr>`;
+            tfoot.innerHTML = html;
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('resetModal');
+        
+        function openResetModal() {
+            modal.classList.remove('hidden-modal');
+        }
+
+        function closeResetModal() {
+            modal.classList.add('hidden-modal');
+        }
+
+        function confirmReset(keepNames) {
+            state.scores = {};
+            if (!keepNames) {
+                state.playerNames = ["", "", "", ""];
+            }
+            saveState();
+            renderUI();
+            closeResetModal();
+        }
+
+        // Close modal on click outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeResetModal();
+        });
+
+        // Run
+        init();
+    </script>
+</body>
+</html>
