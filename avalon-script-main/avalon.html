@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Avalon — First Night Script</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container" role="main">
+    <header class="header">
+      <h1>Avalon Moderator Tool</h1>
+      <p class="sub">Tick the roles in play, then generate the <strong>First Night Script</strong>.</p>
+    </header>
+
+    <!-- Roles in play -->
+    <section class="card" aria-labelledby="rolesHeading">
+      <h2 id="rolesHeading">Roles in play</h2>
+
+      <form id="roleForm" class="roles">
+        <fieldset>
+          <legend>Good</legend>
+          <label><input type="checkbox" name="role" value="Merlin" checked> Merlin</label>
+          <label><input type="checkbox" name="role" value="Percival"> Percival</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Evil</legend>
+          <label><input type="checkbox" name="role" value="Assassin" checked> Assassin</label>
+          <label><input type="checkbox" name="role" value="Morgana"> Morgana</label>
+          <label><input type="checkbox" name="role" value="Mordred"> Mordred</label>
+          <label><input type="checkbox" name="role" value="Oberon"> Oberon</label>
+        </fieldset>
+      </form>
+
+      <div class="actions">
+        <button id="generateFirstNightBtn" type="button">Generate First Night</button>
+        <button id="resetBtn" type="button" class="ghost">Reset</button>
+      </div>
+    </section>
+
+    <!-- First Night Script -->
+    <section id="firstNightSection" class="card" aria-labelledby="firstNightHeading">
+      <h2 id="firstNightHeading">First Night Script</h2>
+      <ol id="firstNightList" aria-live="polite" aria-label="First Night Steps"></ol>
+    </section>
+
+    <footer class="footer">
+      <noscript>This tool requires JavaScript to generate the First Night script.</noscript>
+    </footer>
+  </main>
+
+  <!-- Embedded roles + script pieces -->
+  <script id="rolesData" type="application/json">
+{
+  "roles": [
+    { "name": "Merlin", "team": "Good", "notes": "Knows all Evil except Mordred and Oberon." },
+    { "name": "Percival", "team": "Good", "notes": "Sees Merlin; if Morgana is in play, sees both Merlin and Morgana but cannot tell which is which." },
+    { "name": "Servant of Arthur", "team": "Good", "notes": "Vanilla Good role." },
+    { "name": "Lady of the Lake", "team": "Good (module)", "notes": "After Mission 2, may look at another player's loyalty card." },
+
+    { "name": "Assassin", "team": "Evil", "notes": "At endgame, if Good win 3 missions, Assassin attempts to kill Merlin." },
+    { "name": "Morgana", "team": "Evil", "notes": "Appears as Merlin to Percival." },
+    { "name": "Mordred", "team": "Evil", "notes": "Hidden from Merlin." },
+    { "name": "Oberon", "team": "Evil", "notes": "Does not open eyes with Evil; hidden from Merlin." },
+    { "name": "Minion of Mordred", "team": "Evil", "notes": "Vanilla Evil role." }
+  ],
+  "scriptPieces": {
+  "baseFirstNight": [
+    "😴 Everyone, close your eyes and extend your fist in front of you."
+  ],
+  "evilWakeNoOberon": [
+    "😈Minions of Mordred, open your eyes 👀 and look at each other so you know who is on your team."
+  ],
+  "evilWakeWithOberon": [
+    "😈Minions of Mordred, except for Oberon 🙈 — open your eyes 👀 and look at each other so you know who is on your team."
+  ],
+  "evilClose": [
+    "😈Minions of Mordred, close your eyes 🙈."
+  ],
+  "merlinSeesEvil": [
+    "🧙Merlin, open your eyes",
+    "😈Minions of Mordred, put your thumbs up so Merlin can see you.",
+    "🧙Merlin, close your eyes 🙈.",
+    "😈Minions of Mordred, put your thumbs down."
+  ],
+  "merlinSeesEvilWithMordred": [
+    "🧙Merlin, open your eyes",
+    "😈Minions of Mordred, except for 🕵️‍♂️Mordred himself — put your thumbs up so Merlin can see you.",
+    "🧙Merlin, close your eyes 🙈",
+    "😈Minions of Mordred, put your thumbs down"
+  ],
+  "percivalBlock": [
+    "🛡️Percival, open your eyes",
+    "🧙Merlin and 🧝Morgana, put your thumbs up so 🛡️Percival can see you.",
+    "🛡️Percival, close your eyes 🙈",
+    "🧙Merlin and 🧝Morgana, put your thumbs down."
+  ],
+  "percivalOnlyMerlin": [
+    "🛡️Percival, open your eyes",
+    "🧙Merlin, put your thumbs up so 🛡️Percival can see you.",
+    "🛡️Percival, close your eyes 🙈.",
+    "🧙Merlin, put your thumbs down."
+  ]
+}
+}
+  </script>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
+
+</html>
