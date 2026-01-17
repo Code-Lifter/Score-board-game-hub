@@ -76,9 +76,24 @@
 
     <main class="flex-grow overflow-y-auto custom-scroll p-4 sm:p-8">
       <div class="max-w-6xl mx-auto">
+        
+        <div class="mb-8 relative max-w-md mx-auto">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+            
+            <input 
+                type="text" 
+                id="gameSearch" 
+                placeholder="Find a game..." 
+                class="block w-full pl-10 pr-3 py-3 border border-stone-600 rounded-xl leading-5 bg-stone-800 text-stone-200 placeholder-stone-500 focus:outline-none focus:bg-stone-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 sm:text-sm transition-colors shadow-lg"
+            >
+        </div>
+
         <div
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          <!-- Fox in the Forest -->
           <a
             href="fox-in-the-forest.html"
             class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
@@ -101,7 +116,6 @@
             </div>
           </a>
 
-          <!-- Arboretum -->
           <a
             href="arboretum.html"
             class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
@@ -123,7 +137,6 @@
               </h2>
             </div>
           </a>
-          <!-- Wizard -->
           <a
             href="wizard.html"
             class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
@@ -145,7 +158,6 @@
               </h2>
             </div>
           </a>
-          <!-- Avalon -->
           <a
             href="./avalon-script-main/avalon.html"
             class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
@@ -167,7 +179,6 @@
               </h2>
             </div>
           </a>
-          <!-- Uno -->
           <a
             href="uno.html"
             class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
@@ -192,5 +203,26 @@
         </div>
       </div>
     </main>
+
+    <script>
+        document.getElementById('gameSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.game-card');
+
+            cards.forEach(card => {
+                // Find the title inside the card
+                const title = card.querySelector('h2').innerText.toLowerCase();
+                
+                // Check if title includes the search term
+                if(title.includes(searchTerm)) {
+                    card.classList.remove('hidden');
+                    card.classList.add('flex'); // Keep the flex layout
+                } else {
+                    card.classList.add('hidden');
+                    card.classList.remove('flex');
+                }
+            });
+        });
+    </script>
   </body>
 </html>
