@@ -1,120 +1,196 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Game Night Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lato:wght@400;700&display=swap');
-        
-        /* App Shell Setup */
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            overflow: hidden; /* Lock body scroll */
-            background-color: #1c1917;
-            background-image: radial-gradient(circle at center, #292524 0%, #1c1917 100%);
-            font-family: 'Lato', sans-serif;
-            color: #d6d3d1;
-        }
+      @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lato:wght@400;700&display=swap");
 
-        h1, h2, .fantasy-font { font-family: 'Cinzel', serif; }
+      /* App Shell Setup */
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        overflow: hidden; /* Lock body scroll */
+        background-color: #1c1917;
+        background-image: radial-gradient(
+          circle at center,
+          #292524 0%,
+          #1c1917 100%
+        );
+        font-family: "Lato", sans-serif;
+        color: #d6d3d1;
+      }
 
-        /* Scrollbar Styling for the grid area */
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #292524; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #57534e; border-radius: 3px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #78716c; }
+      h1,
+      h2,
+      .fantasy-font {
+        font-family: "Cinzel", serif;
+      }
 
-        /* Card Hover Effects */
-        .game-card {
-            transition: all 0.2s ease-out;
-            border: 1px solid #44403c;
-        }
-        .game-card:hover {
-            transform: translateY(-2px);
-            border-color: #f59e0b;
-            background-color: #292524;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-        }
-        .game-card:active {
-            transform: scale(0.98);
-        }
+      /* Scrollbar Styling for the grid area */
+      .custom-scroll::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scroll::-webkit-scrollbar-track {
+        background: #292524;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb {
+        background: #57534e;
+        border-radius: 3px;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb:hover {
+        background: #78716c;
+      }
+
+      /* Card Hover Effects */
+      .game-card {
+        transition: all 0.2s ease-out;
+        border: 1px solid #44403c;
+      }
+      .game-card:hover {
+        transform: translateY(-2px);
+        border-color: #f59e0b;
+        background-color: #292524;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+      }
+      .game-card:active {
+        transform: scale(0.98);
+      }
     </style>
-</head>
-<body class="flex flex-col">
-
-    <header class="h-[10dvh] min-h-[60px] flex items-center justify-center bg-stone-900 border-b-4 border-amber-700 shadow-xl z-20 shrink-0">
-        <h1 class="text-amber-500 font-bold tracking-widest uppercase drop-shadow-md" style="font-size: min(6vw, 4vh);">
-            Tabletop Tools
-        </h1>
+  </head>
+  <body class="flex flex-col">
+    <header
+      class="h-[10dvh] min-h-[60px] flex items-center justify-center bg-stone-900 border-b-4 border-amber-700 shadow-xl z-20 shrink-0">
+      <h1
+        class="text-amber-500 font-bold tracking-widest uppercase drop-shadow-md"
+        style="font-size: min(6vw, 4vh)">
+        Tabletop Tools
+      </h1>
     </header>
 
     <main class="flex-grow overflow-y-auto custom-scroll p-4 sm:p-8">
-        <div class="max-w-6xl mx-auto">
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div class="max-w-6xl mx-auto">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <!-- Fox in the Forest -->
+          <a
+            href="fox-in-the-forest.html"
+            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div
+              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
 
-                <a href="fox-in-the-forest.html" class="game-card bg-stone-800 rounded-xl p-6 flex flex-col items-center text-center group relative overflow-hidden">
-                    <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-5 transition-opacity"></div>
-                    
-                    <div class="w-12 h-12 rounded-full bg-stone-900 border-2 border-amber-700 flex items-center justify-center mb-4 group-hover:border-amber-500 transition-colors">
-                        <span class="fantasy-font text-2xl text-amber-500">F</span>
-                    </div>
-                    
-                    <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">Fox in the Forest</h2>
-                </a>
-
-                <a href="arboretum.html" class="game-card bg-stone-800 rounded-xl p-6 flex flex-col items-center text-center group relative overflow-hidden">
-                    <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-5 transition-opacity"></div>
-                    
-                    <div class="w-12 h-12 rounded-full bg-stone-900 border-2 border-amber-700 flex items-center justify-center mb-4 group-hover:border-amber-500 transition-colors">
-                        <span class="fantasy-font text-2xl text-amber-500">A</span>
-                    </div>
-
-                    <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">Arboretum</h2>
-                </a>
-
-                <a href="wizard.html" class="game-card bg-stone-800 rounded-xl p-6 flex flex-col items-center text-center group relative overflow-hidden">
-                    <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-5 transition-opacity"></div>
-                    
-                    <div class="w-12 h-12 rounded-full bg-stone-900 border-2 border-amber-700 flex items-center justify-center mb-4 group-hover:border-amber-500 transition-colors">
-                        <span class="fantasy-font text-2xl text-amber-500">W</span>
-                    </div>
-
-                    <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">Wizard</h2>
-                </a>
-
-                 <a href="./avalon-script-main/avalon.html" class="game-card bg-stone-800 rounded-xl p-6 flex flex-col items-center text-center group relative overflow-hidden">
-                    <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-5 transition-opacity"></div>
-                    
-                    <div class="w-12 h-12 rounded-full bg-stone-900 border-2 border-amber-700 flex items-center justify-center mb-4 group-hover:border-amber-500 transition-colors">
-                        <span class="fantasy-font text-2xl text-amber-500">A</span>
-                    </div>
-
-                    <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">Avalon</h2>
-                </a>
-
-                <a href="uno.html" class="game-card bg-stone-800 rounded-xl p-6 flex flex-col items-center text-center group relative overflow-hidden">
-                    <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-5 transition-opacity"></div>
-                    
-                    <div class="w-12 h-12 rounded-full bg-stone-900 border-2 border-amber-700 flex items-center justify-center mb-4 group-hover:border-amber-500 transition-colors">
-                        <span class="fantasy-font text-2xl text-amber-500">U</span>
-                    </div>
-
-                    <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">Uno</h2>
-                </a>
-
-
+            <div class="w-full h-48 bg-stone-900 relative">
+              <img
+                src="img/Fox in the Forest Title Card.png"
+                alt="Fox in the Forest"
+                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-            
-            <div class="mt-8 text-center">
-                <p class="text-[10px] text-stone-600 uppercase tracking-widest">Local Collection • v1.0</p>
+
+            <div
+              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2
+                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+                Fox in the Forest
+              </h2>
             </div>
+          </a>
+
+          <!-- Arboretum -->
+          <a
+            href="arboretum.html"
+            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div
+              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
+
+            <div class="w-full h-48 bg-stone-900 relative">
+              <img
+                src="img/Arboretum Card Game Cover.png"
+                alt="Arboretum"
+                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+            </div>
+
+            <div
+              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2
+                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+                Arboretum
+              </h2>
+            </div>
+          </a>
+          <!-- Wizard -->
+          <a
+            href="wizard.html"
+            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div
+              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
+
+            <div class="w-full h-48 bg-stone-900 relative">
+              <img
+                src="img/Wizard Card Game Cover.jpg"
+                alt="Wizard"
+                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+            </div>
+
+            <div
+              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2
+                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+                Wizard
+              </h2>
+            </div>
+          </a>
+          <!-- Avalon -->
+          <a
+            href="./avalon-script-main/avalon.html"
+            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div
+              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
+
+            <div class="w-full h-48 bg-stone-900 relative">
+              <img
+                src="img/Avalon Card Game.webp"
+                alt="Avalon"
+                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+            </div>
+
+            <div
+              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2
+                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+                Avalon
+              </h2>
+            </div>
+          </a>
+          <!-- Uno -->
+          <a
+            href="uno.html"
+            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div
+              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
+
+            <div class="w-full h-48 bg-stone-900 relative">
+              <img
+                src="img/Uno Card Color Scheme.jpg"
+                alt="Uno"
+                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+            </div>
+
+            <div
+              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2
+                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+                Uno
+              </h2>
+            </div>
+          </a>
         </div>
+      </div>
     </main>
-
-</body>
+  </body>
 </html>
