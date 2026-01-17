@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNO Scorekeeper</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --uno-red: #d12f2f;
+            --uno-blue: #0063b3;
+            --uno-green: #3caea3;
+            --uno-yellow: #fcd53f;
+            --uno-black: #1d1d1d;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .uno-header {
+            background: linear-gradient(90deg, var(--uno-red) 25%, var(--uno-blue) 25%, var(--uno-blue) 50%, var(--uno-green) 50%, var(--uno-green) 75%, var(--uno-yellow) 75%);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            padding: 20px;
+            border-bottom: 5px solid var(--uno-black);
+        }
+
+        .player-card {
+            border-left: 10px solid var(--uno-black);
+            transition: transform 0.2s;
+        }
+        
+        .player-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* --- Dynamic Player Colors --- */
+        .p-theme-0 { border-left-color: var(--uno-red) !important; }
+        .p-bg-0 { background-color: rgba(209, 47, 47, 0.08); border: 1px solid var(--uno-red); }
+        .p-input-0:focus { border-color: var(--uno-red); box-shadow: 0 0 0 0.25rem rgba(209, 47, 47, 0.25); }
+
+        .p-theme-1 { border-left-color: var(--uno-blue) !important; }
+        .p-bg-1 { background-color: rgba(0, 99, 179, 0.08); border: 1px solid var(--uno-blue); }
+        .p-input-1:focus { border-color: var(--uno-blue); box-shadow: 0 0 0 0.25rem rgba(0, 99, 179, 0.25); }
+
+        .p-theme-2 { border-left-color: var(--uno-green) !important; }
+        .p-bg-2 { background-color: rgba(60, 174, 163, 0.08); border: 1px solid var(--uno-green); }
+        .p-input-2:focus { border-color: var(--uno-green); box-shadow: 0 0 0 0.25rem rgba(60, 174, 163, 0.25); }
+
+        .p-theme-3 { border-left-color: var(--uno-yellow) !important; }
+        .p-bg-3 { background-color: rgba(252, 213, 63, 0.15); border: 1px solid #e0bd35; }
+        .p-input-3:focus { border-color: var(--uno-yellow); box-shadow: 0 0 0 0.25rem rgba(252, 213, 63, 0.25); }
+
+        .winner-highlight {
+            background-color: var(--uno-yellow);
+            color: var(--uno-black);
+            border: 4px solid var(--uno-red);
+        }
+
+        .loser-highlight {
+            background-color: #e9ecef;
+            color: #6c757d;
+            border: 4px solid #343a40;
+            opacity: 0.8;
+        }
+
+        .score-badge {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .mode-badge {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Calculator Styles */
+        .calc-panel {
+            background-color: #fff;
+            border-top: 1px dashed #ccc;
+            margin-top: 5px;
+            padding-top: 10px;
+        }
+        .calc-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .calc-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #555;
+            flex-grow: 1;
+        }
+        .calc-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .calc-count {
+            width: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .btn-calc {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="uno-header text-center mb-4">
+        <h1>UNO Scorekeeper</h1>
+    </div>
+
+    <div class="container" style="max-width: 600px;">
+        
+        <div id="setup-section" class="card shadow-sm p-4 mb-4">
+            <h3 class="mb-3">New Game Setup</h3>
+            
+            <div class="mb-4 p-3 bg-light rounded border">
+                <label class="form-label fw-bold d-block mb-2">Select Game Mode:</label>
+                <div class="btn-group w-100" role="group">
+                    <input type="radio" class="btn-check" name="gameMode" id="modeAlternative" value="alternative" checked onchange="updateModeDesc()">
+                    <label class="btn btn-outline-dark" for="modeAlternative">Alternative</label>
+
+                    <input type="radio" class="btn-check" name="gameMode" id="modeStandard" value="standard" onchange="updateModeDesc()">
+                    <label class="btn btn-outline-primary" for="modeStandard">Standard</label>
+                </div>
+                <div class="mt-2 text-muted small fst-italic" id="modeDescription">
+                    <i class="bi bi-info-circle"></i> 
+                    <strong>Alternative:</strong> Lowest points wins when someone hits 500.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="playerInput" class="form-label">Add Player Name</label>
+                <div class="input-group">
+                    <input type="text" id="playerInput" class="form-control" placeholder="e.g. Player 1">
+                    <button class="btn btn-dark" onclick="addPlayer()">Add</button>
+                </div>
+            </div>
+            
+            <ul id="playerListPreview" class="list-group mb-3">
+                </ul>
+
+            <div class="d-grid gap-2">
+                <button class="btn btn-success btn-lg" onclick="startGame()">Start Game</button>
+            </div>
+            <div class="form-text text-center mt-2">Supports 3-8 Players</div>
+        </div>
+
+        <div id="game-section" class="d-none">
+            
+            <div class="d-flex justify-content-between mb-3 align-items-center">
+                <span id="activeModeDisplay" class="badge bg-secondary d-flex align-items-center mode-badge p-2">MODE: ALT</span>
+                <button class="btn btn-danger btn-sm" onclick="resetGame()">New Game</button>
+            </div>
+
+            <div id="scoreboard" class="row g-3">
+                </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#addRoundModal">
+                    + Add Round Scores
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="addRoundModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">Enter Points</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="roundForm">
+                        <div id="roundInputs">
+                            </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitRound()">Update Scores</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // --- STATE MANAGEMENT ---
+        let gameState = {
+            isActive: false,
+            mode: 'alternative', // 'alternative' or 'standard'
+            players: [],
+            targetScore: 500
+        };
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', loadGame);
+
+        // --- STORAGE FUNCTIONS ---
+        function saveGame() {
+            localStorage.setItem('uno_game_state_v4', JSON.stringify(gameState));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('uno_game_state_v4');
+            if (saved) {
+                try {
+                    gameState = JSON.parse(saved);
+                    if (!gameState.mode) gameState.mode = 'alternative';
+                    
+                    if (gameState.isActive) {
+                        document.getElementById('setup-section').classList.add('d-none');
+                        document.getElementById('game-section').classList.remove('d-none');
+                        updateActiveModeDisplay();
+                        renderScoreboard();
+                    } else {
+                        updatePlayerPreview();
+                        const modeRadio = document.querySelector(`input[name="gameMode"][value="${gameState.mode}"]`);
+                        if(modeRadio) {
+                            modeRadio.checked = true;
+                            updateModeDesc();
+                        }
+                    }
+                } catch (e) {
+                    console.error("Save file corrupted, resetting.");
+                    localStorage.removeItem('uno_game_state_v4');
+                }
+            }
+        }
+
+        // --- UI HELPERS ---
+        function updateModeDesc() {
+            const mode = document.querySelector('input[name="gameMode"]:checked').value;
+            const desc = document.getElementById('modeDescription');
+            if (mode === 'alternative') {
+                desc.innerHTML = '<strong>Alternative:</strong> Lowest points wins when someone hits 500.';
+            } else {
+                desc.innerHTML = '<strong>Standard:</strong> First player to reach 500 points wins.';
+            }
+        }
+        
+        function updateActiveModeDisplay() {
+            const badge = document.getElementById('activeModeDisplay');
+            if (gameState.mode === 'alternative') {
+                badge.innerText = "MODE: ALT (LOWEST WINS)";
+                badge.className = "badge bg-dark d-flex align-items-center mode-badge p-2";
+            } else {
+                badge.innerText = "MODE: STD (HIGHEST WINS)";
+                badge.className = "badge bg-primary d-flex align-items-center mode-badge p-2";
+            }
+        }
+
+        // --- SETUP FUNCTIONS ---
+        function addPlayer() {
+            const input = document.getElementById('playerInput');
+            const name = input.value.trim();
+            
+            if (name && gameState.players.length < 8) {
+                gameState.players.push({
+                    id: Date.now(),
+                    name: name,
+                    score: 0
+                });
+                updatePlayerPreview();
+                saveGame();
+                input.value = '';
+                input.focus();
+            } else if (gameState.players.length >= 8) {
+                alert("Max 8 players allowed.");
+            }
+        }
+
+        function updatePlayerPreview() {
+            const list = document.getElementById('playerListPreview');
+            list.innerHTML = gameState.players.map((p, index) => `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${p.name}
+                    <button class="btn btn-sm btn-outline-danger" onclick="removePlayer(${index})">&times;</button>
+                </li>
+            `).join('');
+        }
+
+        function removePlayer(index) {
+            gameState.players.splice(index, 1);
+            updatePlayerPreview();
+            saveGame();
+        }
+
+        function startGame() {
+            if (gameState.players.length < 3) {
+                alert("You need at least 3 players to start.");
+                return;
+            }
+            
+            const selectedMode = document.querySelector('input[name="gameMode"]:checked').value;
+            gameState.mode = selectedMode;
+            gameState.isActive = true;
+            saveGame();
+
+            document.getElementById('setup-section').classList.add('d-none');
+            document.getElementById('game-section').classList.remove('d-none');
+            updateActiveModeDisplay();
+            renderScoreboard();
+        }
+
+        // --- GAMEPLAY FUNCTIONS ---
+
+        function renderScoreboard() {
+            const board = document.getElementById('scoreboard');
+            const inputs = document.getElementById('roundInputs');
+            
+            let winnerId = null;
+            let loserId = null;
+            
+            const maxScore = Math.max(...gameState.players.map(p => p.score));
+            const isGameOver = maxScore >= gameState.targetScore;
+
+            if (isGameOver) {
+                if (gameState.mode === 'alternative') {
+                    const minScore = Math.min(...gameState.players.map(p => p.score));
+                    winnerId = gameState.players.find(p => p.score === minScore)?.id;
+                    loserId = gameState.players.find(p => p.score === maxScore)?.id;
+                } else {
+                    winnerId = gameState.players.find(p => p.score === maxScore)?.id;
+                }
+            }
+
+            // Display order
+            const displayOrder = [...gameState.players].sort((a, b) => {
+                return gameState.mode === 'alternative' ? a.score - b.score : b.score - a.score;
+            });
+
+            board.innerHTML = displayOrder.map((p) => {
+                const originalIndex = gameState.players.findIndex(x => x.id === p.id);
+                const themeClass = `p-theme-${originalIndex % 4}`;
+                
+                const isWinner = winnerId === p.id;
+                const isLoser = loserId === p.id;
+                
+                let cardClass = 'bg-white';
+                let statusBadge = '';
+
+                if (isWinner) {
+                    cardClass = 'winner-highlight';
+                    statusBadge = '<span class="badge bg-warning text-dark mt-1">WINNER!</span>';
+                } else if (isLoser && gameState.mode === 'alternative') {
+                    cardClass = 'loser-highlight';
+                    statusBadge = '<span class="badge bg-dark mt-1">ELIMINATED</span>';
+                }
+                
+                return `
+                <div class="col-12 col-md-6">
+                    <div class="card player-card ${themeClass} ${cardClass} shadow-sm h-100">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title mb-0">${p.name}</h5>
+                                ${statusBadge}
+                            </div>
+                            <div class="score-badge">${p.score}</div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            // Generate Modal Inputs with CALCULATOR
+            inputs.innerHTML = gameState.players.map(p => {
+                const originalIndex = gameState.players.findIndex(x => x.id === p.id);
+                const colorIndex = originalIndex % 4;
+                const bgClass = `p-bg-${colorIndex}`;
+                const inputFocusClass = `p-input-${colorIndex}`;
+
+                return `
+                <div class="p-2 mb-2 rounded shadow-sm ${bgClass}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center" style="max-width: 55%;">
+                            <button type="button" class="btn btn-sm btn-outline-dark border-0 me-2" 
+                                    data-bs-toggle="collapse" data-bs-target="#calc-${p.id}" 
+                                    aria-expanded="false">
+                                <i class="bi bi-calculator"></i>
+                            </button>
+                            <label class="form-label mb-0 fw-bold text-truncate" style="font-size: 1.1rem; color: #333;">
+                                ${p.name}
+                            </label>
+                        </div>
+                        <input type="number" id="input-${p.id}" class="form-control round-input text-center fw-bold ${inputFocusClass}" 
+                               style="width: 90px;" 
+                               data-id="${p.id}" 
+                               placeholder="0">
+                    </div>
+
+                    <div class="collapse calc-panel" id="calc-${p.id}">
+                        <div class="calc-row">
+                            <span class="calc-label text-dark">
+                                <i class="bi bi-suit-spade-fill"></i> Wild, Draw 4 (+50)
+                            </span>
+                            <div class="calc-controls">
+                                <button type="button" class="btn btn-outline-secondary btn-calc" onclick="updateCalc(${p.id}, 'wild', -1)">-</button>
+                                <span class="calc-count" id="count-wild-${p.id}">0</span>
+                                <button type="button" class="btn btn-secondary btn-calc" onclick="updateCalc(${p.id}, 'wild', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="calc-row">
+                            <span class="calc-label text-primary">
+                                <i class="bi bi-skip-forward-fill"></i> Skip, Reverse, Draw 2 (+20)
+                            </span>
+                            <div class="calc-controls">
+                                <button type="button" class="btn btn-outline-primary btn-calc" onclick="updateCalc(${p.id}, 'action', -1)">-</button>
+                                <span class="calc-count" id="count-action-${p.id}">0</span>
+                                <button type="button" class="btn btn-primary btn-calc" onclick="updateCalc(${p.id}, 'action', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="calc-row">
+                            <span class="calc-label text-muted">
+                                <i class="bi bi-123"></i> Face Cards
+                            </span>
+                            <input type="number" id="val-face-${p.id}" class="form-control form-control-sm text-center" 
+                                   style="width: 84px;" placeholder="0" 
+                                   oninput="recalcTotal(${p.id})">
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // --- CALCULATOR LOGIC ---
+        function updateCalc(id, type, change) {
+            const countSpan = document.getElementById(`count-${type}-${id}`);
+            let current = parseInt(countSpan.innerText);
+            let newVal = current + change;
+            if (newVal < 0) newVal = 0; // No negative counts
+            
+            countSpan.innerText = newVal;
+            recalcTotal(id);
+        }
+
+        function recalcTotal(id) {
+            const wildCount = parseInt(document.getElementById(`count-wild-${id}`).innerText) || 0;
+            const actionCount = parseInt(document.getElementById(`count-action-${id}`).innerText) || 0;
+            const faceVal = parseInt(document.getElementById(`val-face-${id}`).value) || 0;
+
+            const total = (wildCount * 50) + (actionCount * 20) + faceVal;
+            
+            // Update the main input
+            const mainInput = document.getElementById(`input-${id}`);
+            mainInput.value = total;
+        }
+
+        function submitRound() {
+            const inputs = document.querySelectorAll('.round-input');
+            let hasInput = false;
+
+            inputs.forEach(input => {
+                const points = parseInt(input.value);
+                if (!isNaN(points)) {
+                    hasInput = true;
+                    const playerId = parseInt(input.getAttribute('data-id'));
+                    const player = gameState.players.find(p => p.id === playerId);
+                    if (player) {
+                        player.score += points;
+                    }
+                }
+            });
+
+            if (!hasInput) return;
+
+            saveGame();
+
+            const modalEl = document.getElementById('addRoundModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            document.getElementById('roundForm').reset();
+            
+            // Reset calculator counts visually (since form reset doesn't hit spans)
+            document.querySelectorAll('.calc-count').forEach(el => el.innerText = '0');
+
+            renderScoreboard();
+            checkWinCondition();
+        }
+
+        function checkWinCondition() {
+            const maxScore = Math.max(...gameState.players.map(p => p.score));
+            
+            if (maxScore >= 500) {
+                let message = "";
+                
+                if (gameState.mode === 'alternative') {
+                    const minScore = Math.min(...gameState.players.map(p => p.score));
+                    const winner = gameState.players.find(p => p.score === minScore);
+                    const loser = gameState.players.find(p => p.score === maxScore);
+                    message = `GAME OVER! ${loser.name} reached 500.\n\n🏆 THE WINNER IS ${winner.name} with ${minScore} points!`;
+                } else {
+                    const winner = gameState.players.find(p => p.score === maxScore);
+                    message = `GAME OVER!\n\n🏆 ${winner.name} reached 500 points and WINS!`;
+                }
+
+                setTimeout(() => {
+                    alert(message);
+                }, 500);
+            }
+        }
+
+        function resetGame() {
+            if(confirm("Start a new game? This will delete the current saved game.")) {
+                gameState.players = [];
+                gameState.isActive = false;
+                localStorage.removeItem('uno_game_state_v4');
+                updatePlayerPreview();
+                document.getElementById('game-section').classList.add('d-none');
+                document.getElementById('setup-section').classList.remove('d-none');
+                document.getElementById('playerInput').value = '';
+                
+                document.getElementById('modeAlternative').checked = (gameState.mode === 'alternative');
+                document.getElementById('modeStandard').checked = (gameState.mode === 'standard');
+                updateModeDesc();
+            }
+        }
+    </script>
+</body>
+</html>
