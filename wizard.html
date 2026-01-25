@@ -3,505 +3,499 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wizard Smart Scorepad</title>
+    <title>Wizard: The Game of Rage</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rye&display=swap" rel="stylesheet">
+
     <style>
-        /* FONTS & THEME */
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Rye&family=Lato:wght@400;700&display=swap');
-        
+        /* --- THEME CONFIG --- */
+        :root {
+            --wiz-gold: #fbbf24;
+            --wiz-red: #ef4444;
+            --wiz-blue: #3b82f6;
+            --wiz-green: #22c55e;
+            --wiz-dark: #020617;
+            --wiz-stone: #1e293b;
+        }
+
+        /* Base & Background - Deep Magical Void */
         body { 
-            font-family: 'Lato', sans-serif; 
-            background-color: #f1f5f9; 
-            overscroll-behavior-y: none;
+            background: radial-gradient(circle at top center, #312e81 0%, #0f172a 60%, #000000 100%);
+            color: #e2e8f0; 
+            font-family: 'Cinzel', serif; 
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .font-header { font-family: 'Rye', serif; }
-        .font-serif-title { font-family: 'Playfair Display', serif; }
+        /* Typography Override */
+        .font-logo { font-family: 'Rye', serif; } /* Matches Box Art */
+        .font-ui { font-family: 'Cinzel', serif; }
 
-        /* INPUT STYLING */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type=number] { -moz-appearance: textfield; }
-
-        .score-input {
-            font-family: 'Lato', sans-serif;
-            font-weight: bold;
-            text-align: center;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-        
-        .score-input:focus {
-            background-color: #fff;
-            outline: 2px solid #6366f1;
-            z-index: 10;
+        /* The "Wizard" Logo Effect */
+        .wizard-title {
+            background: linear-gradient(180deg, #fcd34d 0%, #d97706 50%, #78350f 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
+            letter-spacing: 0.1em;
         }
 
-        /* Winner highlighting animation */
-        @keyframes pulse-gold {
-            0%, 100% { color: #fbbf24; text-shadow: 0 0 5px rgba(251, 191, 36, 0.5); }
-            50% { color: #f59e0b; text-shadow: 0 0 15px rgba(245, 158, 11, 0.8); }
+        /* Buttons - Magical Gold */
+        .btn-gold {
+            background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #fbbf24 100%);
+            border: 1px solid #78350f;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
         }
-        .winner-text {
-            animation: pulse-gold 2s infinite;
-        }
-        
-        /* Modal Transition */
-        .modal { transition: opacity 0.25s ease; }
-        .hidden-modal { opacity: 0; pointer-events: none; }
+        .btn-gold:active { transform: scale(0.97); filter: brightness(0.9); }
 
-        /* Hide scrollbar */
+        /* Inputs - Dark Stone */
+        .input-stone {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #334155;
+            color: #fbbf24;
+            font-family: 'Cinzel', serif;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .input-stone:focus {
+            border-color: #fbbf24;
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+        }
+
+        /* Cards - Stone Tablets */
+        .card-stone {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Winner Glow */
+        .winner-glow {
+            border: 1px solid #fbbf24;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.2), inset 0 0 20px rgba(251, 191, 36, 0.1);
+            background: linear-gradient(145deg, #1e293b, #2d2a10);
+        }
+
+        /* Utility */
+        .hidden-modal { display: none !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Custom cell layout */
-        .wizard-cell {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            border-bottom: 1px solid #e2e8f0;
-            position: relative;
-        }
-        .input-group {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        .bid-input {
-            background-color: #eff6ff; /* Light Blue */
-            color: #1e40af;
-            border-bottom: 1px dashed #cbd5e1;
-        }
-        
-        /* NEW: Dealer Highlight Style */
-        .bid-input.dealer-active {
-            background-color: #fef9c3 !important; /* Yellow-100 */
-            color: #854d0e !important; /* Yellow-800 */
-            border-bottom: 1px dashed #eab308;
-        }
-
-        .actual-input {
-            background-color: #fff;
-            color: #0f172a;
-        }
-        
-        /* Indicators */
-        .delta-badge {
-            position: absolute;
-            right: 2px;
-            bottom: 2px;
-            font-size: 0.6rem;
-            padding: 1px 3px;
-            border-radius: 3px;
-            font-weight: bold;
-            opacity: 0.8;
-            pointer-events: none;
-        }
-        
-        .forbidden-badge {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            font-size: 0.6rem;
-            background-color: #fee2e2;
-            color: #b91c1c;
-            border: 1px solid #fca5a5;
-            padding: 1px 4px;
-            border-radius: 4px;
-            font-weight: bold;
-            z-index: 20;
-            pointer-events: none;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        /* Illegal State (Total Bids == Round Count) */
-        .row-error .bid-input {
-            background-color: #fef2f2 !important; /* Red tint overrides yellow */
-            color: #991b1b !important;
-        }
-        .row-error {
-            border-left: 4px solid #ef4444;
-        }
+        input[type=number] { -moz-appearance: textfield; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
-    <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "v2qr7384fa");
-</script>
 </head>
-<body class="text-slate-800 h-screen flex flex-col overflow-hidden bg-slate-900">
+<body class="flex flex-col h-screen overflow-hidden">
 
-    <div class="max-w-lg mx-auto bg-white w-full h-full shadow-xl flex flex-col relative">
-        
-        <div class="bg-indigo-950 text-indigo-50 py-3 text-center border-b-4 border-indigo-500 shadow-md z-30 flex-none relative overflow-hidden">
-            <h1 class="font-header text-2xl tracking-[0.15em] relative inline-block text-amber-100">
-                WIZARD
-                <i class="fas fa-hat-wizard absolute -left-10 top-1 text-indigo-400 opacity-80 text-xl"></i>
-                <i class="fas fa-wand-magic-sparkles absolute -right-8 top-1 text-amber-400 opacity-80 text-sm"></i>
-            </h1>
-            <p class="text-indigo-300 text-[10px] uppercase tracking-widest mt-0">Smart Scorepad</p>
+    <header class="h-[12%] min-h-[70px] flex flex-col items-center justify-center border-b border-indigo-900/50 shadow-2xl shrink-0 z-20 bg-slate-950/50 backdrop-blur-md">
+        <h1 class="font-logo text-3xl md:text-4xl wizard-title mt-2">WIZARD</h1>
+        <div class="flex items-center gap-2 mb-1">
+            <span id="roundBadge" class="text-[10px] text-amber-200/80 font-bold uppercase tracking-[0.2em] hidden border-t border-b border-amber-900/50 py-0.5 px-4">
+                Round 1 / 20
+            </span>
         </div>
+    </header>
 
-        <div class="bg-indigo-50 p-3 border-b border-indigo-200 flex justify-between items-center z-20 shadow-sm flex-none">
-            <div class="flex items-center gap-3">
-                <div class="flex items-center bg-white rounded border border-indigo-200 px-2 py-1">
-                    <i class="fas fa-users text-indigo-400 text-xs mr-2"></i>
-                    <select id="playerCount" class="bg-transparent text-indigo-900 font-bold focus:outline-none text-sm cursor-pointer" onchange="changePlayerCount()">
-                        <option value="3">3 Players</option>
-                        <option value="4" selected>4 Players</option>
-                        <option value="5">5 Players</option>
-                        <option value="6">6 Players</option>
-                    </select>
+    <main class="flex-grow overflow-y-auto p-4 pb-32 no-scrollbar relative" id="mainContainer">
+        <div class="fixed top-20 left-10 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="fixed bottom-20 right-10 w-40 h-40 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-xl mx-auto h-full flex flex-col relative z-10">
+            
+            <div id="setupScreen" class="flex flex-col gap-6 pt-4 flex-grow">
+                <div class="card-stone p-6 rounded-xl border-t-2 border-indigo-500">
+                    <label class="block text-xs font-bold text-indigo-300 uppercase tracking-widest mb-4">Summon Players (3-6)</label>
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="playerInput" onkeydown="handleEnter(event)" placeholder="Enter Name..." class="flex-grow input-stone rounded-lg px-4 py-3 font-bold outline-none text-lg placeholder-slate-600 transition-all">
+                        <button onclick="addPlayer()" class="bg-indigo-900 border border-indigo-700 text-indigo-200 w-14 rounded-lg font-bold text-xl shadow-lg active:scale-95 hover:bg-indigo-800 transition-colors">+</button>
+                    </div>
+                    <ul id="playerList" class="space-y-2"></ul>
+                </div>
+                
+                <div class="mt-auto mb-4 text-center">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-2 font-bold">The Game of Truth & Rage</p>
+                    <button onclick="startGame()" class="w-full btn-gold text-amber-950 font-black py-4 rounded-xl shadow-lg uppercase tracking-[0.2em] text-sm transition-transform active:scale-95">
+                        Start Game
+                    </button>
                 </div>
             </div>
-            <button onclick="openResetModal()" class="text-xs font-bold text-red-600 uppercase tracking-wider border border-red-200 bg-red-50 px-3 py-1.5 rounded hover:bg-red-600 hover:text-white transition-colors shadow-sm">
-                <i class="fas fa-rotate-right mr-1"></i> New Game
+
+            <div id="gameScreen" class="hidden flex flex-col gap-4">
+                
+                <div id="scoreboard" class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2"></div>
+
+                <div id="activeBidsPanel" class="hidden bg-black/40 border border-amber-500/20 rounded-xl p-4 mt-2 backdrop-blur-sm">
+                    <h3 class="text-[10px] font-bold text-amber-500 uppercase tracking-[0.2em] mb-3 text-center opacity-80">Bids</h3>
+                    <div id="activeBidsGrid" class="grid grid-cols-3 gap-2 text-center"></div>
+                </div>
+
+                <div class="mt-2 pb-20">
+                    <div class="flex justify-between items-end mb-3 px-1 border-b border-white/5 pb-1">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Chronicle</h3>
+                        <button onclick="resetGame()" class="text-[9px] font-bold text-red-900 bg-red-900/20 hover:bg-red-900/40 px-3 py-1 rounded uppercase transition-colors border border-red-900/30">Resign</button>
+                    </div>
+                    <div id="roundHistory" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="actionDock" class="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/90 to-transparent z-40 hidden">
+        <div class="max-w-xl mx-auto">
+            <button id="mainActionBtn" onclick="handleActionClick()" class="w-full btn-gold text-amber-950 font-black py-4 rounded-xl shadow-2xl uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all">
+                Start Game
             </button>
         </div>
-        
-        <div class="bg-indigo-950 text-white z-30 border-t-4 border-indigo-600 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] flex-none">
-     <table class="w-full table-fixed">
-        <tfoot id="tableFooter">
-            </tfoot>
-     </table>
-</div>
-        <div class="flex-grow bg-slate-50 overflow-y-auto no-scrollbar relative">
-            <table class="w-full border-collapse table-fixed" id="scoreTable">
-                <thead class="sticky top-0 z-10 shadow-sm">
-                </thead>
-                <tbody id="tableBody">
-                </tbody>
-            </table>
-        </div>
-
-        
-        
-        <div class="bg-indigo-100 p-2 text-[10px] text-indigo-800 text-center uppercase tracking-wide flex-none border-t border-indigo-200 flex justify-center items-center gap-2">
-            <i class="fas fa-scroll"></i>
-            <span id="ruleText">Deck of 60 Cards</span>
-        </div>
-
     </div>
 
-    <div id="resetModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden-modal modal">
-        <div class="bg-white rounded-lg shadow-2xl p-6 w-80 text-center modal-content border border-indigo-100">
-            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-magic text-indigo-600 text-xl"></i>
+    <div id="gameModal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-end sm:items-center justify-center hidden-modal opacity-0 transition-opacity duration-300">
+        <div class="bg-slate-900 w-full max-w-md sm:rounded-2xl rounded-t-3xl shadow-2xl overflow-hidden border border-slate-700 flex flex-col max-h-[85dvh]">
+            
+            <div class="bg-slate-950 p-6 text-center border-b border-slate-800 shrink-0 relative overflow-hidden">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-amber-500/50 blur-[5px]"></div>
+                
+                <h3 id="modalTitle" class="font-logo text-amber-500 text-2xl uppercase tracking-wider drop-shadow-md">Round 1</h3>
+                <p id="modalSubtitle" class="text-indigo-300 text-[10px] font-bold uppercase mt-1 tracking-widest">Enter Bids</p>
             </div>
-            <h3 class="font-header text-xl text-slate-800 mb-2">Reset...</h3>
-            <div class="flex flex-col gap-2">
-                <button onclick="confirmReset(true)" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition-colors text-sm">Score</button>
-                <button onclick="confirmReset(false)" class="w-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold py-2 px-4 rounded transition-colors text-sm">Score & Names</button>
-                <button onclick="closeResetModal()" class="mt-2 text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-widest">Cancel</button>
+
+            <div id="modalContent" class="p-6 overflow-y-auto no-scrollbar space-y-4 flex-grow bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"></div>
+
+            <div id="validationMsg" class="bg-red-950/80 border-t border-b border-red-900/50 text-red-200 text-[10px] font-bold py-3 text-center hidden shrink-0 uppercase tracking-wide">
+                <i class="fas fa-exclamation-triangle mr-1"></i> The Bid is Forbidden!<br><span class="opacity-70 text-[9px] normal-case">(Total bids cannot equal round number)</span>
+            </div>
+
+            <div class="p-4 bg-slate-950 flex gap-3 shrink-0 border-t border-slate-800">
+                <button onclick="closeModal()" class="flex-1 py-4 text-slate-500 font-bold uppercase text-[10px] hover:text-slate-300 tracking-widest">Close</button>
+                <button id="modalSubmitBtn" onclick="submitModal()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-lg uppercase text-xs shadow-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all tracking-widest border border-indigo-400/30">
+                    Confirm
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // State
+        const STORAGE_KEY = 'wizard_v8_boxart';
+        
         let state = {
-            playerCount: 4,
-            playerNames: ["", "", "", "", "", ""],
-            bids: {},   
-            actuals: {} 
+            phase: 'setup', 
+            players: [],
+            rounds: [],
+            currentRound: 1,
+            maxRounds: 20, 
+            currentBids: {} 
         };
 
+        // --- INIT ---
         function init() {
-            loadState();
-            renderUI();
-        }
-
-        function saveState() {
-            localStorage.setItem('wizard_state_v2', JSON.stringify(state));
-        }
-
-        function loadState() {
-            const saved = localStorage.getItem('wizard_state_v2');
-            if (saved) {
-                try {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
                     const parsed = JSON.parse(saved);
-                    state = { ...state, ...parsed };
-                    while(state.playerNames.length < 6) state.playerNames.push("");
-                } catch (e) { console.error(e); }
+                    if(parsed && Array.isArray(parsed.players)) {
+                        state = parsed;
+                        if (state.phase !== 'setup') {
+                            showGameScreen();
+                            renderGame();
+                        } else {
+                            renderSetup();
+                        }
+                    }
+                } else {
+                    renderSetup();
+                }
+            } catch (e) {
+                localStorage.removeItem(STORAGE_KEY);
+                renderSetup();
             }
-            document.getElementById('playerCount').value = state.playerCount;
         }
+        function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
-        function getRoundCount() {
-            return Math.floor(60 / state.playerCount);
-        }
-
-        function changePlayerCount() {
-            state.playerCount = parseInt(document.getElementById('playerCount').value);
-            saveState();
-            renderUI();
-        }
-
-        function updateName(idx, val) {
-            state.playerNames[idx] = val;
-            saveState();
-        }
-
-        function updateData(type, rIdx, pIdx, val) {
-            const key = `${rIdx}-${pIdx}`;
-            const targetObj = type === 'bid' ? state.bids : state.actuals;
+        // --- SETUP LOGIC ---
+        function handleEnter(e) { if(e.key==='Enter') addPlayer(); }
+        
+        function addPlayer() {
+            const input = document.getElementById('playerInput');
+            const name = input.value.trim();
+            if(!name) return focusInput(input);
+            if(state.players.length >= 6) return alert("Max 6 Wizards allowed!");
             
-            // Smart Limit: Can't enter more than the round number
-            if (val !== "" && parseInt(val) > rIdx) {
-                val = rIdx; 
-                // Force update input value immediately if user typed too high
-                const el = document.activeElement;
-                if(el) el.value = val;
-            }
+            state.players.push({ id: Date.now(), name, score: 0 });
+            input.value = '';
+            renderSetup();
+            save();
+            focusInput(input);
+        }
 
-            if (val === "" || val === null) {
-                delete targetObj[key];
-            } else {
-                targetObj[key] = parseInt(val);
-            }
+        function removePlayer(idx) {
+            state.players.splice(idx, 1);
+            renderSetup();
+            save();
+        }
+
+        function renderSetup() {
+            const list = document.getElementById('playerList');
+            list.innerHTML = state.players.map((p, i) => `
+                <li class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 animate-[fadeIn_0.2s]">
+                    <span class="font-bold text-indigo-100 font-ui tracking-wide">${p.name}</span>
+                    <button onclick="removePlayer(${i})" class="text-slate-600 hover:text-red-400 w-8 h-8 flex items-center justify-center transition-colors text-xl">&times;</button>
+                </li>
+            `).join('');
+        }
+
+        function focusInput(el) { el.focus(); el.click(); }
+
+        function startGame() {
+            if(state.players.length < 3) return alert("Summon at least 3 Wizards!");
             
-            saveState();
+            state.phase = 'bidding';
+            state.currentRound = 1;
+            state.maxRounds = Math.floor(60 / state.players.length);
             
-            // If we updated a bid, we must re-evaluate the "Forbidden Bid" logic for that row
-            if (type === 'bid') {
-                renderRowValidation(rIdx);
-            }
+            state.rounds = [];
+            state.currentBids = {};
+            state.players.forEach(p => p.score = 0);
             
-            // Re-render scoring
-            renderRowDelta(rIdx);
-            renderTotals();
+            save();
+            showGameScreen();
+            renderGame();
         }
 
-        // --- GAME LOGIC ---
-        function calculateRoundScore(bid, actual) {
-            if (bid === undefined || actual === undefined || isNaN(bid) || isNaN(actual)) return null;
-            if (bid === actual) return 20 + (10 * bid);
-            return -(10 * Math.abs(bid - actual));
+        // --- GAME RENDERER ---
+        function showGameScreen() {
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('actionDock').classList.remove('hidden');
+            document.getElementById('roundBadge').classList.remove('hidden');
         }
 
-        function getPlayerTotal(pIdx) {
-            let total = 0;
-            const roundCount = getRoundCount();
-            for(let r = 1; r <= roundCount; r++) {
-                const score = calculateRoundScore(state.bids[`${r}-${pIdx}`], state.actuals[`${r}-${pIdx}`]);
-                if (score !== null) total += score;
-            }
-            return total;
-        }
+        function renderGame() {
+            const scoreboard = document.getElementById('scoreboard');
+            const dealerIdx = (state.currentRound - 1) % state.players.length;
+            const maxScore = Math.max(...state.players.map(p => p.score));
 
-        // --- RENDERERS ---
-        function renderUI() {
-            const rounds = getRoundCount();
-            document.getElementById('ruleText').innerText = `Deck of 60 Cards • ${rounds} Rounds • Total Bids ≠ Round`;
-            renderHeader();
-            renderBody(rounds);
-            renderTotals();
-        }
+            document.getElementById('roundBadge').innerText = `Round ${state.currentRound} / ${state.maxRounds} (${state.currentRound} Cards)`;
 
-        function renderHeader() {
-            const thead = document.querySelector('#scoreTable thead');
-            let html = `
-                <tr class="bg-indigo-100 h-10 border-b border-indigo-200">
-                    <th class="p-1 text-center w-[12%] border-r border-indigo-300/50">
-                        <span class="font-serif-title italic text-indigo-400 text-[10px]">Rnd</span>
-                    </th>
-            `;
-            for (let i = 0; i < state.playerCount; i++) {
-                html += `
-                    <th class="p-1 border-l border-indigo-300/50 bg-indigo-50 relative group transition-colors focus-within:bg-white">
-                        <input type="text" value="${state.playerNames[i]}" oninput="updateName(${i}, this.value)"
-                            class="w-full bg-transparent text-center font-bold text-indigo-900 placeholder-indigo-300 focus:outline-none text-xs md:text-sm truncate px-1 uppercase tracking-wide"
-                            placeholder="P ${i+1}">
-                    </th>`;
-            }
-            html += `</tr>`;
-            thead.innerHTML = html;
-        }
-
-        function renderBody(rounds) {
-            const tbody = document.getElementById('tableBody');
-            let html = '';
-            
-            for (let r = 1; r <= rounds; r++) {
-                // Dealer logic: rotates clockwise. (Round 1 = Player 0 deals, Round 2 = Player 1, etc.)
-                const dealerIndex = (r - 1) % state.playerCount;
-
-                html += `<tr id="row-${r}" class="bg-white h-16 border-b border-indigo-100 transition-colors duration-300">`;
+            scoreboard.innerHTML = state.players.map((p, i) => {
+                const isDealer = (i === dealerIdx);
+                const isLeader = (p.score === maxScore && state.currentRound > 1);
                 
-                // Round Info
-                html += `
-                    <td class="p-1 text-center border-r border-indigo-100 bg-indigo-50/50">
-                        <div class="flex flex-col items-center justify-center">
-                            <span class="font-header text-indigo-900 text-lg leading-none">${r}</span>
-                            <span class="text-[9px] text-indigo-400 uppercase leading-tight">Cards</span>
-                        </div>
-                    </td>
-                `;
+                // Theme: The Dealer gets the Blue Wizard Hat
+                const dealerBadge = isDealer 
+                    ? `<div class="absolute -top-3 -right-2 bg-indigo-600 text-white w-8 h-8 flex items-center justify-center rounded-full border-2 border-indigo-300 shadow-[0_0_15px_rgba(79,70,229,0.6)] z-10 animate-pulse" title="Dealer"><i class="fas fa-hat-wizard text-sm"></i></div>` 
+                    : '';
+                
+                // Theme: The Leader gets a Glowing Gold Crown
+                const leaderIcon = isLeader ? `<i class="fas fa-crown text-amber-400 text-sm absolute top-3 left-3 drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]"></i>` : '';
+                
+                return `
+                <div class="card-stone p-4 rounded-xl relative flex flex-col justify-between min-h-[110px] ${isLeader ? 'winner-glow' : ''}">
+                    ${dealerBadge}
+                    ${leaderIcon}
+                    <div class="flex items-center mb-1 ${isLeader ? 'ml-5' : ''}">
+                        <span class="text-slate-300 font-bold text-xs truncate uppercase tracking-widest">${p.name}</span>
+                    </div>
+                    <div class="text-4xl font-logo text-white tracking-wide drop-shadow-md text-center">${p.score}</div>
+                </div>`;
+            }).join('');
 
-                // Player Cells
-                for (let p = 0; p < state.playerCount; p++) {
-                    const bid = state.bids[`${r}-${p}`] ?? '';
-                    const actual = state.actuals[`${r}-${p}`] ?? '';
+            const btn = document.getElementById('mainActionBtn');
+            const bidsPanel = document.getElementById('activeBidsPanel');
+            
+            if (state.phase === 'bidding') {
+                btn.innerHTML = `<i class="fas fa-crystal-ball text-lg"></i> <span class="tracking-[0.15em]">Bid</span>`;
+                btn.className = "w-full bg-indigo-900 border border-indigo-500 hover:bg-indigo-800 text-indigo-100 font-black py-4 rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.3)] uppercase text-sm flex items-center justify-center gap-3 transition-all";
+                bidsPanel.classList.add('hidden');
+            } else if (state.phase === 'playing') {
+                btn.innerHTML = `<i class="fas fa-scroll text-lg"></i> <span class="tracking-[0.15em]">Results</span>`;
+                btn.className = "w-full btn-gold text-amber-950 font-black py-4 rounded-xl shadow-2xl uppercase text-sm flex items-center justify-center gap-3 transition-all";
+                
+                bidsPanel.classList.remove('hidden');
+                document.getElementById('activeBidsGrid').innerHTML = state.players.map((p, i) => `
+                    <div class="bg-slate-900/50 rounded p-2 border border-slate-700 relative">
+                        ${i === dealerIdx ? '<div class="absolute -top-1.5 -right-1.5 text-indigo-400 text-[8px] bg-slate-900 rounded-full w-4 h-4 flex items-center justify-center border border-indigo-500"><i class="fas fa-hat-wizard"></i></div>' : ''}
+                        <div class="text-[8px] text-slate-500 uppercase truncate mb-1">${p.name}</div>
+                        <div class="text-xl font-logo text-amber-500">${state.currentBids[i] || 0}</div>
+                    </div>
+                `).join('');
+                
+            } else {
+                state.phase = 'bidding';
+                renderGame();
+            }
+
+            document.getElementById('roundHistory').innerHTML = [...state.rounds].reverse().map(r => `
+                <div class="card-stone p-4 rounded-xl border-l-2 border-indigo-500">
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2 mb-3">
+                        <span class="font-logo text-indigo-400 text-sm tracking-wider">Round ${r.roundNum}</span>
+                        <span class="text-[9px] text-slate-500 font-bold uppercase bg-slate-950/50 px-2 py-1 rounded border border-white/5">${r.cards} Cards</span>
+                    </div>
                     
-                    const isDealer = (p === dealerIndex);
-                    
-                    // UPDATED: No more icon, now we just calculate a class string
-                    const dealerClass = isDealer ? 'dealer-active' : '';
-
-                    // Container for the forbidden bid badge
-                    const forbiddenContainer = isDealer ? `<div id="forbidden-${r}" class="hidden forbidden-badge"></div>` : '';
-
-                    html += `
-                        <td class="p-0 border-l border-indigo-100 relative">
-                            ${forbiddenContainer}
-                            <div class="wizard-cell">
-                                <div class="input-group h-1/2 border-b border-dashed border-indigo-100">
-                                    <input type="number" pattern="[0-9]*" inputmode="numeric" 
-                                        min="0" max="${r}"
-                                        value="${bid}" placeholder="Bid"
-                                        onchange="updateData('bid', ${r}, ${p}, this.value)"
-                                        class="score-input bid-input ${dealerClass} w-full h-full text-indigo-600 text-xs placeholder-indigo-200">
-                                </div>
-                                <div class="input-group h-1/2 relative">
-                                    <input type="number" pattern="[0-9]*" inputmode="numeric" 
-                                        value="${actual}" placeholder="Got"
-                                        onchange="updateData('actual', ${r}, ${p}, this.value)"
-                                        class="score-input actual-input w-full h-full text-slate-800 text-lg placeholder-slate-200">
-                                    <div id="delta-${r}-${p}" class="hidden"></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        ${r.results.map(res => `
+                            <div class="flex flex-col items-center bg-slate-950/30 rounded-lg p-2 border border-white/5">
+                                <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1 truncate w-full text-center">${res.name}</span>
+                                <span class="text-xl font-logo ${res.points >= 0 ? 'text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]' : 'text-rose-500'} mb-1">
+                                    ${res.points > 0 ? '+' : ''}${res.points}
+                                </span>
+                                <div class="flex items-center gap-2 text-[9px] bg-black/40 px-3 py-1 rounded-full border border-white/5 text-slate-400 font-bold font-mono">
+                                    <span>${res.bid}</span>
+                                    <span class="text-slate-700">/</span>
+                                    <span class="${res.bid === res.actual ? 'text-emerald-400' : 'text-rose-400'}">${res.actual}</span>
                                 </div>
                             </div>
-                        </td>
-                    `;
-                }
-                html += `</tr>`;
-            }
-            tbody.innerHTML = html;
-            
-            // Post-render: calculate validations and scores
-            setTimeout(() => {
-                for (let r = 1; r <= rounds; r++) {
-                    renderRowValidation(r);
-                    renderRowDelta(r);
-                }
-            }, 0);
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // --- VALIDATION: The "Smarter" Part ---
-        function renderRowValidation(rIdx) {
-            const dealerIndex = (rIdx - 1) % state.playerCount;
-            let currentTotalBids = 0;
-            let bidsCount = 0;
+        function handleActionClick() { openModal(state.phase); }
 
-            // 1. Calculate sum of bids so far
-            for (let p = 0; p < state.playerCount; p++) {
-                const val = state.bids[`${rIdx}-${p}`];
-                if (val !== undefined && !isNaN(val)) {
-                    currentTotalBids += val;
-                    bidsCount++;
-                }
-            }
-
-            const row = document.getElementById(`row-${rIdx}`);
-            const forbiddenBadge = document.getElementById(`forbidden-${rIdx}`);
+        // --- MODAL LOGIC ---
+        function openModal(mode) {
+            const modal = document.getElementById('gameModal');
+            const content = document.getElementById('modalContent');
+            const dealerIdx = (state.currentRound - 1) % state.players.length;
             
-            // 2. CHECK: Illegal State (Total Bids == Round Number)
-            // Only flag as error if ALL players have bid
-            if (bidsCount === state.playerCount) {
-                if (currentTotalBids === rIdx) {
-                    row.classList.add('row-error');
+            modal.classList.remove('hidden-modal');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+
+            document.getElementById('modalTitle').innerText = `Round: ${state.currentRound} / ${state.maxRounds}`;
+
+            if (mode === 'bidding') {
+                document.getElementById('modalSubtitle').innerText = `${state.currentRound} Cards`;
+                content.innerHTML = state.players.map((p, i) => `
+                    <div class="bg-slate-900/80 p-3 rounded-xl border ${i === dealerIdx ? 'border-indigo-500' : 'border-slate-800'} flex items-center justify-between transition-colors">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-200 text-sm flex items-center gap-2">
+                                ${p.name}
+                                ${i === dealerIdx ? '<span class="text-indigo-400 text-xs drop-shadow-[0_0_5px_rgba(99,102,241,0.8)]"><i class="fas fa-hat-wizard"></i></span>' : ''}
+                            </span>
+                            ${i === dealerIdx ? '<span class="text-[8px] text-indigo-400 font-bold uppercase tracking-widest">Dealer</span>' : ''}
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <label class="text-[9px] uppercase font-bold text-slate-600 tracking-wider">Bid</label>
+                            <input type="number" id="input-${i}" pattern="[0-9]*" inputmode="numeric" min="0" oninput="validateInputs('bidding')" class="w-16 input-stone rounded-lg p-3 text-center font-logo text-xl outline-none transition-all">
+                        </div>
+                    </div>
+                `).join('');
+                setTimeout(() => document.getElementById('input-0').focus(), 100);
+
+            } else {
+                document.getElementById('modalSubtitle').innerText = `Verify the Truth`;
+                content.innerHTML = state.players.map((p, i) => `
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-200 text-sm">${p.name}</span>
+                            <span class="text-[9px] text-indigo-400 font-bold uppercase tracking-wider">Bid: ${state.currentBids[i]}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <label class="text-[9px] uppercase font-bold text-slate-600 tracking-wider">Got</label>
+                            <input type="number" id="input-${i}" pattern="[0-9]*" inputmode="numeric" min="0" oninput="validateInputs('scoring')" class="w-16 input-stone rounded-lg p-3 text-center font-logo text-xl outline-none transition-all">
+                        </div>
+                    </div>
+                `).join('');
+                setTimeout(() => document.getElementById('input-0').focus(), 100);
+            }
+            
+            validateInputs(mode);
+        }
+
+        function validateInputs(mode) {
+            const btn = document.getElementById('modalSubmitBtn');
+            const msg = document.getElementById('validationMsg');
+            let total = 0;
+            let allFilled = true;
+
+            state.players.forEach((_, i) => {
+                const el = document.getElementById(`input-${i}`);
+                if (el.value < 0 && el.value !== "") el.value = 0;
+                if (el.value === "") allFilled = false;
+                total += parseInt(el.value || 0);
+            });
+
+            if (mode === 'bidding') {
+                const isForbidden = (total === state.currentRound);
+                if (allFilled && isForbidden) {
+                    msg.classList.remove('hidden');
+                    btn.disabled = true;
                 } else {
-                    row.classList.remove('row-error');
+                    msg.classList.add('hidden');
+                    btn.disabled = !allFilled;
                 }
             } else {
-                row.classList.remove('row-error');
-            }
-
-            // 3. CHECK: Predict what the Dealer CANNOT bid
-            // Logic: Forbidden = RoundNum - (Sum of non-dealer bids)
-            // This is only useful to show if the dealer hasn't bid yet, or to remind them.
-            
-            let otherPlayersSum = 0;
-            let othersCount = 0;
-            
-            for (let p = 0; p < state.playerCount; p++) {
-                if (p !== dealerIndex) {
-                    const val = state.bids[`${rIdx}-${p}`];
-                    if (val !== undefined) {
-                        otherPlayersSum += val;
-                        othersCount++;
-                    }
-                }
-            }
-
-            // We can only definitely say what is forbidden if all NON-dealers have bid
-            if (othersCount === state.playerCount - 1 && forbiddenBadge) {
-                const forbiddenVal = rIdx - otherPlayersSum;
-                if (forbiddenVal >= 0) {
-                    forbiddenBadge.innerText = `≠ ${forbiddenVal}`;
-                    forbiddenBadge.classList.remove('hidden');
+                const isMatch = (total === state.currentRound);
+                if (allFilled && !isMatch) {
+                    msg.innerHTML = `<i class="fas fa-balance-scale-right mr-1"></i> Reality is Broken!<br><span class="opacity-70 text-[9px] normal-case">(Tricks count: ${total} / ${state.currentRound})</span>`;
+                    msg.classList.remove('hidden');
+                    btn.disabled = true;
                 } else {
-                    // If forbidden is negative (e.g. round 5, others bid 6), 
-                    // then dealer can bid anything (0+), so no restriction applies.
-                    forbiddenBadge.classList.add('hidden');
+                    msg.classList.add('hidden');
+                    btn.disabled = !allFilled;
                 }
-            } else if (forbiddenBadge) {
-                forbiddenBadge.classList.add('hidden');
             }
         }
 
-        function renderRowDelta(rIdx) {
-            for (let p = 0; p < state.playerCount; p++) {
-                const bid = state.bids[`${rIdx}-${p}`];
-                const actual = state.actuals[`${rIdx}-${p}`];
-                const container = document.getElementById(`delta-${rIdx}-${p}`);
-                if (container) {
-                    const score = calculateRoundScore(bid, actual);
-                    if (score !== null) {
-                        const isPos = score >= 0;
-                        container.className = `delta-badge ${isPos ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
-                        container.innerHTML = isPos ? `+${score}` : `${score}`;
+        function submitModal() {
+            if (state.phase === 'bidding') {
+                state.players.forEach((_, i) => {
+                    const val = parseInt(document.getElementById(`input-${i}`).value);
+                    state.currentBids[i] = val;
+                });
+                state.phase = 'playing';
+                save();
+                closeModal();
+                renderGame();
+            } else {
+                const roundData = { roundNum: state.currentRound, cards: state.currentRound, results: [] };
+                
+                state.players.forEach((p, i) => {
+                    const bid = state.currentBids[i];
+                    const actual = parseInt(document.getElementById(`input-${i}`).value);
+                    let points = 0;
+                    
+                    if (bid === actual) {
+                        points = 20 + (actual * 10);
                     } else {
-                        container.className = 'hidden';
+                        points = -10 * Math.abs(bid - actual);
                     }
+                    
+                    p.score += points;
+                    roundData.results.push({ name: p.name, bid, actual, points });
+                });
+
+                state.rounds.push(roundData);
+                state.currentRound++;
+                state.currentBids = {};
+                state.phase = 'bidding';
+                
+                save();
+                closeModal();
+                renderGame();
+                
+                if (state.currentRound > state.maxRounds) {
+                   setTimeout(() => {
+                       alert("The Prophecy is Complete! Check the winner.");
+                   }, 500);
                 }
             }
         }
 
-        function renderTotals() {
-            const tfoot = document.getElementById('tableFooter');
-            let totals = [];
-            let maxScore = -9999;
-            for (let p = 0; p < state.playerCount; p++) {
-                const sum = getPlayerTotal(p);
-                totals.push(sum);
-                if (sum > maxScore) maxScore = sum;
-            }
-            let html = `<tr class="h-14"><td class="bg-indigo-950 p-2 text-right w-[12%] border-r border-indigo-700"><span class="text-[0.6rem] uppercase tracking-widest font-bold text-indigo-400 block">Total</span></td>`;
-            for (let p = 0; p < state.playerCount; p++) {
-                const isWinner = totals[p] === maxScore;
-                const winnerClass = isWinner ? 'winner-text font-bold text-2xl' : 'text-indigo-200 text-lg';
-                const crown = isWinner ? '<div class="absolute -top-3 left-1/2 transform -translate-x-1/2 text-amber-400 text-xs"><i class="fas fa-crown"></i></div>' : '';
-                html += `<td class="p-1 text-center border-l border-indigo-700 font-header relative">${crown}<span class="${winnerClass} transition-all duration-500">${totals[p]}</span></td>`;
-            }
-            html += `</tr>`;
-            tfoot.innerHTML = html;
+        function closeModal() {
+            const modal = document.getElementById('gameModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden-modal'), 200);
         }
 
-        // Modal Logic
-        const modal = document.getElementById('resetModal');
-        function openResetModal() { modal.classList.remove('hidden-modal'); }
-        function closeResetModal() { modal.classList.add('hidden-modal'); }
-        function confirmReset(keepNames) {
-            state.bids = {}; state.actuals = {};
-            if (!keepNames) state.playerNames = ["", "", "", "", "", ""];
-            saveState(); renderUI(); closeResetModal();
+        function resetGame() {
+            if(confirm("Cast Obliviate? (Reset Game)")) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
         }
-        modal.addEventListener('click', (e) => { if (e.target === modal) closeResetModal(); });
 
         init();
     </script>
