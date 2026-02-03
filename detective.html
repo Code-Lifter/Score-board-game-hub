@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antares OS | Field Unit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        /* --- IMMERSIVE VISUALS --- */
+        body {
+            background-color: #050a14;
+            color: #a5f3fc;
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 50%, #111827 0%, #000000 100%);
+        }
+
+        /* CRT Scanline Overlay */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; w: 100%; h: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Neon Glows */
+        .neon-text { text-shadow: 0 0 5px rgba(6, 182, 212, 0.7); }
+        .neon-border { box-shadow: 0 0 8px rgba(6, 182, 212, 0.4), inset 0 0 8px rgba(6, 182, 212, 0.1); }
+        .neon-red { text-shadow: 0 0 5px rgba(239, 68, 68, 0.8); }
+        .border-red-glow { box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); border-color: #ef4444; }
+
+        /* Token Chips */
+        .token-chip {
+            transition: transform 0.1s;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+        .token-chip:active { transform: scale(0.95); }
+        .token-count-badge {
+            position: absolute;
+            top: -5px; right: -5px;
+            background: #000;
+            border: 1px solid currentColor;
+            border-radius: 50%;
+            width: 24px; height: 24px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        /* Map Location Card - STABILIZED */
+        .location-card {
+            transition: border-color 0.3s, box-shadow 0.3s, opacity 0.3s;
+            /* Removed transform scaling to prevent jitter */
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            opacity: 0.5;
+            cursor: pointer;
+        }
+        .location-card:hover { 
+            opacity: 0.8; 
+            border-color: #22d3ee;
+        }
+        .location-card.active {
+            opacity: 1;
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid #22d3ee;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+            z-index: 10;
+        }
+        /* Stable badge for current location */
+        .current-badge {
+            display: none;
+            position: absolute;
+            top: -10px; left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            color: #22d3ee;
+            font-size: 10px;
+            padding: 2px 8px;
+            border: 1px solid #22d3ee;
+            white-space: nowrap;
+        }
+        .location-card.active .current-badge {
+            display: block;
+        }
+        .location-card:not(.active) .cost-hint {
+            display: block;
+        }
+        .location-card.active .cost-hint {
+            display: none;
+        }
+
+
+        /* Time Track */
+        .time-segment {
+            height: 12px;
+            flex-grow: 1;
+            margin: 0 1px;
+            background: #1f2937;
+            border: 1px solid #374151;
+        }
+        .time-segment.filled { background: #22d3ee; box-shadow: 0 0 5px #22d3ee; }
+        .time-segment.overtime { border-color: #7f1d1d; }
+        .time-segment.overtime.filled { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-2 md:p-6">
+
+    <div class="scanlines"></div>
+
+    <div id="setup-modal" class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-md bg-slate-900 border-2 border-cyan-700 p-8 rounded-lg shadow-[0_0_50px_rgba(6,182,212,0.2)]">
+            <h1 class="text-3xl font-bold text-cyan-400 mb-2 neon-text text-center tracking-widest">ANTARES N.I.A.</h1>
+            <p class="text-slate-500 text-xs text-center mb-8 uppercase tracking-[0.3em]">Case Initialization Protocol</p>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-xs text-cyan-600 uppercase mb-2">Maximum Days (Deadline)</label>
+                    <div class="flex gap-2">
+                        <button onclick="setSetup('maxDays', 3)" class="setup-btn flex-1 p-3 bg-slate-800 border border-slate-700 hover:border-cyan-400 text-slate-400 hover:text-white transition">3</button>
+                        <button onclick="setSetup('maxDays', 4)" class="setup-btn flex-1 p-3 bg-slate-800 border border-slate-700 hover:border-cyan-400 text-slate-400 hover:text-white transition">4</button>
+                        <button onclick="setSetup('maxDays', 5)" class="setup-btn flex-1 p-3 bg-slate-800 border border-slate-700 hover:border-cyan-400 text-slate-400 hover:text-white transition">5</button>
+                        <input type="number" id="custom-days" placeholder="#" class="w-16 bg-slate-900 border border-slate-700 text-center text-white focus:border-cyan-500 outline-none" onchange="setSetup('maxDays', this.value)">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-red-600 uppercase mb-2">Stress Limit (Case Threshold)</label>
+                    <div class="flex items-center bg-slate-800 border border-red-900/50 p-2 rounded">
+                        <input type="range" min="1" max="10" value="5" class="w-full accent-red-500 mr-4" oninput="document.getElementById('setup-stress-val').innerText = this.value; setSetup('stressLimit', this.value)">
+                        <span id="setup-stress-val" class="text-xl font-bold text-red-500 w-8 text-center">5</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-blue-500 uppercase mb-2">Starting Authority</label>
+                    <div class="flex items-center bg-slate-800 border border-blue-900/50 p-2 rounded">
+                        <button onclick="updateSetupAuth(-1)" class="w-8 h-8 bg-slate-700 text-white hover:bg-slate-600">-</button>
+                        <span id="setup-auth-val" class="flex-1 text-center font-bold text-blue-400">0</span>
+                        <button onclick="updateSetupAuth(1)" class="w-8 h-8 bg-slate-700 text-white hover:bg-slate-600">+</button>
+                    </div>
+                </div>
+
+                <button onclick="initializeCase()" class="w-full mt-8 bg-cyan-900/40 border border-cyan-500 text-cyan-300 py-4 font-bold uppercase tracking-widest hover:bg-cyan-900 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition">
+                    Load Case File
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 opacity-0 transition-opacity duration-1000" id="game-board">
+
+        <div class="lg:col-span-12 flex flex-col md:flex-row justify-between items-end border-b border-cyan-900/50 pb-4 mb-2">
+            <div class="flex items-end gap-4">
+                <div class="text-center">
+                    <div class="text-xs text-cyan-700 tracking-[0.2em] mb-1">INVESTIGATION DAY</div>
+                    <div class="text-4xl font-bold text-white neon-text flex items-baseline gap-2">
+                        <span id="day-display">1</span>
+                        <span class="text-xl text-slate-600 font-normal">/ <span id="max-days-display">?</span></span>
+                    </div>
+                </div>
+                <div class="h-12 w-px bg-cyan-900/50 mx-2"></div>
+                <div>
+                    <div class="text-xs text-cyan-700 tracking-[0.2em] mb-1">LOCAL TIME</div>
+                    <div class="text-4xl text-cyan-300 neon-text" id="time-display">08:00 AM</div>
+                </div>
+            </div>
+            
+            <div class="w-full md:w-1/2 mt-4 md:mt-0 flex flex-col items-end">
+                <div class="flex w-full mb-1">
+                    <div id="track-8" class="time-segment"></div>
+                    <div id="track-9" class="time-segment"></div>
+                    <div id="track-10" class="time-segment"></div>
+                    <div id="track-11" class="time-segment"></div>
+                    <div id="track-12" class="time-segment"></div>
+                    <div id="track-13" class="time-segment"></div>
+                    <div id="track-14" class="time-segment"></div>
+                    <div id="track-15" class="time-segment"></div>
+                    <div id="track-16" class="time-segment overtime"></div>
+                    <div id="track-17" class="time-segment overtime"></div>
+                    <div id="track-18" class="time-segment overtime"></div>
+                    <div id="track-19" class="time-segment overtime"></div>
+                    <div id="track-20" class="time-segment overtime"></div>
+                </div>
+                <div class="flex justify-between w-full text-[10px] text-cyan-700 uppercase">
+                    <span>08:00</span>
+                    <span class="text-red-900">16:00 (OT)</span>
+                    <span class="text-red-900">Crit</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-7 relative h-[450px] bg-slate-900/40 border border-cyan-900/30 rounded-lg p-4 neon-border bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgNDBMMDQgMEgwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoNiwgMTgyLDIxMiwwLjEpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')]">
+            <div class="absolute top-2 right-2 text-[10px] text-cyan-800 tracking-widest border border-cyan-900 px-2 py-1">GPS TRACKING ACTIVE</div>
+            
+            <div onclick="movePlayer('The Lab')" id="loc-lab" class="location-card absolute top-10 left-4 w-32 md:w-40 h-24 bg-slate-800 border border-slate-600 p-2 flex flex-col justify-center items-center text-center">
+                <div class="current-badge">CURRENT LOCATION</div>
+                <div class="text-2xl mb-1">⚗️</div>
+                <div class="font-bold text-sm tracking-wider text-emerald-400">THE LAB</div>
+                <div class="text-[9px] text-slate-500 mt-1 uppercase cost-hint">+1h Travel</div>
+            </div>
+
+            <div onclick="movePlayer('Richmond PD')" id="loc-pd" class="location-card absolute top-10 right-4 w-32 md:w-40 h-24 bg-slate-800 border border-slate-600 p-2 flex flex-col justify-center items-center text-center">
+                <div class="current-badge">CURRENT LOCATION</div>
+                <div class="text-2xl mb-1">🚔</div>
+                <div class="font-bold text-sm tracking-wider text-blue-400">RICHMOND PD</div>
+                <div class="text-[9px] text-slate-500 mt-1 uppercase cost-hint">+1h Travel</div>
+            </div>
+
+            <div onclick="movePlayer('Headquarters')" id="loc-hq" class="location-card absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-32 bg-slate-800 border border-slate-600 p-2 flex flex-col justify-center items-center text-center active">
+                <div class="current-badge">CURRENT LOCATION</div>
+                <div class="text-3xl mb-1">🏢</div>
+                <div class="font-bold text-lg tracking-wider text-white">HEADQUARTERS</div>
+                <div class="text-[9px] text-slate-500 mt-1 uppercase cost-hint">Start Here</div>
+            </div>
+
+            <div onclick="movePlayer('Fieldwork')" id="loc-field" class="location-card absolute bottom-10 left-4 w-32 md:w-40 h-24 bg-slate-800 border border-slate-600 p-2 flex flex-col justify-center items-center text-center">
+                <div class="current-badge">CURRENT LOCATION</div>
+                <div class="text-2xl mb-1">🏙️</div>
+                <div class="font-bold text-sm tracking-wider text-purple-400">FIELDWORK</div>
+                <div class="text-[9px] text-slate-500 mt-1 uppercase cost-hint">+1h Travel</div>
+            </div>
+
+            <div onclick="movePlayer('Courthouse')" id="loc-court" class="location-card absolute bottom-10 right-4 w-32 md:w-40 h-24 bg-slate-800 border border-slate-600 p-2 flex flex-col justify-center items-center text-center">
+                <div class="current-badge">CURRENT LOCATION</div>
+                <div class="text-2xl mb-1">⚖️</div>
+                <div class="font-bold text-sm tracking-wider text-amber-500">COURTHOUSE</div>
+                <div class="text-[9px] text-slate-500 mt-1 uppercase cost-hint">+1h Travel</div>
+            </div>
+            
+            <svg class="absolute inset-0 pointer-events-none opacity-20" width="100%" height="100%">
+                <line x1="20%" y1="20%" x2="50%" y2="50%" stroke="#22d3ee" stroke-width="2" stroke-dasharray="5,5" />
+                <line x1="80%" y1="20%" x2="50%" y2="50%" stroke="#22d3ee" stroke-width="2" stroke-dasharray="5,5" />
+                <line x1="20%" y1="80%" x2="50%" y2="50%" stroke="#22d3ee" stroke-width="2" stroke-dasharray="5,5" />
+                <line x1="80%" y1="80%" x2="50%" y2="50%" stroke="#22d3ee" stroke-width="2" stroke-dasharray="5,5" />
+            </svg>
+        </div>
+
+        <div class="lg:col-span-5 flex flex-col gap-6">
+
+            <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-lg">
+                <div class="text-xs text-slate-500 tracking-widest mb-3 uppercase">Time Allocation</div>
+                <div class="grid grid-cols-4 gap-2 mb-4">
+                    <button onclick="addTime(1)" class="bg-slate-800 border border-slate-600 hover:border-cyan-400 hover:bg-slate-700 text-cyan-300 py-3 rounded transition font-bold">+1h</button>
+                    <button onclick="addTime(2)" class="bg-slate-800 border border-slate-600 hover:border-cyan-400 hover:bg-slate-700 text-cyan-300 py-3 rounded transition font-bold">+2h</button>
+                    <button onclick="addTime(3)" class="bg-slate-800 border border-slate-600 hover:border-cyan-400 hover:bg-slate-700 text-cyan-300 py-3 rounded transition font-bold">+3h</button>
+                    <button onclick="addTime(4)" class="bg-slate-800 border border-slate-600 hover:border-cyan-400 hover:bg-slate-700 text-cyan-300 py-3 rounded transition font-bold">+4h</button>
+                </div>
+                
+                <button id="btn-report" onclick="writeReport()" class="w-full flex justify-between items-center bg-emerald-900/30 border border-emerald-700 hover:bg-emerald-900/50 text-emerald-300 p-3 rounded mb-2 transition group disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span class="font-bold uppercase tracking-wider">📝 Write Report</span>
+                    <span class="text-xs bg-emerald-900 px-2 py-1 rounded group-hover:bg-emerald-800">+1 Auth | -1h</span>
+                </button>
+                <div id="report-status" class="text-center text-[10px] text-red-400 uppercase tracking-widest hidden">Report Unavailable</div>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-lg">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
+                    <div class="text-xs text-slate-500 tracking-widest uppercase">Resource Pool</div>
+                    <div class="text-[10px] text-slate-600">CLICK TO ADD</div>
+                </div>
+
+                <div class="flex flex-wrap justify-between gap-4">
+                    
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="token-chip w-14 h-14 rounded-full bg-slate-200 text-slate-900 flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                             onclick="modToken('research', 1)" oncontextmenu="modToken('research', -1); return false;">
+                            📂
+                            <div id="skill-research" class="token-count-badge text-cyan-300 border-cyan-500">0</div>
+                        </div>
+                        <span class="text-[9px] text-slate-400 uppercase tracking-wider">Rsrch</span>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="token-chip w-14 h-14 rounded-full bg-slate-200 text-slate-900 flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                             onclick="modToken('tech', 1)" oncontextmenu="modToken('tech', -1); return false;">
+                            💻
+                            <div id="skill-tech" class="token-count-badge text-cyan-300 border-cyan-500">0</div>
+                        </div>
+                        <span class="text-[9px] text-slate-400 uppercase tracking-wider">Tech</span>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="token-chip w-14 h-14 rounded-full bg-slate-200 text-slate-900 flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                             onclick="modToken('perception', 1)" oncontextmenu="modToken('perception', -1); return false;">
+                            🔍
+                            <div id="skill-perception" class="token-count-badge text-cyan-300 border-cyan-500">0</div>
+                        </div>
+                        <span class="text-[9px] text-slate-400 uppercase tracking-wider">Perc</span>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="token-chip w-14 h-14 rounded-full bg-slate-200 text-slate-900 flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                             onclick="modToken('question', 1)" oncontextmenu="modToken('question', -1); return false;">
+                            💬
+                            <div id="skill-question" class="token-count-badge text-cyan-300 border-cyan-500">0</div>
+                        </div>
+                        <span class="text-[9px] text-slate-400 uppercase tracking-wider">Quest</span>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="token-chip w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl border-2 border-blue-400 shadow-[0_0_15px_rgba(37,99,235,0.4)]"
+                             onclick="modToken('auth', 1)" oncontextmenu="modToken('auth', -1); return false;">
+                            🛡️
+                            <div id="auth-count" class="token-count-badge text-white border-blue-400 bg-blue-900">0</div>
+                        </div>
+                        <span class="text-[9px] text-blue-400 uppercase tracking-wider">Auth</span>
+                    </div>
+
+                </div>
+                <div class="text-center mt-3 text-[9px] text-slate-600">L-CLICK: +1 | R-CLICK: -1</div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div id="stress-container" class="bg-black border border-red-900/50 p-4 rounded-lg flex items-center gap-4 relative overflow-hidden">
+                <div class="absolute inset-0 bg-red-900/10 pointer-events-none"></div>
+                <div class="z-10 flex flex-col items-center">
+                    <div class="text-xs text-red-500 font-bold uppercase tracking-widest mb-1">Stress Level</div>
+                    <div class="text-4xl font-bold text-red-600 neon-red" id="stress-display">0</div>
+                </div>
+                <div class="flex-grow z-10 mx-4">
+                    <div class="flex justify-between text-[10px] text-red-800 uppercase mb-1">
+                        <span>Calm</span>
+                        <span>Limit: <span id="limit-display">5</span></span>
+                    </div>
+                    <div class="flex gap-1 h-8" id="stress-pips">
+                        </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                 <button onclick="endDay()" class="flex-grow bg-slate-800 border border-slate-600 hover:bg-slate-700 hover:text-white text-slate-400 p-4 rounded uppercase tracking-widest font-bold transition">
+                    End Day Sequence
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="game-over-modal" class="fixed inset-0 z-[100] bg-black/95 hidden flex flex-col items-center justify-center">
+        <h1 class="text-6xl md:text-8xl font-bold text-red-600 tracking-tighter neon-red mb-4">TERMINATED</h1>
+        <div class="border-t-2 border-b-2 border-red-600 py-4 px-12 mb-8 bg-red-900/20">
+            <p class="text-xl md:text-2xl text-red-300 font-mono text-center">STRESS LIMIT EXCEEDED</p>
+        </div>
+        <button onclick="location.reload()" class="bg-red-700 hover:bg-red-600 text-white px-8 py-3 rounded font-bold tracking-widest border border-red-500 shadow-[0_0_20px_rgba(220,38,38,0.5)]">
+            REBOOT SYSTEM
+        </button>
+    </div>
+
+    <script>
+        // --- LOGIC ---
+        const STATE = {
+            day: 1,
+            maxDays: 3,
+            time: 480, // 8:00 AM
+            location: 'Headquarters',
+            stress: 0,
+            stressLimit: 5,
+            authority: 0,
+            reportWrittenToday: false,
+            skills: { research: 0, tech: 0, perception: 0, question: 0 }
+        };
+
+        const OVERTIME_THRESHOLD = 960; // 16:00
+        const LOCATIONS = ['Headquarters', 'Richmond PD', 'The Lab', 'Courthouse', 'Fieldwork'];
+
+        // Setup Logic
+        let setupAuth = 0;
+        function updateSetupAuth(val) {
+            setupAuth = Math.max(0, setupAuth + val);
+            document.getElementById('setup-auth-val').innerText = setupAuth;
+        }
+
+        function setSetup(key, val) {
+            if(key === 'maxDays') {
+                document.querySelectorAll('.setup-btn').forEach(btn => {
+                    if(btn.innerText === val.toString()) btn.classList.add('border-cyan-400', 'text-white');
+                    else btn.classList.remove('border-cyan-400', 'text-white');
+                });
+                STATE.maxDays = parseInt(val);
+                document.getElementById('custom-days').value = ""; // clear custom if preset used
+                if(!val && document.getElementById('custom-days').value) STATE.maxDays = parseInt(document.getElementById('custom-days').value);
+            }
+            if(key === 'stressLimit') {
+                STATE.stressLimit = parseInt(val);
+            }
+        }
+
+        function initializeCase() {
+            // Check Custom Days
+            const custDays = document.getElementById('custom-days').value;
+            if(custDays) STATE.maxDays = parseInt(custDays);
+            
+            STATE.authority = setupAuth;
+
+            document.getElementById('setup-modal').style.display = 'none';
+            const board = document.getElementById('game-board');
+            board.classList.remove('opacity-0');
+            render();
+        }
+
+
+        function render() {
+            // Day
+            document.getElementById('day-display').innerText = STATE.day;
+            document.getElementById('max-days-display').innerText = STATE.maxDays;
+
+            // Time String
+            const h = Math.floor(STATE.time / 60);
+            const m = STATE.time % 60;
+            const period = h >= 12 && h < 24 ? 'PM' : 'AM';
+            const displayH = h % 12 === 0 ? 12 : h % 12;
+            const displayM = m < 10 ? '0' + m : m;
+            document.getElementById('time-display').innerText = `${displayH}:${displayM} ${period}`;
+            
+            // Time Track Visuals
+            const currentHour = Math.floor(STATE.time / 60);
+            for(let i=8; i<=20; i++) {
+                const el = document.getElementById(`track-${i}`);
+                if(el) {
+                    if (i < currentHour) el.classList.add('filled');
+                    else el.classList.remove('filled');
+                }
+            }
+
+            // Location Visuals
+            LOCATIONS.forEach(loc => {
+                let id = 'loc-' + (loc === 'Richmond PD' ? 'pd' : loc === 'The Lab' ? 'lab' : loc === 'Courthouse' ? 'court' : loc === 'Fieldwork' ? 'field' : 'hq');
+                const el = document.getElementById(id);
+                if(loc === STATE.location) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+
+            // Report Button
+            const btnReport = document.getElementById('btn-report');
+            const statusReport = document.getElementById('report-status');
+            const isOvertime = STATE.time >= OVERTIME_THRESHOLD;
+            
+            if (isOvertime || STATE.reportWrittenToday) {
+                btnReport.disabled = true;
+                statusReport.classList.remove('hidden');
+                if(isOvertime) statusReport.innerText = "UNAVAILABLE: OVERTIME";
+                else statusReport.innerText = "UNAVAILABLE: DAILY LIMIT REACHED";
+            } else {
+                btnReport.disabled = false;
+                statusReport.classList.add('hidden');
+            }
+
+            // Stress Visuals
+            document.getElementById('stress-display').innerText = STATE.stress;
+            document.getElementById('limit-display').innerText = STATE.stressLimit;
+            
+            const pipsContainer = document.getElementById('stress-pips');
+            pipsContainer.innerHTML = '';
+            for(let i=0; i<STATE.stressLimit; i++) {
+                const pip = document.createElement('div');
+                pip.className = `flex-1 rounded-sm border border-red-900 transition-all duration-300 ${i < STATE.stress ? 'bg-red-600 shadow-[0_0_5px_rgba(220,38,38,0.8)]' : 'bg-transparent'}`;
+                pipsContainer.appendChild(pip);
+            }
+
+            // Container Glow
+            const stressContainer = document.getElementById('stress-container');
+            if (STATE.stress >= STATE.stressLimit - 1) stressContainer.classList.add('border-red-glow');
+            else stressContainer.classList.remove('border-red-glow');
+
+            // Tokens
+            document.getElementById('auth-count').innerText = STATE.authority;
+            document.getElementById('skill-research').innerText = STATE.skills.research;
+            document.getElementById('skill-tech').innerText = STATE.skills.tech;
+            document.getElementById('skill-perception').innerText = STATE.skills.perception;
+            document.getElementById('skill-question').innerText = STATE.skills.question;
+
+            // Global Overtime Alert
+            if(isOvertime) {
+                document.getElementById('time-display').classList.add('text-red-500');
+                document.getElementById('time-display').classList.remove('text-cyan-300');
+            } else {
+                document.getElementById('time-display').classList.remove('text-red-500');
+                document.getElementById('time-display').classList.add('text-cyan-300');
+            }
+        }
+
+        // --- ACTIONS ---
+
+        function addTime(hours) {
+            for (let i = 0; i < hours; i++) {
+                if (STATE.time >= OVERTIME_THRESHOLD) STATE.stress++;
+                STATE.time += 60;
+            }
+            checkGameOver();
+            render();
+        }
+
+        function movePlayer(target) {
+            if(STATE.location === target) return;
+            addTime(1); // Travel Tax
+            STATE.location = target;
+            render();
+        }
+
+        function writeReport() {
+            if (STATE.time >= OVERTIME_THRESHOLD || STATE.reportWrittenToday) return;
+            addTime(1);
+            STATE.authority++;
+            STATE.reportWrittenToday = true;
+            render();
+        }
+
+        function modToken(type, val) {
+            if(type === 'auth') STATE.authority = Math.max(0, STATE.authority + val);
+            else STATE.skills[type] = Math.max(0, STATE.skills[type] + val);
+            render();
+        }
+
+        function endDay() {
+            STATE.day++;
+            if(STATE.day > STATE.maxDays) {
+                alert("FINAL DAY REACHED. SUBMIT REPORT.");
+            }
+            STATE.time = 480; // 8 AM
+            STATE.location = 'Headquarters';
+            STATE.reportWrittenToday = false;
+            render();
+        }
+
+        function checkGameOver() {
+            if(STATE.stress >= STATE.stressLimit) {
+                document.getElementById('game-over-modal').classList.remove('hidden');
+            }
+        }
+
+        // Initialize Defaults
+        setSetup('maxDays', 3);
+        render();
+
+    </script>
+</body>
+</html>
