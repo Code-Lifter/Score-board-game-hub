@@ -3,122 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jekyll vs. Hyde - Smart Referee</title>
+  <title>Jekyll vs. Hyde Referee</title>
   <style>
-    /* CSS: The Victorian Aesthetic */
     :root {
-      --bg-color: #1a1a1a;
-      --text-color: #e0e0e0;
-      --jekyll-color: #4a90e2;
-      --hyde-color: #d0021b;
-      --board-bg: #2a2a2a;
+      --bg: #121212;
+      --panel: #1e1e1e;
+      --text: #e0e0e0;
+      --jekyll: #4a90e2;
+      --hyde: #d0021b;
     }
-    
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: 'Georgia', serif;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      background: var(--bg); color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0; padding: 15px;
+      display: flex; flex-direction: column; gap: 15px;
     }
-
-    h2, h3 { border-bottom: 1px solid #444; padding-bottom: 5px; width: 100%; text-align: center; }
-
-    /* The Tracker */
-    .tracker-container {
-      background: var(--board-bg);
-      padding: 20px;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    .panel {
+      background: var(--panel); padding: 15px;
+      border-radius: 8px; border: 1px solid #333;
     }
+    h2, h3 { margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 5px; }
+    
+    /* Tracker */
     .track {
-      display: flex;
-      justify-content: space-between;
-      position: relative;
-      margin: 30px 0;
+      display: flex; justify-content: space-between;
+      position: relative; margin: 30px 0 10px 0;
     }
     .track::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: #555;
-      z-index: 1;
-      transform: translateY(-50%);
+      content: ''; position: absolute; top: 50%; left: 0; right: 0;
+      height: 4px; background: #444; z-index: 1; transform: translateY(-50%);
     }
     .space {
-      width: 25px;
-      height: 25px;
-      border-radius: 50%;
-      background: #444;
-      z-index: 2;
-      border: 2px solid #222;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #333; z-index: 2; border: 2px solid #111;
     }
     #marker {
-      width: 35px;
-      height: 35px;
-      background: radial-gradient(circle, var(--hyde-color), #500);
-      border-radius: 50%;
-      position: absolute;
-      top: 50%;
-      left: 0%; /* Starts at 0 */
-      transform: translate(-20%, -50%);
-      z-index: 3;
-      transition: left 0.5s ease-in-out;
-      border: 2px solid white;
+      width: 30px; height: 30px; background: var(--hyde);
+      border-radius: 50%; position: absolute; top: 50%; left: 0%;
+      transform: translate(-15px, -50%); z-index: 3;
+      transition: left 0.4s ease; border: 2px solid white;
     }
 
     /* Controls */
-    .controls, .suit-ladder {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 20px;
+    select, button, input {
+      width: 100%; padding: 12px; margin-bottom: 10px;
+      background: #333; color: white; border: 1px solid #555;
+      border-radius: 4px; font-size: 16px;
     }
-    .btn-group { display: flex; gap: 10px; }
-    button {
-      flex: 1;
-      padding: 12px;
-      background: #333;
-      color: white;
-      border: 1px solid #555;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:active { background: #555; }
+    button { cursor: pointer; font-weight: bold; }
+    button.action { background: var(--jekyll); }
+    button.danger { background: #800; }
     
-    input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      text-align: center;
-      background: #222;
-      color: white;
-      border: 1px solid #555;
-    }
-
-    .ladder-slots { display: flex; justify-content: space-between; font-size: 24px; }
-    .slot { padding: 10px; background: #222; border-radius: 5px; width: 30%; text-align: center; }
-
-    .reference { font-size: 14px; background: #222; padding: 10px; border-radius: 5px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    
+    /* Suit Ladder */
+    .ladder { display: flex; justify-content: space-between; font-size: 24px; margin-bottom: 15px;}
+    .slot { width: 30%; background: #222; text-align: center; padding: 10px; border-radius: 4px;}
+    
+    #log { font-size: 14px; color: #aaa; max-height: 100px; overflow-y: auto; }
   </style>
 </head>
 <body>
 
-  <h2>Jekyll vs. Hyde Companion</h2>
+  <div class="panel">
+    <h2 id="round-display">Round 1</h2>
+    <p id="exchange-rules" style="color: #ffcc00; font-weight: bold;"></p>
+    <button onclick="nextRound()">Start Next Round</button>
+  </div>
 
-  <div class="tracker-container">
+  <div class="panel">
+    <h3>Suit Power Ladder</h3>
+    <div class="ladder">
+      <div class="slot" id="rank-1">-</div>
+      <div class="slot" id="rank-2">-</div>
+      <div class="slot" id="rank-3">-</div>
+    </div>
+    <div class="grid-2">
+      <button onclick="addSuit('♥️')">Add ♥️ (Red)</button>
+      <button onclick="addSuit('♠️')">Add ♠️ (Green)</button>
+      <button onclick="addSuit('♦️')">Add ♦️ (Blue)</button>
+      <button onclick="resetLadder()" class="danger">Reset (Green Potion)</button>
+    </div>
+  </div>
+
+  <div class="panel">
     <h3>Identity Track</h3>
     <div class="track">
       <div class="space"></div><div class="space"></div><div class="space"></div>
@@ -127,96 +95,101 @@
       <div class="space"></div><div class="space"></div>
       <div id="marker"></div>
     </div>
-    <p id="status-text" style="text-align: center;">Hyde is at step: 0</p>
-  </div>
-
-  <div class="controls">
-    <h3>End of Round Scoring</h3>
-    <div class="btn-group">
+    <div class="grid-2">
       <input type="number" id="jekyll-tricks" placeholder="Jekyll Tricks" min="0" max="10">
       <input type="number" id="hyde-tricks" placeholder="Hyde Tricks" min="0" max="10">
     </div>
-    <button onclick="calculateRound()">Move Marker</button>
+    <button onclick="calculateEvil()" class="action">Move Marker</button>
   </div>
 
-  <div class="suit-ladder">
-    <h3>Suit Power (Weak to Strong)</h3>
-    <div class="ladder-slots">
-      <div class="slot" id="rank-1">-</div>
-      <div class="slot" id="rank-2">-</div>
-      <div class="slot" id="rank-3">-</div>
-    </div>
-    <div class="btn-group">
-      <button onclick="addSuit('♥️')">♥️</button>
-      <button onclick="addSuit('♠️')">♠️</button>
-      <button onclick="addSuit('♦️')">♦️</button>
-    </div>
-    <button onclick="resetLadder()" style="background: #500;">Reset Ladder (Green Potion)</button>
-  </div>
-
-  <div class="reference">
-    <strong>♣️ Clubs = Potions</strong><br>
-    Cards 2, 3, 4, 5 = Value 2, 3, 4, 5<br>
-    Cards 8, 9, 10, J = Value 2, 3, 4, 5<br>
-    <hr>
-    <strong>Abilities:</strong><br>
-    ♥️ (Red): Highest rank steals 2 tricks.<br>
-    ♠️ (Green): Reset Suit Power Ladder.<br>
-    ♦️ (Blue): Exchange 2 cards in hand.
+  <div class="panel">
+    <h3>Game Log</h3>
+    <div id="log">Game started...</div>
   </div>
 
   <script>
-    // JavaScript: The Engine
-
-    // State Variables
-    let currentPosition = 0; // 0 is Jekyll, 10 is Hyde
+    // --- State Management ---
+    let currentRound = 1;
+    let markerPosition = 0; // 0 (Jekyll) to 10 (Hyde)
     let suitLadder = [];
 
-    // --- Tracker Logic ---
-    function calculateRound() {
-      const jekyll = parseInt(document.getElementById('jekyll-tricks').value) || 0;
-      const hyde = parseInt(document.getElementById('hyde-tricks').value) || 0;
-      
-      const difference = Math.abs(jekyll - hyde);
-      currentPosition += difference;
+    // Initialize Game
+    updateExchangeRules();
 
-      if (currentPosition > 10) currentPosition = 10; // Cap at 10
-
-      updateTrackerUI();
-      
-      // Clear inputs for the next round
-      document.getElementById('jekyll-tricks').value = '';
-      document.getElementById('hyde-tricks').value = '';
-    }
-
-    function updateTrackerUI() {
-      const marker = document.getElementById('marker');
-      // 10 steps total. 100% / 10 = 10% per step.
-      marker.style.left = (currentPosition * 10) + '%';
-      document.getElementById('status-text').innerText = `Hyde is at step: ${currentPosition}`;
-      
-      if (currentPosition === 10) {
-        alert("Hyde Wins! The transformation is complete.");
+    // --- Phase 1: Preparation ---
+    function nextRound() {
+      if (currentRound >= 3) {
+        alert("Game Over! Check the final marker position.");
+        return;
       }
+      currentRound++;
+      document.getElementById('round-display').innerText = `Round ${currentRound}`;
+      resetLadder();
+      updateExchangeRules();
+      logEvent(`--- Round ${currentRound} Started ---`);
     }
 
-    // --- Suit Ladder Logic ---
+    function updateExchangeRules() {
+      const rules = {
+        1: "Exchange 1 card simultaneously.",
+        2: "Exchange 2 cards simultaneously.",
+        3: "Exchange 3 cards simultaneously."
+      };
+      const potionWarning = "<br>⚠️ If you have 2+ ♣️ (Potions), you MUST include at least 1 in the exchange.";
+      document.getElementById('exchange-rules').innerHTML = rules[currentRound] + potionWarning;
+    }
+
+    // --- Phase 2: Suit Power ---
     function addSuit(suit) {
       if (suitLadder.length < 3 && !suitLadder.includes(suit)) {
         suitLadder.push(suit);
-        updateLadderUI();
+        renderLadder();
+        logEvent(`${suit} added to ladder at Rank ${suitLadder.length}`);
       }
     }
 
     function resetLadder() {
       suitLadder = [];
-      updateLadderUI();
+      renderLadder();
+      logEvent("Suit ladder reset by Green Potion!");
     }
 
-    function updateLadderUI() {
+    function renderLadder() {
       document.getElementById('rank-1').innerText = suitLadder[0] || '-';
       document.getElementById('rank-2').innerText = suitLadder[1] || '-';
       document.getElementById('rank-3').innerText = suitLadder[2] || '-';
+    }
+
+    // --- Phase 3: Progression of Evil ---
+    function calculateEvil() {
+      const jTricks = parseInt(document.getElementById('jekyll-tricks').value) || 0;
+      const hTricks = parseInt(document.getElementById('hyde-tricks').value) || 0;
+      
+      if (jTricks + hTricks > 10) {
+        alert("Error: Total tricks cannot exceed 10.");
+        return;
+      }
+
+      const difference = Math.abs(jTricks - hTricks);
+      markerPosition += difference;
+      
+      if (markerPosition > 10) markerPosition = 10;
+      
+      document.getElementById('marker').style.left = (markerPosition * 10) + '%';
+      logEvent(`Round ended. Difference: ${difference}. Hyde is at step ${markerPosition}.`);
+
+      if (markerPosition === 10) {
+        alert("HYDE WINS! The darkness has taken over.");
+      }
+
+      // Clear inputs
+      document.getElementById('jekyll-tricks').value = '';
+      document.getElementById('hyde-tricks').value = '';
+    }
+
+    function logEvent(message) {
+      const logDiv = document.getElementById('log');
+      logDiv.innerHTML = `<div>> ${message}</div>` + logDiv.innerHTML;
     }
   </script>
 </body>
