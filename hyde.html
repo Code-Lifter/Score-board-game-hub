@@ -3,264 +3,245 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jekyll & Hyde: The Transformation</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <title>Jekyll & Hyde: Tabletop Edition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --paper: #f0e6d2;
-      --ink: #2b2b2b;
-      --accent-gold: #c5a059;
-      --jekyll-blue: #2c3e50;
-      --hyde-red: #8b0000;
-      --track-gradient: linear-gradient(90deg, #2c3e50 0%, #4a2c50 50%, #8b0000 100%);
+      /* Theme Colors from the Photo */
+      --table-bg: #1a1a1d; /* Dark wood feel */
+      --card-bg: #2b2b2b;
+      --text-main: #e0e0e0;
+      
+      /* The Specific Neon Card Colors */
+      --pride-purple: #9b59b6;
+      --wrath-red: #c0392b;
+      --greed-green: #27ae60;
+      --potion-silver: #bdc3c7;
+      
+      /* Track Gradient: Purple (Hyde) to Blue (Jekyll) */
+      --track-gradient: linear-gradient(90deg, #5b2c6f 0%, #2980b9 100%);
+      
+      --gold-accent: #f1c40f;
     }
 
     body {
-      background-color: var(--paper);
-      background-image: radial-gradient(#dccbb0 1px, transparent 1px);
+      background-color: var(--table-bg);
+      /* Subtle wood grain pattern effect */
+      background-image: repeating-linear-gradient(45deg, #1f1f22 25%, transparent 25%, transparent 75%, #1f1f22 75%, #1f1f22), repeating-linear-gradient(45deg, #1f1f22 25%, #1a1a1d 25%, #1a1a1d 75%, #1f1f22 75%, #1f1f22);
+      background-position: 0 0, 10px 10px;
       background-size: 20px 20px;
-      color: var(--ink);
-      font-family: 'Playfair Display', serif;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      color: var(--text-main);
+      font-family: 'Lato', sans-serif;
+      margin: 0; padding: 20px;
+      display: flex; flex-direction: column; align-items: center;
       min-height: 100vh;
     }
 
     h1, h2, h3 {
       font-family: 'Cinzel', serif;
-      text-align: center;
-      margin: 0 0 10px 0;
       text-transform: uppercase;
       letter-spacing: 2px;
+      margin: 0 0 15px 0;
+      text-align: center;
+    }
+    
+    h1 { 
+      color: var(--text-main); 
+      border-bottom: 2px solid var(--gold-accent); 
+      padding-bottom: 10px; 
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
 
-    h1 { color: var(--hyde-red); text-shadow: 1px 1px 0px rgba(0,0,0,0.2); border-bottom: 2px solid var(--ink); padding-bottom: 10px; width: 100%; max-width: 500px;}
-    
-    /* Container Cards */
-    .card {
-      background: #fffef8;
-      border: 1px solid #bda87f;
+    /* Container: Looks like the game board floating on the table */
+    .game-panel {
+      background: rgba(30, 30, 30, 0.95);
+      border: 1px solid #444;
+      border-radius: 8px;
       padding: 20px;
-      border-radius: 4px;
-      box-shadow: 3px 3px 10px rgba(0,0,0,0.1), inset 0 0 20px rgba(197, 160, 89, 0.1);
-      width: 100%;
-      max-width: 450px;
+      width: 100%; max-width: 450px;
       margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       position: relative;
-    }
-    
-    .card::before {
-      content: '';
-      position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px;
-      border: 1px solid #e0d0b0;
-      pointer-events: none;
     }
 
-    /* --- IDENTITY TRACK --- */
+    /* --- IDENTITY TRACK (The Board) --- */
     .track-container {
-      position: relative;
-      margin: 40px 0;
-      padding: 0 10px;
+      position: relative; margin: 30px 0; padding: 0 10px;
     }
     
     .track-bar {
-      height: 12px;
+      height: 40px; /* Thicker like the board */
       background: var(--track-gradient);
-      border-radius: 6px;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+      border-radius: 20px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
       position: relative;
+      border: 2px solid #555;
     }
 
     .track-steps {
-      display: flex;
-      justify-content: space-between;
-      position: absolute;
-      top: -6px; left: 0; right: 0;
+      display: flex; justify-content: space-between;
+      position: absolute; top: 0; left: 5px; right: 5px; height: 100%;
+      align-items: center;
     }
 
     .step {
-      width: 24px; height: 24px;
-      background: var(--paper);
-      border: 2px solid var(--ink);
+      width: 12px; height: 12px;
+      background: rgba(0,0,0,0.3);
       border-radius: 50%;
-      font-size: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Cinzel', serif;
-      z-index: 1;
+      border: 1px solid rgba(255,255,255,0.2);
     }
+    
+    /* Highlight the start and end steps */
+    .step:first-child { background: var(--hyde-red); border-color: white; box-shadow: 0 0 5px var(--hyde-red); }
+    .step:last-child { background: #2980b9; border-color: white; box-shadow: 0 0 5px #2980b9; }
 
     #marker {
-      width: 40px; height: 40px;
-      background: url('https://cdn-icons-png.flaticon.com/512/1046/1046380.png'); /* Top hat icon */
-      background-size: cover;
-      filter: drop-shadow(0px 4px 2px rgba(0,0,0,0.4));
+      width: 45px; height: 45px;
+      /* Top Hat Icon */
+      background: url('https://cdn-icons-png.flaticon.com/512/1046/1046380.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      filter: drop-shadow(0 5px 5px rgba(0,0,0,0.8)) invert(1); /* Invert for white hat look */
       position: absolute;
-      top: -15px; left: 0%;
+      top: -25px; left: 0%; /* Starts at Hyde (10) or Jekyll (0) depending on logic */
       transform: translateX(-50%);
       z-index: 10;
       transition: left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* --- SUIT LADDER --- */
-    .ladder-display {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
+    /* --- SUIT TOKENS (The Circles) --- */
+    .token-container {
+      display: flex; justify-content: space-between; margin-bottom: 20px;
+      background: #222; padding: 10px; border-radius: 50px;
+      border: 1px solid #444;
+    }
+
+    .token-slot {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: #111;
+      border: 2px dashed #555;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      color: #333;
       position: relative;
     }
     
-    .ladder-slot {
-      width: 30%;
-      background: #e8ded1;
-      border: 1px dashed var(--ink);
-      padding: 15px 5px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 28px;
-      border-radius: 4px;
-      min-height: 40px;
-    }
-    
-    .rank-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      display: block;
-      margin-top: 5px;
-      color: #666;
+    .token-slot::after {
+      content: attr(data-rank);
+      position: absolute; bottom: -20px;
+      font-size: 10px; color: #888; text-transform: uppercase;
       font-family: sans-serif;
     }
 
-    .suit-btn-group { display: flex; gap: 8px; justify-content: center; }
+    /* Active Token Styles */
+    .token-slot.active { border-style: solid; color: white; text-shadow: 0 2px 2px black; }
+    .token-slot[data-color="♥️"] { background: var(--wrath-red); border-color: #ff6b6b; box-shadow: 0 0 10px var(--wrath-red); }
+    .token-slot[data-color="♠️"] { background: var(--greed-green); border-color: #2ecc71; box-shadow: 0 0 10px var(--greed-green); }
+    .token-slot[data-color="♦️"] { background: var(--pride-purple); border-color: #d2b4de; box-shadow: 0 0 10px var(--pride-purple); }
+
+    .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
     
     button {
-      font-family: 'Cinzel', serif;
-      border: 1px solid var(--ink);
-      background: var(--paper);
-      color: var(--ink);
-      padding: 10px 15px;
-      font-size: 18px;
-      cursor: pointer;
-      flex: 1;
-      transition: all 0.2s;
-      box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+      background: #333; color: #fff;
+      border: 1px solid #555; padding: 12px;
+      font-family: 'Cinzel', serif; cursor: pointer;
+      border-radius: 4px; transition: 0.2s;
     }
+    button:active { background: #555; }
+    
+    /* Suit Buttons with Specific Colors */
+    .btn-red { border-bottom: 3px solid var(--wrath-red); }
+    .btn-green { border-bottom: 3px solid var(--greed-green); }
+    .btn-purple { border-bottom: 3px solid var(--pride-purple); }
 
-    button:active { transform: translateY(1px); box-shadow: none; }
-    button.reset { background: #2c6e49; color: white; border-color: #1a452d; margin-top: 10px; width: 100%; }
-
-    /* --- SCORING INPUT --- */
-    .scoring-grid {
-      display: grid;
-      grid-template-columns: 1fr 20px 1fr;
-      align-items: center;
-      gap: 10px;
-      text-align: center;
-      margin-bottom: 15px;
+    button.reset { 
+      grid-column: span 3; 
+      background: #27ae60; 
+      color: white; 
+      border: none; 
+      margin-top: 10px;
+      box-shadow: 0 4px 0 #1e8449;
     }
+    button.reset:active { transform: translateY(4px); box-shadow: none; }
 
+    /* --- SCORING AREA --- */
+    .score-box {
+      background: #222; border: 1px solid #444;
+      padding: 15px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    
     select {
-      width: 100%;
-      padding: 10px;
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      background: #fff;
-      border: 1px solid var(--ink);
-      text-align: center;
+      background: #333; color: white; border: 1px solid #555;
+      padding: 10px; font-size: 18px; border-radius: 4px;
     }
+    
+    .vs-badge { font-family: 'Cinzel'; color: var(--gold-accent); font-size: 20px; }
+    
+    .hyde-score { color: var(--wrath-red); font-size: 24px; font-weight: bold; }
 
-    .auto-score {
-      font-size: 24px;
-      font-weight: bold;
-      color: var(--hyde-red);
-      background: #e8ded1;
-      padding: 8px;
-      border: 1px solid #ccc;
-      display: block;
+    .resolve-btn {
+      width: 100%; margin-top: 15px;
+      background: var(--gold-accent); color: black;
+      font-weight: bold; border: none; padding: 15px;
+      box-shadow: 0 4px 0 #b7950b;
     }
+    .resolve-btn:active { transform: translateY(4px); box-shadow: none; }
 
-    .move-btn {
-      background: var(--hyde-red);
-      color: white;
-      border: none;
-      width: 100%;
-      padding: 15px;
-      font-size: 18px;
-    }
-
-    /* UTILS */
-    .round-badge {
-      background: var(--ink);
-      color: #fff;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 14px;
-      display: inline-block;
-      margin-bottom: 10px;
-      font-family: sans-serif;
-    }
+    .info-text { text-align: center; color: #888; font-size: 12px; margin-top: 10px; }
   </style>
 </head>
 <body>
 
-  <h1>Jekyll & Hyde</h1>
+  <h1>Jekyll <span style="color:var(--gold-accent); font-size: 0.7em;">VS</span> Hyde</h1>
 
-  <div class="card">
-    <h3>The Transformation</h3>
+  <div class="game-panel">
+    <div style="display:flex; justify-content:space-between; font-size: 12px; color: #888; margin-bottom:5px;">
+      <span>DR. JEKYLL (ORDER)</span>
+      <span>MR. HYDE (CHAOS)</span>
+    </div>
+    
     <div class="track-container">
       <div class="track-bar"></div>
       <div class="track-steps">
-        <div class="step">0</div><div class="step"></div><div class="step"></div>
         <div class="step"></div><div class="step"></div><div class="step"></div>
         <div class="step"></div><div class="step"></div><div class="step"></div>
-        <div class="step"></div><div class="step" style="background:var(--hyde-red); color:white;">10</div>
+        <div class="step"></div><div class="step"></div><div class="step"></div>
+        <div class="step"></div><div class="step"></div>
       </div>
       <div id="marker"></div>
     </div>
-    <div style="text-align: center; font-style: italic; color: #555; font-size: 14px;" id="status-text">
-      Dr. Jekyll is in control.
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Suit Hierarchy</h3>
-    <div class="ladder-display">
-      <div class="ladder-slot">
-        <span id="slot-0">-</span>
-        <span class="rank-label">Lowest</span>
-      </div>
-      <div class="ladder-slot">
-        <span id="slot-1">-</span>
-        <span class="rank-label">Middle</span>
-      </div>
-      <div class="ladder-slot">
-        <span id="slot-2">-</span>
-        <span class="rank-label">Highest</span>
-      </div>
-    </div>
-
-    <div class="suit-btn-group">
-      <button onclick="addSuit('♥️')">♥️</button>
-      <button onclick="addSuit('♠️')">♠️</button>
-      <button onclick="addSuit('♦️')">♦️</button>
-    </div>
-    <button class="reset" onclick="resetLadder()">Green Potion: Reset Ranks</button>
-  </div>
-
-  <div class="card">
-    <div style="text-align: center;">
-      <span class="round-badge" id="round-badge">Round 1</span>
-      <p id="exchange-text" style="font-size: 14px; margin-top: 5px;">Exchange 1 Card.</p>
-    </div>
     
-    <hr style="border: 0; border-top: 1px dashed #ccc; margin: 15px 0;">
+    <div id="status-text" style="text-align: center; font-style: italic; color: var(--gold-accent);">
+      The transformation begins...
+    </div>
+  </div>
 
-    <div class="scoring-grid">
-      <div>
-        <label style="font-size: 12px; display:block; margin-bottom:5px;">Jekyll Tricks</label>
-        <select id="jekyll-select" onchange="updateHydeScore()">
+  <div class="game-panel">
+    <h3>Suit Rank</h3>
+    <div class="token-container">
+      <div class="token-slot" id="slot-0" data-rank="Lowest"></div>
+      <div class="token-slot" id="slot-1" data-rank="Middle"></div>
+      <div class="token-slot" id="slot-2" data-rank="Highest"></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn-red" onclick="addSuit('♥️')">WRATH<br>(Red)</button>
+      <button class="btn-green" onclick="addSuit('♠️')">GREED<br>(Green)</button>
+      <button class="btn-purple" onclick="addSuit('♦️')">PRIDE<br>(Blue)</button>
+      <button class="reset" onclick="resetLadder()">🧪 Green Potion: Reset Ranks</button>
+    </div>
+  </div>
+
+  <div class="game-panel">
+    <h3 id="round-title">Round 1</h3>
+    
+    <div class="score-box">
+      <div style="text-align:center;">
+        <label style="font-size:10px; display:block; color:#aaa; margin-bottom:4px;">JEKYLL TRICKS</label>
+        <select id="jekyll-select" onchange="updateScore()">
           <option value="0">0</option><option value="1">1</option>
           <option value="2">2</option><option value="3">3</option>
           <option value="4">4</option><option value="5">5</option>
@@ -269,36 +250,36 @@
           <option value="10">10</option>
         </select>
       </div>
-      <div style="font-weight: bold; padding-top: 15px;">VS</div>
-      <div>
-        <label style="font-size: 12px; display:block; margin-bottom:5px;">Hyde Tricks</label>
-        <span id="hyde-score" class="auto-score">10</span>
+      
+      <div class="vs-badge">VS</div>
+      
+      <div style="text-align:center;">
+        <label style="font-size:10px; display:block; color:#aaa; margin-bottom:4px;">HYDE TRICKS</label>
+        <span id="hyde-score" class="hyde-score">10</span>
       </div>
     </div>
 
-    <button class="move-btn" onclick="endRound()">Resolve Round</button>
+    <button class="resolve-btn" onclick="endRound()">RESOLVE ROUND</button>
+    <p class="info-text" id="exchange-info">Exchange 1 card. (Watch for Potions!)</p>
   </div>
 
   <script>
-    // --- GAME STATE ---
+    // --- STATE ---
     let suitOrder = [];
-    let currentPos = 0; // 0 = Jekyll, 10 = Hyde
+    let currentPos = 0; // 0 = Jekyll (Right/Blue), 10 = Hyde (Left/Purple)
     let round = 1;
 
     // --- SUIT LOGIC ---
     function addSuit(suit) {
-      // Prevent adding duplicates or adding if full
       if (suitOrder.includes(suit) || suitOrder.length >= 3) return;
-
       suitOrder.push(suit);
-      
-      // AUTO-FILL LOGIC: If we have 2 suits, the 3rd is forced.
+
+      // Auto-fill logic
       if (suitOrder.length === 2) {
         const allSuits = ['♥️', '♠️', '♦️'];
         const missing = allSuits.find(s => !suitOrder.includes(s));
         if (missing) suitOrder.push(missing);
       }
-
       renderSuits();
     }
 
@@ -308,67 +289,72 @@
     }
 
     function renderSuits() {
-      document.getElementById('slot-0').innerText = suitOrder[0] || '-';
-      document.getElementById('slot-1').innerText = suitOrder[1] || '-';
-      document.getElementById('slot-2').innerText = suitOrder[2] || '-';
-      
-      // Color coding for visual flair
-      const colors = {'♥️': '#d0021b', '♦️': '#4a90e2', '♠️': '#2c6e49'};
-      
       [0,1,2].forEach(i => {
         const el = document.getElementById(`slot-${i}`);
-        if(suitOrder[i]) el.style.color = colors[suitOrder[i]];
-        else el.style.color = 'inherit';
+        const suit = suitOrder[i];
+        
+        // Clear previous state
+        el.className = 'token-slot'; 
+        el.innerText = '';
+        el.removeAttribute('data-color');
+
+        if (suit) {
+          el.classList.add('active');
+          el.innerText = suit;
+          el.setAttribute('data-color', suit);
+        }
       });
     }
 
-    // --- MATH LOGIC ---
-    function updateHydeScore() {
-      const jekyllVal = parseInt(document.getElementById('jekyll-select').value);
-      const hydeVal = 10 - jekyllVal;
-      document.getElementById('hyde-score').innerText = hydeVal;
+    // --- SCORE LOGIC ---
+    function updateScore() {
+      const jVal = parseInt(document.getElementById('jekyll-select').value);
+      document.getElementById('hyde-score').innerText = 10 - jVal;
     }
 
-    // --- TRACKER LOGIC ---
+    // --- GAME LOOP ---
     function endRound() {
-      if (round > 3) { alert("Game is over!"); return; }
+      if (round > 3) return;
 
-      const jekyllVal = parseInt(document.getElementById('jekyll-select').value);
-      const hydeVal = 10 - jekyllVal;
-      const moves = Math.abs(jekyllVal - hydeVal);
+      const jVal = parseInt(document.getElementById('jekyll-select').value);
+      const hVal = 10 - jVal;
+      const moves = Math.abs(jVal - hVal);
 
+      // Update Position
       currentPos += moves;
       if (currentPos > 10) currentPos = 10;
 
-      // Animate Marker
-      const percentage = currentPos * 10;
-      document.getElementById('marker').style.left = percentage + '%';
+      // Animate Marker (0% is Jekyll/Right, 100% is Hyde/Left in this CSS logic? 
+      // Actually in the CSS: left: 0%. Let's map 0 -> 10 properly.
+      // 0 steps = 0%. 10 steps = 100%.
+      document.getElementById('marker').style.left = (currentPos * 10) + '%';
 
-      // Status Update
+      // Update Text
       const statusEl = document.getElementById('status-text');
-      if (currentPos === 0) statusEl.innerText = "Dr. Jekyll is in control.";
-      else if (currentPos < 5) statusEl.innerText = "The shadow grows...";
-      else if (currentPos < 10) statusEl.innerText = "Hyde is taking over!";
+      if (currentPos === 0) statusEl.innerText = "Jekyll is safe... for now.";
+      else if (currentPos < 6) statusEl.innerText = "The shadows lengthen.";
+      else if (currentPos < 10) statusEl.innerText = "Hyde is seizing control!";
       else statusEl.innerText = "HYDE HAS WON.";
 
-      // Advance Round
       if (currentPos < 10 && round < 3) {
         round++;
-        document.getElementById('round-badge').innerText = `Round ${round}`;
-        const exchangeText = round === 2 ? "Exchange 2 Cards." : "Exchange 3 Cards.";
-        document.getElementById('exchange-text').innerText = exchangeText + " (Recall Potions!)";
+        document.getElementById('round-title').innerText = `Round ${round}`;
+        const exAmount = round === 2 ? "2 cards" : "3 cards";
+        document.getElementById('exchange-info').innerText = `Exchange ${exAmount}. (Recall Potions!)`;
         
-        // Reset inputs and ladder for new round
+        // Reset for next round
         document.getElementById('jekyll-select').value = "0";
-        updateHydeScore();
+        updateScore();
         resetLadder();
       } else if (round === 3 && currentPos < 10) {
-        alert("JEKYLL WINS! He survived 3 rounds.");
+        alert("JEKYLL WINS! He maintained his identity.");
+      } else if (currentPos === 10) {
+        alert("HYDE WINS! Total corruption.");
       }
     }
-    
+
     // Init
-    updateHydeScore();
+    updateScore();
   </script>
 </body>
 </html>
