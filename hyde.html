@@ -3,194 +3,372 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jekyll vs. Hyde Referee</title>
+  <title>Jekyll & Hyde: The Transformation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #121212;
-      --panel: #1e1e1e;
-      --text: #e0e0e0;
-      --jekyll: #4a90e2;
-      --hyde: #d0021b;
-    }
-    body {
-      background: var(--bg); color: var(--text);
-      font-family: system-ui, -apple-system, sans-serif;
-      margin: 0; padding: 15px;
-      display: flex; flex-direction: column; gap: 15px;
-    }
-    .panel {
-      background: var(--panel); padding: 15px;
-      border-radius: 8px; border: 1px solid #333;
-    }
-    h2, h3 { margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 5px; }
-    
-    /* Tracker */
-    .track {
-      display: flex; justify-content: space-between;
-      position: relative; margin: 30px 0 10px 0;
-    }
-    .track::before {
-      content: ''; position: absolute; top: 50%; left: 0; right: 0;
-      height: 4px; background: #444; z-index: 1; transform: translateY(-50%);
-    }
-    .space {
-      width: 20px; height: 20px; border-radius: 50%;
-      background: #333; z-index: 2; border: 2px solid #111;
-    }
-    #marker {
-      width: 30px; height: 30px; background: var(--hyde);
-      border-radius: 50%; position: absolute; top: 50%; left: 0%;
-      transform: translate(-15px, -50%); z-index: 3;
-      transition: left 0.4s ease; border: 2px solid white;
+      --paper: #f0e6d2;
+      --ink: #2b2b2b;
+      --accent-gold: #c5a059;
+      --jekyll-blue: #2c3e50;
+      --hyde-red: #8b0000;
+      --track-gradient: linear-gradient(90deg, #2c3e50 0%, #4a2c50 50%, #8b0000 100%);
     }
 
-    /* Controls */
-    select, button, input {
-      width: 100%; padding: 12px; margin-bottom: 10px;
-      background: #333; color: white; border: 1px solid #555;
-      border-radius: 4px; font-size: 16px;
+    body {
+      background-color: var(--paper);
+      background-image: radial-gradient(#dccbb0 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: var(--ink);
+      font-family: 'Playfair Display', serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
-    button { cursor: pointer; font-weight: bold; }
-    button.action { background: var(--jekyll); }
-    button.danger { background: #800; }
+
+    h1, h2, h3 {
+      font-family: 'Cinzel', serif;
+      text-align: center;
+      margin: 0 0 10px 0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    h1 { color: var(--hyde-red); text-shadow: 1px 1px 0px rgba(0,0,0,0.2); border-bottom: 2px solid var(--ink); padding-bottom: 10px; width: 100%; max-width: 500px;}
     
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    /* Container Cards */
+    .card {
+      background: #fffef8;
+      border: 1px solid #bda87f;
+      padding: 20px;
+      border-radius: 4px;
+      box-shadow: 3px 3px 10px rgba(0,0,0,0.1), inset 0 0 20px rgba(197, 160, 89, 0.1);
+      width: 100%;
+      max-width: 450px;
+      margin-bottom: 20px;
+      position: relative;
+    }
     
-    /* Suit Ladder */
-    .ladder { display: flex; justify-content: space-between; font-size: 24px; margin-bottom: 15px;}
-    .slot { width: 30%; background: #222; text-align: center; padding: 10px; border-radius: 4px;}
+    .card::before {
+      content: '';
+      position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px;
+      border: 1px solid #e0d0b0;
+      pointer-events: none;
+    }
+
+    /* --- IDENTITY TRACK --- */
+    .track-container {
+      position: relative;
+      margin: 40px 0;
+      padding: 0 10px;
+    }
     
-    #log { font-size: 14px; color: #aaa; max-height: 100px; overflow-y: auto; }
+    .track-bar {
+      height: 12px;
+      background: var(--track-gradient);
+      border-radius: 6px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .track-steps {
+      display: flex;
+      justify-content: space-between;
+      position: absolute;
+      top: -6px; left: 0; right: 0;
+    }
+
+    .step {
+      width: 24px; height: 24px;
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      font-size: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cinzel', serif;
+      z-index: 1;
+    }
+
+    #marker {
+      width: 40px; height: 40px;
+      background: url('https://cdn-icons-png.flaticon.com/512/1046/1046380.png'); /* Top hat icon */
+      background-size: cover;
+      filter: drop-shadow(0px 4px 2px rgba(0,0,0,0.4));
+      position: absolute;
+      top: -15px; left: 0%;
+      transform: translateX(-50%);
+      z-index: 10;
+      transition: left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* --- SUIT LADDER --- */
+    .ladder-display {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    
+    .ladder-slot {
+      width: 30%;
+      background: #e8ded1;
+      border: 1px dashed var(--ink);
+      padding: 15px 5px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 28px;
+      border-radius: 4px;
+      min-height: 40px;
+    }
+    
+    .rank-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 5px;
+      color: #666;
+      font-family: sans-serif;
+    }
+
+    .suit-btn-group { display: flex; gap: 8px; justify-content: center; }
+    
+    button {
+      font-family: 'Cinzel', serif;
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      color: var(--ink);
+      padding: 10px 15px;
+      font-size: 18px;
+      cursor: pointer;
+      flex: 1;
+      transition: all 0.2s;
+      box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+    }
+
+    button:active { transform: translateY(1px); box-shadow: none; }
+    button.reset { background: #2c6e49; color: white; border-color: #1a452d; margin-top: 10px; width: 100%; }
+
+    /* --- SCORING INPUT --- */
+    .scoring-grid {
+      display: grid;
+      grid-template-columns: 1fr 20px 1fr;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      background: #fff;
+      border: 1px solid var(--ink);
+      text-align: center;
+    }
+
+    .auto-score {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--hyde-red);
+      background: #e8ded1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      display: block;
+    }
+
+    .move-btn {
+      background: var(--hyde-red);
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+    }
+
+    /* UTILS */
+    .round-badge {
+      background: var(--ink);
+      color: #fff;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 10px;
+      font-family: sans-serif;
+    }
   </style>
 </head>
 <body>
 
-  <div class="panel">
-    <h2 id="round-display">Round 1</h2>
-    <p id="exchange-rules" style="color: #ffcc00; font-weight: bold;"></p>
-    <button onclick="nextRound()">Start Next Round</button>
-  </div>
+  <h1>Jekyll & Hyde</h1>
 
-  <div class="panel">
-    <h3>Suit Power Ladder</h3>
-    <div class="ladder">
-      <div class="slot" id="rank-1">-</div>
-      <div class="slot" id="rank-2">-</div>
-      <div class="slot" id="rank-3">-</div>
-    </div>
-    <div class="grid-2">
-      <button onclick="addSuit('♥️')">Add ♥️ (Red)</button>
-      <button onclick="addSuit('♠️')">Add ♠️ (Green)</button>
-      <button onclick="addSuit('♦️')">Add ♦️ (Blue)</button>
-      <button onclick="resetLadder()" class="danger">Reset (Green Potion)</button>
-    </div>
-  </div>
-
-  <div class="panel">
-    <h3>Identity Track</h3>
-    <div class="track">
-      <div class="space"></div><div class="space"></div><div class="space"></div>
-      <div class="space"></div><div class="space"></div><div class="space"></div>
-      <div class="space"></div><div class="space"></div><div class="space"></div>
-      <div class="space"></div><div class="space"></div>
+  <div class="card">
+    <h3>The Transformation</h3>
+    <div class="track-container">
+      <div class="track-bar"></div>
+      <div class="track-steps">
+        <div class="step">0</div><div class="step"></div><div class="step"></div>
+        <div class="step"></div><div class="step"></div><div class="step"></div>
+        <div class="step"></div><div class="step"></div><div class="step"></div>
+        <div class="step"></div><div class="step" style="background:var(--hyde-red); color:white;">10</div>
+      </div>
       <div id="marker"></div>
     </div>
-    <div class="grid-2">
-      <input type="number" id="jekyll-tricks" placeholder="Jekyll Tricks" min="0" max="10">
-      <input type="number" id="hyde-tricks" placeholder="Hyde Tricks" min="0" max="10">
+    <div style="text-align: center; font-style: italic; color: #555; font-size: 14px;" id="status-text">
+      Dr. Jekyll is in control.
     </div>
-    <button onclick="calculateEvil()" class="action">Move Marker</button>
   </div>
 
-  <div class="panel">
-    <h3>Game Log</h3>
-    <div id="log">Game started...</div>
+  <div class="card">
+    <h3>Suit Hierarchy</h3>
+    <div class="ladder-display">
+      <div class="ladder-slot">
+        <span id="slot-0">-</span>
+        <span class="rank-label">Lowest</span>
+      </div>
+      <div class="ladder-slot">
+        <span id="slot-1">-</span>
+        <span class="rank-label">Middle</span>
+      </div>
+      <div class="ladder-slot">
+        <span id="slot-2">-</span>
+        <span class="rank-label">Highest</span>
+      </div>
+    </div>
+
+    <div class="suit-btn-group">
+      <button onclick="addSuit('♥️')">♥️</button>
+      <button onclick="addSuit('♠️')">♠️</button>
+      <button onclick="addSuit('♦️')">♦️</button>
+    </div>
+    <button class="reset" onclick="resetLadder()">Green Potion: Reset Ranks</button>
+  </div>
+
+  <div class="card">
+    <div style="text-align: center;">
+      <span class="round-badge" id="round-badge">Round 1</span>
+      <p id="exchange-text" style="font-size: 14px; margin-top: 5px;">Exchange 1 Card.</p>
+    </div>
+    
+    <hr style="border: 0; border-top: 1px dashed #ccc; margin: 15px 0;">
+
+    <div class="scoring-grid">
+      <div>
+        <label style="font-size: 12px; display:block; margin-bottom:5px;">Jekyll Tricks</label>
+        <select id="jekyll-select" onchange="updateHydeScore()">
+          <option value="0">0</option><option value="1">1</option>
+          <option value="2">2</option><option value="3">3</option>
+          <option value="4">4</option><option value="5">5</option>
+          <option value="6">6</option><option value="7">7</option>
+          <option value="8">8</option><option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+      </div>
+      <div style="font-weight: bold; padding-top: 15px;">VS</div>
+      <div>
+        <label style="font-size: 12px; display:block; margin-bottom:5px;">Hyde Tricks</label>
+        <span id="hyde-score" class="auto-score">10</span>
+      </div>
+    </div>
+
+    <button class="move-btn" onclick="endRound()">Resolve Round</button>
   </div>
 
   <script>
-    // --- State Management ---
-    let currentRound = 1;
-    let markerPosition = 0; // 0 (Jekyll) to 10 (Hyde)
-    let suitLadder = [];
+    // --- GAME STATE ---
+    let suitOrder = [];
+    let currentPos = 0; // 0 = Jekyll, 10 = Hyde
+    let round = 1;
 
-    // Initialize Game
-    updateExchangeRules();
-
-    // --- Phase 1: Preparation ---
-    function nextRound() {
-      if (currentRound >= 3) {
-        alert("Game Over! Check the final marker position.");
-        return;
-      }
-      currentRound++;
-      document.getElementById('round-display').innerText = `Round ${currentRound}`;
-      resetLadder();
-      updateExchangeRules();
-      logEvent(`--- Round ${currentRound} Started ---`);
-    }
-
-    function updateExchangeRules() {
-      const rules = {
-        1: "Exchange 1 card simultaneously.",
-        2: "Exchange 2 cards simultaneously.",
-        3: "Exchange 3 cards simultaneously."
-      };
-      const potionWarning = "<br>⚠️ If you have 2+ ♣️ (Potions), you MUST include at least 1 in the exchange.";
-      document.getElementById('exchange-rules').innerHTML = rules[currentRound] + potionWarning;
-    }
-
-    // --- Phase 2: Suit Power ---
+    // --- SUIT LOGIC ---
     function addSuit(suit) {
-      if (suitLadder.length < 3 && !suitLadder.includes(suit)) {
-        suitLadder.push(suit);
-        renderLadder();
-        logEvent(`${suit} added to ladder at Rank ${suitLadder.length}`);
+      // Prevent adding duplicates or adding if full
+      if (suitOrder.includes(suit) || suitOrder.length >= 3) return;
+
+      suitOrder.push(suit);
+      
+      // AUTO-FILL LOGIC: If we have 2 suits, the 3rd is forced.
+      if (suitOrder.length === 2) {
+        const allSuits = ['♥️', '♠️', '♦️'];
+        const missing = allSuits.find(s => !suitOrder.includes(s));
+        if (missing) suitOrder.push(missing);
       }
+
+      renderSuits();
     }
 
     function resetLadder() {
-      suitLadder = [];
-      renderLadder();
-      logEvent("Suit ladder reset by Green Potion!");
+      suitOrder = [];
+      renderSuits();
     }
 
-    function renderLadder() {
-      document.getElementById('rank-1').innerText = suitLadder[0] || '-';
-      document.getElementById('rank-2').innerText = suitLadder[1] || '-';
-      document.getElementById('rank-3').innerText = suitLadder[2] || '-';
-    }
-
-    // --- Phase 3: Progression of Evil ---
-    function calculateEvil() {
-      const jTricks = parseInt(document.getElementById('jekyll-tricks').value) || 0;
-      const hTricks = parseInt(document.getElementById('hyde-tricks').value) || 0;
+    function renderSuits() {
+      document.getElementById('slot-0').innerText = suitOrder[0] || '-';
+      document.getElementById('slot-1').innerText = suitOrder[1] || '-';
+      document.getElementById('slot-2').innerText = suitOrder[2] || '-';
       
-      if (jTricks + hTricks > 10) {
-        alert("Error: Total tricks cannot exceed 10.");
-        return;
+      // Color coding for visual flair
+      const colors = {'♥️': '#d0021b', '♦️': '#4a90e2', '♠️': '#2c6e49'};
+      
+      [0,1,2].forEach(i => {
+        const el = document.getElementById(`slot-${i}`);
+        if(suitOrder[i]) el.style.color = colors[suitOrder[i]];
+        else el.style.color = 'inherit';
+      });
+    }
+
+    // --- MATH LOGIC ---
+    function updateHydeScore() {
+      const jekyllVal = parseInt(document.getElementById('jekyll-select').value);
+      const hydeVal = 10 - jekyllVal;
+      document.getElementById('hyde-score').innerText = hydeVal;
+    }
+
+    // --- TRACKER LOGIC ---
+    function endRound() {
+      if (round > 3) { alert("Game is over!"); return; }
+
+      const jekyllVal = parseInt(document.getElementById('jekyll-select').value);
+      const hydeVal = 10 - jekyllVal;
+      const moves = Math.abs(jekyllVal - hydeVal);
+
+      currentPos += moves;
+      if (currentPos > 10) currentPos = 10;
+
+      // Animate Marker
+      const percentage = currentPos * 10;
+      document.getElementById('marker').style.left = percentage + '%';
+
+      // Status Update
+      const statusEl = document.getElementById('status-text');
+      if (currentPos === 0) statusEl.innerText = "Dr. Jekyll is in control.";
+      else if (currentPos < 5) statusEl.innerText = "The shadow grows...";
+      else if (currentPos < 10) statusEl.innerText = "Hyde is taking over!";
+      else statusEl.innerText = "HYDE HAS WON.";
+
+      // Advance Round
+      if (currentPos < 10 && round < 3) {
+        round++;
+        document.getElementById('round-badge').innerText = `Round ${round}`;
+        const exchangeText = round === 2 ? "Exchange 2 Cards." : "Exchange 3 Cards.";
+        document.getElementById('exchange-text').innerText = exchangeText + " (Recall Potions!)";
+        
+        // Reset inputs and ladder for new round
+        document.getElementById('jekyll-select').value = "0";
+        updateHydeScore();
+        resetLadder();
+      } else if (round === 3 && currentPos < 10) {
+        alert("JEKYLL WINS! He survived 3 rounds.");
       }
-
-      const difference = Math.abs(jTricks - hTricks);
-      markerPosition += difference;
-      
-      if (markerPosition > 10) markerPosition = 10;
-      
-      document.getElementById('marker').style.left = (markerPosition * 10) + '%';
-      logEvent(`Round ended. Difference: ${difference}. Hyde is at step ${markerPosition}.`);
-
-      if (markerPosition === 10) {
-        alert("HYDE WINS! The darkness has taken over.");
-      }
-
-      // Clear inputs
-      document.getElementById('jekyll-tricks').value = '';
-      document.getElementById('hyde-tricks').value = '';
     }
-
-    function logEvent(message) {
-      const logDiv = document.getElementById('log');
-      logDiv.innerHTML = `<div>> ${message}</div>` + logDiv.innerHTML;
-    }
+    
+    // Init
+    updateHydeScore();
   </script>
 </body>
 </html>
