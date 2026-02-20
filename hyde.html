@@ -58,13 +58,8 @@
     }
     
     #dynamic-score {
-      font-family: 'Cinzel', serif;
-      font-weight: 900;
-      line-height: 1;
-      margin: 10px 0;
-      /* Default state, overridden by JS */
-      font-size: 24px; color: var(--jekyll-blue);
-      text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      font-family: 'Cinzel', serif; font-weight: 900; line-height: 1; margin: 10px 0;
+      font-size: 24px; color: var(--jekyll-blue); text-shadow: 0 4px 10px rgba(0,0,0,0.5);
       transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
@@ -72,6 +67,30 @@
       font-size: 11px; text-transform: uppercase; color: #888;
       letter-spacing: 3px; font-weight: bold;
     }
+
+    /* --- INSTRUCTIONS --- */
+    .instruction-box {
+      background: #222; border-left: 4px solid var(--gold-accent);
+      padding: 15px; border-radius: 0 6px 6px 0; font-size: 14px;
+      margin-bottom: 15px; line-height: 1.5; color: #ddd;
+    }
+    .instruction-box strong { color: var(--gold-accent); font-family: 'Cinzel', serif; display: block; margin-bottom: 5px;}
+
+    /* --- SCORING --- */
+    .score-box { background: #111; border: 1px solid #444; padding: 15px; border-radius: 8px; margin-bottom: 15px;}
+    .score-inputs { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+    select { background: #333; color: white; border: 1px solid #555; padding: 10px; font-size: 18px; border-radius: 4px; outline: none; }
+    .vs-badge { font-family: 'Cinzel'; color: var(--gold-accent); font-size: 20px; }
+    .hyde-score { color: var(--wrath-red); font-size: 24px; font-weight: bold; }
+    
+    .live-calc {
+      background: rgba(255, 255, 255, 0.05); border-radius: 4px; padding: 10px;
+      text-align: center; font-family: 'Cinzel', serif; color: var(--gold-accent);
+      font-size: 14px; letter-spacing: 1px; border: 1px dashed #555;
+    }
+
+    .resolve-btn { width: 100%; background: var(--gold-accent); color: black; font-weight: bold; border: none; padding: 15px; box-shadow: 0 4px 0 #b7950b; cursor: pointer; transition: 0.1s;}
+    .resolve-btn:active { transform: translateY(4px); box-shadow: none; }
 
     /* --- SUIT TOKENS --- */
     .rank-staircase {
@@ -97,15 +116,16 @@
     .token-slot[data-color="♣️"] { background: var(--pride-purple); border-color: #d2b4de; box-shadow: 0 0 10px var(--pride-purple); }
 
     .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px; }
-    button {
+    button.suit-btn {
       background: #333; color: #fff; border: 1px solid #555; padding: 12px 5px;
       font-family: 'Cinzel', serif; cursor: pointer; border-radius: 4px; transition: 0.2s; font-size: 14px;
     }
-    button:active { background: #555; }
+    button.suit-btn:active { background: #555; }
     .btn-red { border-bottom: 3px solid var(--wrath-red); }
     .btn-green { border-bottom: 3px solid var(--greed-green); }
     .btn-purple { border-bottom: 3px solid var(--pride-purple); }
-    button.reset { grid-column: span 3; background: #27ae60; color: white; border: none; font-size: 16px; padding: 15px; }
+    button.reset { grid-column: span 3; background: #27ae60; color: white; border: none; font-size: 16px; padding: 15px; font-family: 'Cinzel', serif; cursor: pointer;}
+    button.reset:active { transform: translateY(4px); }
 
     .potion-ref {
       padding: 15px; background: rgba(0, 0, 0, 0.6);
@@ -117,29 +137,6 @@
     .ref-red { color: #ff6b6b; font-weight: bold; }
     .ref-green { color: #2ecc71; font-weight: bold; }
     .ref-purple { color: #d2b4de; font-weight: bold; }
-
-    /* --- SCORING & INSTRUCTIONS --- */
-    .instruction-box {
-      background: #222; border-left: 4px solid var(--gold-accent);
-      padding: 15px; border-radius: 0 6px 6px 0; font-size: 14px;
-      margin-bottom: 20px; line-height: 1.5; color: #ddd;
-    }
-    .instruction-box strong { color: var(--gold-accent); font-family: 'Cinzel', serif; display: block; margin-bottom: 5px;}
-
-    .score-box { background: #111; border: 1px solid #444; padding: 15px; border-radius: 8px; margin-bottom: 15px;}
-    .score-inputs { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-    select { background: #333; color: white; border: 1px solid #555; padding: 10px; font-size: 18px; border-radius: 4px; outline: none; }
-    .vs-badge { font-family: 'Cinzel'; color: var(--gold-accent); font-size: 20px; }
-    .hyde-score { color: var(--wrath-red); font-size: 24px; font-weight: bold; }
-    
-    .live-calc {
-      background: rgba(255, 255, 255, 0.05); border-radius: 4px; padding: 10px;
-      text-align: center; font-family: 'Cinzel', serif; color: var(--gold-accent);
-      font-size: 14px; letter-spacing: 1px; border: 1px dashed #555;
-    }
-
-    .resolve-btn { width: 100%; background: var(--gold-accent); color: black; font-weight: bold; border: none; padding: 15px; box-shadow: 0 4px 0 #b7950b; }
-    .resolve-btn:active { transform: translateY(4px); box-shadow: none; }
 
     /* --- MODALS --- */
     .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(3px); }
@@ -191,35 +188,15 @@
         (If you hold 2 or more ♥️ Potions, you MUST include at least one in this exchange!)
       </div>
     </div>
-  </div>
 
-  <div class="game-panel">
-    <h3>Suit Rank</h3>
-    <div class="rank-staircase">
-      <div class="token-wrapper"><span class="rank-label">Lowest</span><div class="token-slot" id="slot-0"></div></div>
-      <div class="rank-arrow">➔</div>
-      <div class="token-wrapper"><span class="rank-label">Middle</span><div class="token-slot" id="slot-1"></div></div>
-      <div class="rank-arrow">➔</div>
-      <div class="token-wrapper"><span class="rank-label" style="color: white;">Highest</span><div class="token-slot" id="slot-2"></div></div>
-    </div>
-    <div class="controls">
-      <button class="btn-red" onclick="addSuit('♦️')">WRATH<br>♦️ Red</button>
-      <button class="btn-green" onclick="addSuit('♠️')">GREED<br>♠️ Green</button>
-      <button class="btn-purple" onclick="addSuit('♣️')">PRIDE<br>♣️ Blue</button>
-      <button class="reset" onclick="resetLadder()">🧪 Green Potion: Reset Ranks</button>
-    </div>
-    <div class="potion-ref">
-      <div class="potion-title">🧪 Potion Abilities (♥️ Hearts)</div>
-      <ul>
-        <li><span class="ref-red">♦️ WRATH:</span> Remove tokens & reset Suit Ranks.</li>
-        <li><span class="ref-green">♠️ GREED:</span> Both players exchange 2 cards (or 1 if last trick).</li>
-        <li><span class="ref-purple">♣️ PRIDE:</span> Trick winner steals 1 won trick (2 cards) from opponent.</li>
-      </ul>
+    <div class="instruction-box" style="border-left-color: var(--jekyll-blue);">
+      <strong style="color: var(--jekyll-blue);">Phase 2: Trick-Taking</strong>
+      <span style="font-size: 13px;">At the beginning of each round, after the preparation phase, the identity marker determines who is the starting player. If the marker is on Dr. Jekyll's side, Jekyll starts the round. If the marker in on Mr. Hyde side, Mr. Hyde starts the round. <b>Dr. Jekyll always starts the 1st round.</b></span>
     </div>
   </div>
 
   <div class="game-panel">
-    <h3>Progression of Evil</h3>
+    <h3>Phase 3: Progression of Evil</h3>
     <div class="score-box">
       <div class="score-inputs">
         <div style="text-align:center;">
@@ -243,6 +220,31 @@
       </div>
     </div>
     <button class="resolve-btn" onclick="endRound()">RESOLVE ROUND</button>
+  </div>
+
+  <div class="game-panel">
+    <h3>Suit Rank Tracker</h3>
+    <div class="rank-staircase">
+      <div class="token-wrapper"><span class="rank-label">Lowest</span><div class="token-slot" id="slot-0"></div></div>
+      <div class="rank-arrow">➔</div>
+      <div class="token-wrapper"><span class="rank-label">Middle</span><div class="token-slot" id="slot-1"></div></div>
+      <div class="rank-arrow">➔</div>
+      <div class="token-wrapper"><span class="rank-label" style="color: white;">Highest</span><div class="token-slot" id="slot-2"></div></div>
+    </div>
+    <div class="controls">
+      <button class="suit-btn btn-red" onclick="addSuit('♦️')">WRATH<br>♦️ Red</button>
+      <button class="suit-btn btn-green" onclick="addSuit('♠️')">GREED<br>♠️ Green</button>
+      <button class="suit-btn btn-purple" onclick="addSuit('♣️')">PRIDE<br>♣️ Blue</button>
+      <button class="reset" onclick="resetLadder()">🧪 Green Potion: Reset Ranks</button>
+    </div>
+    <div class="potion-ref">
+      <div class="potion-title">🧪 Potion Abilities (♥️ Hearts)</div>
+      <ul>
+        <li><span class="ref-red">♦️ WRATH:</span> Remove tokens & reset Suit Ranks.</li>
+        <li><span class="ref-green">♠️ GREED:</span> Both players exchange 2 cards (or 1 if last trick).</li>
+        <li><span class="ref-purple">♣️ PRIDE:</span> Trick winner steals 1 won trick (2 cards) from opponent.</li>
+      </ul>
+    </div>
   </div>
 
   <script>
@@ -297,27 +299,22 @@
       });
     }
 
-    // DYNAMIC UI UPDATER
     function updateDynamicScoreDisplay() {
       const scoreEl = document.getElementById('dynamic-score');
       const labelEl = document.getElementById('dynamic-label');
       
       scoreEl.innerText = currentPos;
 
-      // Calculate size (24px to 80px)
       const minSize = 24; const maxSize = 80;
       const ratio = currentPos / 10;
       const newSize = minSize + ((maxSize - minSize) * ratio);
       scoreEl.style.fontSize = `${newSize}px`;
 
-      // Calculate color shift (Jekyll Blue #2980b9 -> Hyde Red #c0392b)
-      // Blue: R=41, G=128, B=185 | Red: R=192, G=57, B=43
       const r = Math.round(41 + (192 - 41) * ratio);
       const g = Math.round(128 + (57 - 128) * ratio);
       const b = Math.round(185 + (43 - 185) * ratio);
       scoreEl.style.color = `rgb(${r}, ${g}, ${b})`;
 
-      // Update Label
       if (currentPos === 0) labelEl.innerText = "Pure Order";
       else if (currentPos < 4) labelEl.innerText = "Slipping...";
       else if (currentPos < 7) labelEl.innerText = "Fractured Identity";
@@ -332,7 +329,6 @@
       
       document.getElementById('hyde-score').innerText = hVal;
       
-      // Live Math Feedback
       const diffText = diff === 1 ? "1 move" : `${diff} moves`;
       document.getElementById('live-diff-display').innerText = `Difference: ${diffText} toward Hyde`;
     }
@@ -366,7 +362,6 @@
       }
     }
 
-    // Init
     updateDynamicScoreDisplay();
     updateScore();
   </script>
