@@ -68,13 +68,23 @@
       letter-spacing: 3px; font-weight: bold;
     }
 
-    /* --- INSTRUCTIONS --- */
+    /* --- INSTRUCTIONS & STARTING PLAYER --- */
     .instruction-box {
       background: #222; border-left: 4px solid var(--gold-accent);
       padding: 15px; border-radius: 0 6px 6px 0; font-size: 14px;
-      margin-bottom: 15px; line-height: 1.5; color: #ddd;
+      margin-bottom: 15px; line-height: 1.5; color: #ddd; transition: all 0.4s ease;
     }
-    .instruction-box strong { color: var(--gold-accent); font-family: 'Cinzel', serif; display: block; margin-bottom: 5px;}
+    .instruction-box strong { color: var(--gold-accent); font-family: 'Cinzel', serif; display: block; margin-bottom: 5px; transition: all 0.4s ease;}
+    
+    .quote-text {
+      font-size: 11px; color: #888; font-style: italic; border-bottom: 1px dashed #444;
+      padding-bottom: 10px; margin-bottom: 10px; line-height: 1.4;
+    }
+
+    .starter-highlight {
+      background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px;
+      text-align: center; border: 1px solid #333;
+    }
 
     /* --- SCORING --- */
     .score-box { background: #111; border: 1px solid #444; padding: 15px; border-radius: 8px; margin-bottom: 15px;}
@@ -89,7 +99,7 @@
       font-size: 14px; letter-spacing: 1px; border: 1px dashed #555;
     }
 
-    .resolve-btn { width: 100%; background: var(--gold-accent); color: black; font-weight: bold; border: none; padding: 15px; box-shadow: 0 4px 0 #b7950b; cursor: pointer; transition: 0.1s;}
+    .resolve-btn { width: 100%; background: var(--gold-accent); color: black; font-weight: bold; border: none; padding: 15px; box-shadow: 0 4px 0 #b7950b; }
     .resolve-btn:active { transform: translateY(4px); box-shadow: none; }
 
     /* --- SUIT TOKENS --- */
@@ -116,16 +126,15 @@
     .token-slot[data-color="♣️"] { background: var(--pride-purple); border-color: #d2b4de; box-shadow: 0 0 10px var(--pride-purple); }
 
     .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px; }
-    button.suit-btn {
+    button {
       background: #333; color: #fff; border: 1px solid #555; padding: 12px 5px;
       font-family: 'Cinzel', serif; cursor: pointer; border-radius: 4px; transition: 0.2s; font-size: 14px;
     }
-    button.suit-btn:active { background: #555; }
+    button:active { background: #555; }
     .btn-red { border-bottom: 3px solid var(--wrath-red); }
     .btn-green { border-bottom: 3px solid var(--greed-green); }
     .btn-purple { border-bottom: 3px solid var(--pride-purple); }
-    button.reset { grid-column: span 3; background: #27ae60; color: white; border: none; font-size: 16px; padding: 15px; font-family: 'Cinzel', serif; cursor: pointer;}
-    button.reset:active { transform: translateY(4px); }
+    button.reset { grid-column: span 3; background: #27ae60; color: white; border: none; font-size: 16px; padding: 15px; }
 
     .potion-ref {
       padding: 15px; background: rgba(0, 0, 0, 0.6);
@@ -189,9 +198,15 @@
       </div>
     </div>
 
-    <div class="instruction-box" style="border-left-color: var(--jekyll-blue);">
-      <strong style="color: var(--jekyll-blue);">Phase 2: Trick-Taking</strong>
-      <span style="font-size: 13px;">At the beginning of each round, after the preparation phase, the identity marker determines who is the starting player. If the marker is on Dr. Jekyll's side, Jekyll starts the round. If the marker in on Mr. Hyde side, Mr. Hyde starts the round. <b>Dr. Jekyll always starts the 1st round.</b></span>
+    <div id="starting-player-box" class="instruction-box" style="border-left-color: var(--jekyll-blue);">
+      <strong id="starting-player-title" style="color: var(--jekyll-blue);">Phase 2: Trick-Taking</strong>
+      <div class="quote-text">
+        "At the beginning of each round, after the preparation phase, the identity marker determines who is the starting player. If the marker is on Dr. Jekyll's side, Jekyll starts the round. If the marker in on Mr. Hyde side, Mr. Hyde starts the round. Dr. Jekyll always starts the 1st round."
+      </div>
+      <div class="starter-highlight">
+        <span style="font-size: 12px; text-transform: uppercase; color: #aaa; letter-spacing: 1px;">Starting Player</span><br>
+        <b id="starting-player-name" style="font-size: 22px; color: var(--jekyll-blue); font-family: 'Cinzel', serif;">Dr. Jekyll</b>
+      </div>
     </div>
   </div>
 
@@ -223,7 +238,7 @@
   </div>
 
   <div class="game-panel">
-    <h3>Suit Rank Tracker</h3>
+    <h3>Suit Rank</h3>
     <div class="rank-staircase">
       <div class="token-wrapper"><span class="rank-label">Lowest</span><div class="token-slot" id="slot-0"></div></div>
       <div class="rank-arrow">➔</div>
@@ -232,9 +247,9 @@
       <div class="token-wrapper"><span class="rank-label" style="color: white;">Highest</span><div class="token-slot" id="slot-2"></div></div>
     </div>
     <div class="controls">
-      <button class="suit-btn btn-red" onclick="addSuit('♦️')">WRATH<br>♦️ Red</button>
-      <button class="suit-btn btn-green" onclick="addSuit('♠️')">GREED<br>♠️ Green</button>
-      <button class="suit-btn btn-purple" onclick="addSuit('♣️')">PRIDE<br>♣️ Blue</button>
+      <button class="btn-red" onclick="addSuit('♦️')">WRATH<br>♦️ Red</button>
+      <button class="btn-green" onclick="addSuit('♠️')">GREED<br>♠️ Green</button>
+      <button class="btn-purple" onclick="addSuit('♣️')">PRIDE<br>♣️ Blue</button>
       <button class="reset" onclick="resetLadder()">🧪 Green Potion: Reset Ranks</button>
     </div>
     <div class="potion-ref">
@@ -322,6 +337,33 @@
       else labelEl.innerText = "Total Corruption";
     }
 
+    function updateStartingPlayer() {
+      const nameEl = document.getElementById('starting-player-name');
+      const boxEl = document.getElementById('starting-player-box');
+      const titleEl = document.getElementById('starting-player-title');
+      
+      let starter = "";
+      let color = "";
+      
+      if (round === 1) {
+        starter = "Dr. Jekyll (Round 1)";
+        color = "var(--jekyll-blue)";
+      } else {
+        if (currentPos < 5) {
+          starter = "Dr. Jekyll";
+          color = "var(--jekyll-blue)";
+        } else {
+          starter = "Mr. Hyde";
+          color = "var(--wrath-red)";
+        }
+      }
+      
+      nameEl.innerText = starter;
+      nameEl.style.color = color;
+      boxEl.style.borderLeftColor = color;
+      titleEl.style.color = color;
+    }
+
     function updateScore() {
       const jVal = parseInt(document.getElementById('jekyll-select').value);
       const hVal = 10 - jVal;
@@ -353,8 +395,11 @@
         document.getElementById('instruction-text').innerHTML = `Both players select <b>${exAmount}</b> from their hand and exchange them face down simultaneously.`;
         
         document.getElementById('jekyll-select').value = "5";
+        
+        updateStartingPlayer();
         updateScore();
         resetLadder();
+        
       } else if (round === 3 && currentPos < 10) {
         showThematicMessage("JEKYLL SURVIVES", "Dr. Jekyll has successfully protected his mind and kept the secret of his dual nature safe.", "jekyll");
       } else if (currentPos === 10) {
@@ -362,7 +407,9 @@
       }
     }
 
+    // Init
     updateDynamicScoreDisplay();
+    updateStartingPlayer();
     updateScore();
   </script>
 </body>
