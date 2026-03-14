@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score Tracker Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans p-4 md:p-8 max-w-3xl mx-auto">
+
+    <div class="flex justify-between items-center mb-6">
+        <a href="#" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Home
+        </a>
+        <h1 class="text-3xl font-bold text-center flex-1">Score Tracker</h1>
+        <div class="w-16"></div> </div>
+
+    <div id="action-bar" class="hidden flex justify-between items-center bg-white p-3 rounded-lg shadow-sm mb-6">
+        <div class="flex space-x-2">
+            <button id="btn-undo" onclick="undo()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors">
+                Undo
+            </button>
+            <button id="btn-redo" onclick="redo()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors">
+                Redo
+            </button>
+        </div>
+        <div class="flex space-x-2">
+            <button onclick="toggleView('setup')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 font-medium transition-colors shadow-sm">
+                ⚙️ Setup
+            </button>
+            <button onclick="triggerReset()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 font-medium transition-colors shadow-sm">
+                Reset Game
+            </button>
+        </div>
+    </div>
+
+    <div id="view-setup" class="bg-white p-8 rounded-lg shadow-sm mb-6 max-w-xl mx-auto mt-10">
+        <h2 class="text-2xl font-bold text-center mb-6 text-gray-700">Game Setup</h2>
+        
+        <div class="mb-6">
+            <label class="block text-sm font-bold text-gray-700 mb-2">Winning Score</label>
+            <input type="number" id="max-points" placeholder="Set Max Points to Win" min="1" onchange="updateMaxPoints(this.value)" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-bold text-gray-700 mb-2">Add Players</label>
+            <div class="flex gap-2 mb-2">
+                <input type="text" id="player-name" placeholder="Enter player name" class="flex-1 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                <button onclick="addPlayer()" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 font-bold transition-colors shadow-sm">Add</button>
+            </div>
+            <p id="player-count" class="text-sm text-gray-500">Players: 0/10</p>
+        </div>
+
+        <div id="setup-player-list" class="flex flex-wrap gap-2 mb-8 min-h-[40px]">
+            </div>
+
+        <button id="btn-start-game" onclick="toggleView('game')" class="w-full py-4 bg-green-500 text-white rounded-lg hover:bg-green-600 font-bold text-xl transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+            Start Game
+        </button>
+    </div>
+
+    <div id="view-game" class="hidden">
+        <div class="bg-white p-5 rounded-lg shadow-sm mb-6">
+            <h2 class="text-xl font-bold text-center mb-4 text-gray-700 border-b pb-2">Round <span id="round-display">1</span> Scoring</h2>
+            
+            <div id="player-list" class="space-y-3 mb-6">
+                </div>
+
+            <button onclick="saveRound()" class="w-full py-3 bg-green-500 text-white rounded hover:bg-green-600 font-bold text-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" id="btn-save-round">
+                Save Round & Update Totals
+            </button>
+        </div>
+
+        <div class="bg-white p-5 rounded-lg shadow-sm">
+            <h2 class="text-xl font-bold mb-4 text-gray-700">Score History</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-center border-collapse whitespace-nowrap" id="history-table">
+                    </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let state = {
+            players: [], 
+            currentRound: 1,
+            gameActive: true,
+            maxPoints: '',
+            historyLogs: [],
+            currentView: 'setup' // Tracks which view we are in
+        };
+
+        let historyStack = [];
+        let redoStack = [];
+
+        window.onload = () => {
+            const savedData = localStorage.getItem('scoreTrackerPro');
+            if (savedData) {
+                const parsed = JSON.parse(savedData);
+                state = parsed.state;
+                historyStack = parsed.historyStack || [];
+                redoStack = parsed.redoStack || [];
+            }
+            document.getElementById('max-points').value = state.maxPoints;
+            updateUI();
+        };
+
+        function commitAction(actionFn) {
+            historyStack.push(JSON.stringify(state));
+            if (historyStack.length > 50) historyStack.shift(); 
+            redoStack = []; 
+            actionFn(); 
+            persistData();
+            updateUI();
+        }
+
+        function persistData() {
+            localStorage.setItem('scoreTrackerPro', JSON.stringify({ state, historyStack, redoStack }));
+        }
+
+        function toggleView(viewName) {
+            if (viewName === 'game' && state.players.length === 0) {
+                return alert("You must add at least one player to start the game.");
+            }
+            commitAction(() => {
+                state.currentView = viewName;
+            });
+        }
+
+        function updateMaxPoints(val) {
+            commitAction(() => { state.maxPoints = val; });
+        }
+
+        function addPlayer() {
+            const nameInput = document.getElementById('player-name');
+            const name = nameInput.value.trim();
+            
+            if (!name) return alert("Please enter a name.");
+            if (state.players.length >= 10) return alert("Maximum of 10 players allowed.");
+            if (state.players.some(p => p.name.toLowerCase() === name.toLowerCase())) return alert("Player already exists.");
+
+            commitAction(() => {
+                state.players.push({ name: name, roundScore: 0, totalScore: 0 });
+            });
+            nameInput.value = '';
+            nameInput.focus(); // Keep focus for rapid entry
+        }
+
+        function removePlayer(index) {
+            if (state.currentRound > 1) {
+                return alert("Cannot remove players after the game has started.");
+            }
+            commitAction(() => {
+                state.players.splice(index, 1);
+            });
+        }
+
+        function changeScore(index, delta) {
+            if (!state.gameActive) return;
+            commitAction(() => {
+                state.players[index].roundScore += delta;
+            });
+        }
+
+        function saveRound() {
+            if (state.players.length === 0) return alert("Add players first.");
+            
+            commitAction(() => {
+                let roundSnapshot = { roundNum: state.currentRound, scores: {} };
+                state.players.forEach(p => {
+                    roundSnapshot.scores[p.name] = p.roundScore;
+                });
+                state.historyLogs.push(roundSnapshot);
+
+                state.players.forEach(p => {
+                    p.totalScore += p.roundScore;
+                    p.roundScore = 0; 
+                });
+                state.currentRound++;
+            });
+
+            checkWinCondition();
+        }
+
+        function checkWinCondition() {
+            if (!state.maxPoints || !state.gameActive) return; 
+            const max = parseInt(state.maxPoints);
+            const eligibleWinners = state.players.filter(p => p.totalScore >= max);
+
+            if (eligibleWinners.length > 0) {
+                const highestScore = Math.max(...eligibleWinners.map(p => p.totalScore));
+                const actualWinners = eligibleWinners.filter(p => p.totalScore === highestScore);
+
+                setTimeout(() => {
+                    if (actualWinners.length === 1) {
+                        alert(`🏆 ${actualWinners[0].name} wins the game with ${highestScore} points!`);
+                    } else {
+                        const names = actualWinners.map(p => p.name).join(' and ');
+                        alert(`🤝 It's a tie! ${names} both finished with ${highestScore} points!`);
+                    }
+                    commitAction(() => { state.gameActive = false; });
+                }, 50);
+            }
+        }
+
+        function triggerReset() {
+            if (!confirm("Are you sure you want to completely reset the game? This cannot be undone.")) return;
+            state = { players: [], currentRound: 1, gameActive: true, maxPoints: '', historyLogs: [], currentView: 'setup' };
+            historyStack = [];
+            redoStack = [];
+            document.getElementById('max-points').value = '';
+            document.getElementById('player-name').value = '';
+            persistData();
+            updateUI();
+        }
+
+        function undo() {
+            if (historyStack.length === 0) return;
+            redoStack.push(JSON.stringify(state));
+            state = JSON.parse(historyStack.pop());
+            document.getElementById('max-points').value = state.maxPoints;
+            persistData();
+            updateUI();
+        }
+
+        function redo() {
+            if (redoStack.length === 0) return;
+            historyStack.push(JSON.stringify(state));
+            state = JSON.parse(redoStack.pop());
+            document.getElementById('max-points').value = state.maxPoints;
+            persistData();
+            updateUI();
+        }
+
+        function updateUI() {
+            // View Management
+            const viewSetup = document.getElementById('view-setup');
+            const viewGame = document.getElementById('view-game');
+            const actionBar = document.getElementById('action-bar');
+
+            if (state.currentView === 'setup') {
+                viewSetup.classList.remove('hidden');
+                viewGame.classList.add('hidden');
+                actionBar.classList.add('hidden');
+            } else {
+                viewSetup.classList.add('hidden');
+                viewGame.classList.remove('hidden');
+                actionBar.classList.remove('hidden');
+            }
+
+            // Setup UI
+            document.getElementById('player-count').innerText = `Players: ${state.players.length}/10`;
+            document.getElementById('btn-start-game').disabled = state.players.length === 0;
+            
+            const setupList = document.getElementById('setup-player-list');
+            setupList.innerHTML = state.players.map((p, i) => `
+                <span class="inline-flex items-center bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
+                    ${p.name}
+                    ${state.currentRound === 1 ? `<button onclick="removePlayer(${i})" class="ml-2 text-blue-500 hover:text-red-500">&times;</button>` : ''}
+                </span>
+            `).join('');
+
+            // Game UI
+            document.getElementById('round-display').innerText = state.currentRound;
+            
+            const list = document.getElementById('player-list');
+            list.innerHTML = '';
+            state.players.forEach((player, index) => {
+                list.innerHTML += `
+                    <div class="flex flex-col sm:flex-row justify-between items-center p-3 bg-gray-50 rounded border border-gray-100 shadow-sm gap-2">
+                        <div class="flex flex-col flex-1 w-full text-center sm:text-left">
+                            <span class="font-bold text-lg truncate">${player.name}</span>
+                            <span class="text-sm text-gray-500 font-medium">Total: ${player.totalScore}</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <button onclick="changeScore(${index}, -1)" class="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-full hover:bg-red-200 font-bold text-xl transition-colors shrink-0 ${!state.gameActive ? 'opacity-50 cursor-not-allowed' : ''}" ${!state.gameActive ? 'disabled' : ''}>-</button>
+                            <div class="text-2xl font-bold w-12 text-center text-blue-600 bg-blue-50 py-1 rounded-md" title="Current Round Score">${player.roundScore}</div>
+                            <button onclick="changeScore(${index}, 1)" class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 font-bold text-xl transition-colors shrink-0 ${!state.gameActive ? 'opacity-50 cursor-not-allowed' : ''}" ${!state.gameActive ? 'disabled' : ''}>+</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // History Table UI
+            const table = document.getElementById('history-table');
+            if (state.players.length > 0) {
+                let tableHTML = `
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-700">
+                            <th class="p-2 border border-gray-300 text-left">Round</th>
+                            ${state.players.map(p => `<th class="p-2 border border-gray-300">${p.name}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+                
+                if (state.historyLogs.length === 0) {
+                    tableHTML += `<tr><td colspan="${state.players.length + 1}" class="p-4 text-gray-500 italic border border-gray-200">No rounds saved yet.</td></tr>`;
+                } else {
+                    state.historyLogs.forEach(log => {
+                        tableHTML += `<tr><td class="p-2 border border-gray-200 font-bold bg-gray-50">${log.roundNum}</td>`;
+                        state.players.forEach(p => {
+                            let score = log.scores[p.name];
+                            tableHTML += `<td class="p-2 border border-gray-200">${score !== undefined ? score : '-'}</td>`;
+                        });
+                        tableHTML += `</tr>`;
+                    });
+                }
+
+                tableHTML += `
+                    </tbody>
+                    <tfoot>
+                        <tr class="bg-blue-50 font-bold text-blue-900 border-t-2 border-blue-200">
+                            <td class="p-2 border border-gray-300 text-left">TOTAL</td>
+                            ${state.players.map(p => `<td class="p-2 border border-gray-300">${p.totalScore}</td>`).join('')}
+                        </tr>
+                    </tfoot>
+                `;
+                table.innerHTML = tableHTML;
+            }
+
+            // Buttons
+            document.getElementById('btn-undo').disabled = historyStack.length === 0;
+            document.getElementById('btn-redo').disabled = redoStack.length === 0;
+            document.getElementById('btn-save-round').disabled = !state.gameActive;
+        }
+    </script>
+</body>
+</html>
