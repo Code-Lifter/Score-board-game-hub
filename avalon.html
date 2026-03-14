@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Avalon — First Night Script</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Lora', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            display: ['Cinzel', 'ui-serif', 'Georgia', 'serif'],
+          },
+          colors: {
+            avalon: {
+              boxYellow: '#f5b041',
+              boxOrange: '#dc7633',
+              boxBlue: '#2c3e50',
+              cardBg: '#1a252f',
+              accent: '#f1c40f',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer utilities {
+      input[type="checkbox"] {
+        @apply w-6 h-6 accent-avalon-accent bg-avalon-cardBg border-slate-600 rounded cursor-pointer transition-all duration-200;
+      }
+    }
+    
+    body {
+      background: linear-gradient(170deg, #f1c40f 0%, #d35400 35%, #2c3e50 70%, #1a252f 100%);
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body class="text-slate-200 font-sans min-h-screen p-4 sm:p-8">
+
+  <main class="max-w-3xl mx-auto" role="main">
+    
+    <a href="/" class="inline-flex items-center text-slate-900 hover:text-white font-bold mb-6 transition-colors drop-shadow-md">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+      </svg>
+      Return Home
+    </a>
+
+    <header class="text-center mb-8">
+      <h1 class="text-6xl sm:text-7xl font-display text-white font-black tracking-wider mb-2 drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">Avalon</h1>
+      <p class="text-slate-900 font-bold text-lg sm:text-xl drop-shadow-sm border-t border-b border-slate-900/20 inline-block px-4 py-1">Moderator Tool &bull; First Night Script</p>
+    </header>
+
+    <section class="bg-avalon-cardBg/95 backdrop-blur-sm border-2 border-[#34495e] rounded-xl p-6 sm:p-8 shadow-2xl mb-8" aria-labelledby="rolesHeading">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-[#34495e] pb-2 gap-4">
+        <h2 id="rolesHeading" class="text-2xl font-display text-avalon-accent m-0">Roles in play</h2>
+        <div id="setupAnalyzer" class="text-sm font-bold px-4 py-2 rounded bg-slate-800 border border-slate-600 shadow-inner flex flex-col items-end">
+          <span id="playerCountReq" class="text-slate-300">Minimum Players: 5</span>
+          <span id="balanceStatus" class="text-avalon-accent">Status: Standard</span>
+        </div>
+      </div>
+
+      <form id="roleForm" class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <fieldset class="border border-slate-600 rounded-lg p-5 bg-slate-800/40 shadow-inner">
+          <legend class="text-avalon-accent font-display font-bold px-3 text-xl tracking-wide drop-shadow-md">Forces of Good</legend>
+          <div class="flex flex-col gap-4 mt-2">
+            <label class="flex items-center gap-3 cursor-pointer group text-lg">
+              <input type="checkbox" name="role" value="Merlin" data-team="good" class="peer"> 
+              <span class="group-hover:text-white transition-colors">Merlin</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer group text-lg">
+              <input type="checkbox" name="role" value="Percival" data-team="good"> 
+              <span class="group-hover:text-white transition-colors">Percival</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="border border-slate-600 rounded-lg p-5 bg-slate-800/40 shadow-inner">
+          <legend class="text-red-500 font-display font-bold px-3 text-xl tracking-wide drop-shadow-md">Minions of Mordred</legend>
+          <div class="flex flex-col gap-4 mt-2">
+            <label class="flex items-center gap-3 cursor-pointer group text-lg">
+              <input type="checkbox" name="role" value="Assassin" data-team="evil" class="peer"> 
+              <span class="group-hover:text-white transition-colors">Assassin</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer group text-lg">
+              <input type="checkbox" name="role" value="Morgana" data-team="evil"> 
+              <span class="group-hover:text-white transition-colors">Morgana</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer group text-lg">
+              <input type="checkbox" name="role" value="Mordred" data-team="evil"> 
+              <span class="group-hover:text-white transition-colors">Mordred</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer group text-lg">
+              <input type="checkbox" name="role" value="Oberon" data-team="evil"> 
+              <span class="group-hover:text-white transition-colors">Oberon</span>
+            </label>
+          </div>
+        </fieldset>
+      </form>
+
+      <div class="flex flex-wrap gap-4 mt-8">
+        <button id="generateFirstNightBtn" type="button" class="flex-1 sm:flex-none bg-avalon-accent hover:bg-yellow-300 text-slate-900 font-display font-bold text-lg py-3 px-8 rounded-lg shadow-[0_4px_14px_rgba(241,196,15,0.4)] transition-all active:scale-95 border border-yellow-200">
+          Generate Script
+        </button>
+        <button id="resetBtn" type="button" class="flex-1 sm:flex-none bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-lg transition-colors border border-slate-500 shadow-md">
+          Reset Roles
+        </button>
+      </div>
+    </section>
+
+    <section id="firstNightSection" class="bg-avalon-cardBg border-2 border-avalon-accent rounded-xl p-6 sm:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hidden mb-12 scroll-mt-6" aria-labelledby="firstNightHeading">
+      <h2 id="firstNightHeading" class="text-3xl font-display text-avalon-accent mb-8 border-b border-slate-600 pb-4 text-center">The First Night</h2>
+      <ol id="firstNightList" class="list-decimal pl-6 sm:pl-10 space-y-6 text-xl sm:text-2xl leading-relaxed text-slate-300 marker:text-avalon-accent marker:font-bold" aria-live="polite" aria-label="First Night Steps"></ol>
+    </section>
+
+  </main>
+
+  <script id="rolesData" type="application/json">
+  {
+    "scriptPieces": {
+      "baseFirstNight": [
+        "Everyone, close your eyes and extend your fist in front of you."
+      ],
+      "evilWakeNoOberon": [
+        "Minions of Mordred, open your eyes and look at each other so you know who is on your team."
+      ],
+      "evilWakeWithOberon": [
+        "Minions of Mordred, except for Oberon — open your eyes and look at each other so you know who is on your team."
+      ],
+      "evilClose": [
+        "Minions of Mordred, close your eyes."
+      ],
+      "merlinSeesEvil": [
+        "Merlin, open your eyes.",
+        "Minions of Mordred, put your thumbs up so Merlin can see you.",
+        "Merlin, close your eyes.",
+        "Minions of Mordred, put your thumbs down."
+      ],
+      "merlinSeesEvilWithMordred": [
+        "Merlin, open your eyes.",
+        "Minions of Mordred, except for Mordred himself — put your thumbs up so Merlin can see you.",
+        "Merlin, close your eyes.",
+        "Minions of Mordred, put your thumbs down."
+      ],
+      "percivalBlock": [
+        "Percival, open your eyes.",
+        "Merlin and Morgana, put your thumbs up so Percival can see you.",
+        "Percival, close your eyes.",
+        "Merlin and Morgana, put your thumbs down."
+      ],
+      "percivalOnlyMerlin": [
+        "Percival, open your eyes.",
+        "Merlin, put your thumbs up so Percival can see you.",
+        "Percival, close your eyes.",
+        "Merlin, put your thumbs down."
+      ]
+    }
+  }
+  </script>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const qs  = (sel) => document.querySelector(sel);
+      const qsa = (sel) => Array.from(document.querySelectorAll(sel));
+      const STORAGE_KEY = "avalonSelectedRoles";
+
+      function getRolesConfig() {
+        const el = document.getElementById("rolesData");
+        if (!el) return null;
+        try { return JSON.parse(el.textContent); }
+        catch (e) { console.error("roles JSON parse failed", e); return null; }
+      }
+
+      function collectSelectedRoles() {
+        return new Set(qsa('input[name="role"]:checked').map(cb => cb.value));
+      }
+
+      // --- Setup Analyzer Logic ---
+      function updateAnalyzer() {
+        const selected = collectSelectedRoles();
+        let evilCount = 0;
+        let goodCount = 0;
+
+        qsa('input[name="role"]:checked').forEach(cb => {
+          if (cb.dataset.team === 'evil') evilCount++;
+          if (cb.dataset.team === 'good') goodCount++;
+        });
+
+        let minPlayers = 5;
+        if (evilCount === 3) minPlayers = 7;
+        if (evilCount > 3) minPlayers = 10;
+        
+        if (minPlayers === 5 && goodCount > 3) minPlayers = 6;
+        if (minPlayers === 7 && goodCount > 4) minPlayers = 8;
+
+        const countUI = qs("#playerCountReq");
+        const statusUI = qs("#balanceStatus");
+
+        if (evilCount > 4) {
+          countUI.textContent = "Error: Too many Evil roles";
+          statusUI.textContent = "Status: Invalid Setup";
+          statusUI.className = "text-red-500 font-bold";
+          return;
+        }
+
+        countUI.textContent = `Min Players: ${minPlayers}`;
+
+        if (selected.has("Oberon")) {
+          statusUI.textContent = "Status: High Chaos 🌪️";
+          statusUI.className = "text-purple-400 font-bold";
+        } else if (selected.has("Percival") && selected.has("Morgana") && selected.has("Mordred")) {
+          statusUI.textContent = "Status: Advanced Meta ⚔️";
+          statusUI.className = "text-orange-400 font-bold";
+        } else if (selected.has("Percival") && !selected.has("Morgana")) {
+          statusUI.textContent = "Status: Heavily Favors Good 🛡️";
+          statusUI.className = "text-blue-400 font-bold";
+        } else if (selected.has("Mordred") && !selected.has("Percival")) {
+          statusUI.textContent = "Status: Heavily Favors Evil 😈";
+          statusUI.className = "text-red-400 font-bold";
+        } else if (selected.has("Percival") && selected.has("Morgana")) {
+          statusUI.textContent = "Status: Balanced (Standard Expansion)";
+          statusUI.className = "text-green-400 font-bold";
+        } else {
+          statusUI.textContent = "Status: Vanilla Balance";
+          statusUI.className = "text-avalon-accent font-bold";
+        }
+      }
+
+      function saveRolesToStorage() {
+        const selected = Array.from(collectSelectedRoles());
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(selected));
+      }
+
+      function loadRolesFromStorage() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          try {
+            const selectedArr = JSON.parse(saved);
+            qsa('input[name="role"]').forEach(cb => {
+              cb.checked = selectedArr.includes(cb.value);
+            });
+          } catch (e) {
+            console.error("Failed to parse local storage", e);
+          }
+        } else {
+          const defaults = ["Merlin", "Assassin"];
+          qsa('input[name="role"]').forEach(cb => {
+            cb.checked = defaults.includes(cb.value);
+          });
+        }
+        updateAnalyzer();
+      }
+
+      // --- Text Parser Logic ---
+      function formatScriptLine(line) {
+        const goodRegex = /\b(Merlin|Percival)\b/g;
+        const evilRegex = /\b(Minions of Mordred|Mordred|Morgana|Oberon|Assassin)\b/g;
+        
+        let formatted = line;
+        
+        // Wrap good characters in Blue Pills
+        formatted = formatted.replace(goodRegex, '<span class="text-blue-400 bg-slate-700 px-3 py-1 rounded-full font-bold whitespace-nowrap drop-shadow-sm">$1</span>');
+        
+        // Wrap evil characters in Red Pills
+        formatted = formatted.replace(evilRegex, '<span class="text-red-400 bg-slate-700 px-3 py-1 rounded-full font-bold whitespace-nowrap drop-shadow-sm">$1</span>');
+        
+        return formatted;
+      }
+
+      function renderList(targetOl, lines) {
+        targetOl.innerHTML = "";
+        lines.forEach(line => {
+          const li = document.createElement("li");
+          li.innerHTML = formatScriptLine(line); // Replaced textContent with innerHTML to render our new spans
+          targetOl.appendChild(li);
+        });
+      }
+
+      function buildFirstNight(selected, cfg) {
+        const out = [];
+        out.push(...cfg.scriptPieces.baseFirstNight);
+        
+        if (selected.has("Oberon")) {
+          out.push(...cfg.scriptPieces.evilWakeWithOberon);
+        } else {
+          out.push(...cfg.scriptPieces.evilWakeNoOberon);
+        }
+        out.push(...cfg.scriptPieces.evilClose);
+
+        if (selected.has("Merlin")) {
+          if (selected.has("Mordred")) {
+            out.push(...cfg.scriptPieces.merlinSeesEvilWithMordred);
+          } else {
+            out.push(...cfg.scriptPieces.merlinSeesEvil);
+          }
+        }
+
+        if (selected.has("Percival")) {
+          if (selected.has("Morgana")) {
+            out.push(...cfg.scriptPieces.percivalBlock);
+          } else {
+            out.push(...cfg.scriptPieces.percivalOnlyMerlin);
+          }
+        }
+        return out;
+      }
+
+      function init() {
+        const cfg = getRolesConfig();
+        if (!cfg) return;
+
+        const generateBtn  = qs("#generateFirstNightBtn");
+        const resetBtn     = qs("#resetBtn");
+        const firstNightSec = qs("#firstNightSection");
+        const firstNightOl = qs("#firstNightList");
+
+        loadRolesFromStorage();
+
+        qsa('input[name="role"]').forEach(cb => {
+          cb.addEventListener('change', () => {
+            saveRolesToStorage();
+            updateAnalyzer();
+          });
+        });
+
+        generateBtn.addEventListener("click", () => {
+          const selected = collectSelectedRoles();
+          const lines = buildFirstNight(selected, cfg);
+          renderList(firstNightOl, lines);
+          
+          firstNightSec.classList.remove("hidden");
+          firstNightSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        resetBtn.addEventListener("click", () => {
+          qs("#roleForm").reset();
+          qsa('input[name="role"]').forEach(cb => cb.checked = false);
+          localStorage.removeItem(STORAGE_KEY);
+          firstNightOl.innerHTML = "";
+          updateAnalyzer();
+          
+          firstNightSec.classList.add("hidden");
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+</body>
+</html>
