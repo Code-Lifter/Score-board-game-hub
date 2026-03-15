@@ -1,0 +1,1235 @@
+{
+
+"Auction Houses": [
+
+{ "name": "Armitage's Gallery", "location": "21 NW" },
+
+{ "name": "Bonham's", "location": "12 NW" },
+
+{ "name": "Christie's", "location": "87 SW" },
+
+{ "name": "Gartling's Art Salon", "location": "75 WC" },
+
+{ "name": "Sotheby's", "location": "78 NW" }
+
+],
+
+"Banks": [
+
+{ "name": "Bank of England", "location": "23 EC" },
+
+{ "name": "Capital & Counties", "location": "75 NW" },
+
+{ "name": "City & Suburban", "location": "72 EC" },
+
+{ "name": "Continental", "location": "68 WC" },
+
+{ "name": "Cox & Co", "location": "22 WC" },
+
+{ "name": "Crédit Lyonnais", "location": "60 SW" },
+
+{ "name": "Drummond's", "location": "26 WC" },
+
+{ "name": "Holder & Stevenson", "location": "69 EC" },
+
+{ "name": "Sylvester", "location": "84 EC" },
+
+{ "name": "Worthingdon", "location": "67 NW" }
+
+],
+
+"Barristers": [
+
+{ "name": "Attard, Charles", "location": "34 EC" },
+
+{ "name": "Bakersfield, Woodward", "location": "21 NW" },
+
+{ "name": "Faversham, F. V.", "location": "32 WC" },
+
+{ "name": "Hall, Edward", "location": "36 EC" },
+
+{ "name": "Krantz, Herbert", "location": "72 WC" },
+
+{ "name": "Mason, Cecil", "location": "92 EC" },
+
+{ "name": "Nast, Flavius", "location": "29 EC" },
+
+{ "name": "Robarts, Wilfrid", "location": "37 WC" },
+
+{ "name": "Truax, Robert", "location": "34 EC" }
+
+],
+
+"Baths": [
+
+{ "name": "Bell's", "location": "11 EC" },
+
+{ "name": "Chelsea", "location": "29 SW" },
+
+{ "name": "Crown Swimming", "location": "20 SE" },
+
+{ "name": "Haley's", "location": "57 WC" },
+
+{ "name": "Nevill's Turkish", "location": "92 WC" },
+
+{ "name": "St George's", "location": "28 NW" }
+
+],
+
+"Boarding Houses": [
+
+{ "name": "Beaufort House", "location": "7 NW" },
+
+{ "name": "Borough, The", "location": "86 SE" },
+
+{ "name": "Calvin House", "location": "7 E" },
+
+{ "name": "Crossingham's Lodging House", "location": "35 E" },
+
+{ "name": "Dover Rooms", "location": "11 SE" },
+
+{ "name": "Flower and Dean", "location": "62 E" },
+
+{ "name": "Kent House", "location": "7 WC" },
+
+{ "name": "Knaresborough House", "location": "30 SE" },
+
+{ "name": "Madame Charpentier", "location": "59 SE" },
+
+{ "name": "Mrs Cory's", "location": "25 SE" },
+
+{ "name": "Mrs Hagwood's", "location": "7 EC" },
+
+{ "name": "Mrs Jetley's", "location": "7 SE" },
+
+{ "name": "Mrs Robertson's", "location": "78 NW" },
+
+{ "name": "Mrs Warren's", "location": "76 WC" },
+
+{ "name": "Pirlot House", "location": "23 S" },
+
+{ "name": "Thrawl Street", "location": "18 E" },
+
+{ "name": "White House", "location": "60 E" }
+
+],
+
+"Booksellers": [
+
+{ "name": "Gilbert & Field", "location": "41 EC" },
+
+{ "name": "Hatchard's", "location": "63 NW" },
+
+{ "name": "J. & E. Bumpus", "location": "12 NW" },
+
+{ "name": "Sotheran & Co", "location": "72 WC" }
+
+],
+
+"Booksellers: Used & Rare": [
+
+{ "name": "Dobell Books", "location": "66 WC" },
+
+{ "name": "Pickering & Chatto", "location": "86 SW" },
+
+{ "name": "Quaritch Books", "location": "66 NW" },
+
+{ "name": "Steven's Books", "location": "63 WC" }
+
+],
+
+"Carpets": [
+
+{ "name": "Cardinal & Hartford", "location": "11 WC" },
+
+{ "name": "Shoolbred & Co", "location": "61 WC" },
+
+{ "name": "Sidley & Sons", "location": "32 SE" }
+
+],
+
+"Charities": [
+
+{ "name": "Indigent Blind Vis. Soc.", "location": "11 WC" },
+
+{ "name": "Invalid Ladies Est.", "location": "92 NW" },
+
+{ "name": "London Homeopathic", "location": "9 WC" },
+
+{ "name": "Salvation Army", "location": "69 EC" },
+
+{ "name": "Salvation Army Hostel", "location": "42 SE" },
+
+{ "name": "Seamen's Charity", "location": "10 S" },
+
+{ "name": "Vegetarian Society", "location": "38 E" },
+
+{ "name": "Watt Street Mission", "location": "88 EC" }
+
+],
+
+"Chemists": [
+
+{ "name": "Ambrecht & Co", "location": "32 NW" },
+
+{ "name": "Gould & Sons", "location": "68 EC" },
+
+{ "name": "J.J. Goldstein & Son", "location": "41 E" },
+
+{ "name": "John Taylor", "location": "72 NW" },
+
+{ "name": "Keene & Ashwell", "location": "87 SW" },
+
+{ "name": "Leath & Ross", "location": "85 SE" },
+
+{ "name": "Squire & Sons", "location": "66 WC" },
+
+{ "name": "Vickerson", "location": "47 QP" }
+
+],
+
+"Churches": [
+
+{ "name": "Ascension", "location": "40 QP" },
+
+{ "name": "Jesuit Church", "location": "69 EC" },
+
+{ "name": "Scottish National", "location": "51 EC" },
+
+{ "name": "Spitalfields Church", "location": "55 E" },
+
+{ "name": "St George's", "location": "81 NW" },
+
+{ "name": "St Mary Matfelon", "location": "89 E" },
+
+{ "name": "St Mary's", "location": "19 EC" },
+
+{ "name": "St Patrick's", "location": "57 E" },
+
+{ "name": "St Paul's Cathedral", "location": "28 EC" },
+
+{ "name": "St Saviour's", "location": "2 WC" },
+
+{ "name": "Unity Church", "location": "31 E" },
+
+{ "name": "Welsh Calvinistic Methodist", "location": "11 WC" },
+
+{ "name": "Westminster Abbey", "location": "17 SW" },
+
+{ "name": "Westminster Chapel", "location": "88 SW" }
+
+],
+
+"Clubs": [
+
+{ "name": "Anglo-Indian Club", "location": "67 WC" },
+
+{ "name": "Bagatelle Card Club", "location": "14 NW" },
+
+{ "name": "Baldwin Card Club", "location": "88 SW" },
+
+{ "name": "Carlton Club", "location": "7 SW" },
+
+{ "name": "Cavendish Club", "location": "25 NW" },
+
+{ "name": "Criterion Club", "location": "3 SW" },
+
+{ "name": "Diogenes Club", "location": "8 SW" },
+
+{ "name": "I.W.M.E. Club", "location": "114 E" },
+
+{ "name": "Imperial Club", "location": "101 EC" },
+
+{ "name": "Tankerville Club", "location": "34 WC" }
+
+],
+
+"Cocoa Manufacturers": [
+
+{ "name": "Cadbury Bros", "location": "76 SE" },
+
+{ "name": "Epps", "location": "76 NW" },
+
+{ "name": "Fry & Sons", "location": "95 EC" }
+
+],
+
+"Coroner's Office": [
+
+{ "name": "Coroner", "location": "91 EC" },
+
+{ "name": "Medical Examiner", "location": "38 EC" }
+
+],
+
+"Cycles": [
+
+{ "name": "Bayliss Cycles", "location": "92 EC" },
+
+{ "name": "Swift Cycle Co", "location": "90 EC" }
+
+],
+
+"Dentists": [
+
+{ "name": "Beaufort, Harrison", "location": "23 WC" },
+
+{ "name": "Goldsmith, A.A.", "location": "93 NW" },
+
+{ "name": "Jones, G.H.", "location": "64 WC" }
+
+],
+
+"Department Stores": [
+
+{ "name": "Bon Marché", "location": "81 NW" },
+
+{ "name": "Cobay's", "location": "6 NW" },
+
+{ "name": "Farmer & Rogers", "location": "90 NW" },
+
+{ "name": "Gamage's", "location": "61 EC" },
+
+{ "name": "Hanover House", "location": "82 NW" },
+
+{ "name": "Liberty & Co", "location": "91 NW" },
+
+{ "name": "Marshall & Snelgrove's", "location": "33 NW" },
+
+{ "name": "Peter Robinson's", "location": "71 NW" },
+
+{ "name": "Selfridges", "location": "74 NW" },
+
+{ "name": "Tendwell & Krebs", "location": "27 EC" },
+
+{ "name": "Whiteley's", "location": "71 EC" }
+
+],
+
+"Detective Agencies": [
+
+{ "name": "Barker's", "location": "66 WC" },
+
+{ "name": "Francis Baird", "location": "25 EC" },
+
+{ "name": "Martin Hewitt", "location": "77 SE" },
+
+{ "name": "Moser's", "location": "18 WC" },
+
+{ "name": "Paschal: Investigations", "location": "78 WC" },
+
+{ "name": "Pinkerton International", "location": "24 NW" },
+
+{ "name": "Tod's Private Enquiries", "location": "84 SW" }
+
+],
+
+"Docks": [
+
+{ "name": "Commercial Docks", "location": "66 S" },
+
+{ "name": "East India Docks", "location": "99 E" },
+
+{ "name": "Limehouse", "location": "96 E" },
+
+{ "name": "London Docks", "location": "94 E" },
+
+{ "name": "Outer Docks", "location": "98 E" },
+
+{ "name": "Shadwell New Basin", "location": "95 E" },
+
+{ "name": "St Katherine Docks", "location": "93 E" },
+
+{ "name": "West India Docks", "location": "97 E" }
+
+],
+
+"Doctors/Physicians": [
+
+{ "name": "Agar, Dr Moore", "location": "93 NW" },
+
+{ "name": "Ainstree, Dr A.", "location": "32 WC" },
+
+{ "name": "Bestianelli, Dr", "location": "39 EC" },
+
+{ "name": "Brown, Dr", "location": "81 EC" },
+
+{ "name": "Fell, Dr Gideon", "location": "55 WC" },
+
+{ "name": "Gibilsco, Dr", "location": "46 SE" },
+
+{ "name": "Harrigan, Dr M.", "location": "35 E" },
+
+{ "name": "Horowitz, Dr J.", "location": "9 S" },
+
+{ "name": "Jackson, Dr", "location": "64 EC" },
+
+{ "name": "Killeen, Dr John", "location": "83 E" },
+
+{ "name": "Llewellyn, Dr Ralph", "location": "115 E" },
+
+{ "name": "Mason, Dr Jerrold", "location": "29 WC" },
+
+{ "name": "Phillips, Dr George", "location": "2 EC" },
+
+{ "name": "Richards, Dr", "location": "83 WC" },
+
+{ "name": "Saari, Dr Ilona", "location": "3 S" },
+
+{ "name": "Trevelyan, Dr Percy", "location": "19 SW" },
+
+{ "name": "Verner, Dr", "location": "60 SE" },
+
+{ "name": "Watson, Dr John H.", "location": "42 NW" }
+
+],
+
+"Embassies": [
+
+{ "name": "American Embassy", "location": "18 SW" },
+
+{ "name": "China Legation", "location": "38 NW" },
+
+{ "name": "French Embassy", "location": "59 SW" },
+
+{ "name": "German Embassy", "location": "9 SW" },
+
+{ "name": "Russian Embassy", "location": "54 SW" },
+
+{ "name": "Spanish Embassy", "location": "38 SW" }
+
+],
+
+"Florists": [
+
+{ "name": "Finsterwald", "location": "46 WC" },
+
+{ "name": "Grayson's Nursery", "location": "50 EC" },
+
+{ "name": "Mayall & Co", "location": "9 WC" },
+
+{ "name": "Stirge's", "location": "31 SW" },
+
+{ "name": "Waldenboch", "location": "24 NW" }
+
+],
+
+"Furriers": [
+
+{ "name": "Arctic Fur Store", "location": "68 WC" },
+
+{ "name": "Debenham & Freebody", "location": "34 NW" },
+
+{ "name": "Jetts & Harris", "location": "24 NW" },
+
+{ "name": "National Fur Store", "location": "64 WC" }
+
+],
+
+"Government Offices": [
+
+{ "name": "Government Offices", "location": "14 SW" },
+
+{ "name": "Colonial Office", "location": "91 SW" },
+
+{ "name": "Foreign Office", "location": "92 SW" },
+
+{ "name": "Home Office", "location": "93 SW" },
+
+{ "name": "India Office", "location": "94 SW" },
+
+{ "name": "Office of Records", "location": "14 WC" },
+
+{ "name": "Parliament, Houses of", "location": "16 SW" },
+
+{ "name": "Printing Office", "location": "95 SW" },
+
+{ "name": "War Office", "location": "11 SW" }
+
+],
+
+"Guides": [
+
+{ "name": "Ladies Couriers", "location": "16 NW" },
+
+{ "name": "Miss L.E. Elwin", "location": "31 SE" }
+
+],
+
+"Gunsmiths": [
+
+{ "name": "Colt's Firearms Co", "location": "12 NW" },
+
+{ "name": "Grant Arms Co", "location": "5 EC" },
+
+{ "name": "Rigby & Co", "location": "1 SW" },
+
+{ "name": "S. Goff", "location": "28 WC" },
+
+{ "name": "Westley Richards", "location": "31 NW" },
+
+{ "name": "Winchester Arms Co", "location": "21 EC" }
+
+],
+
+"Hospitals": [
+
+{ "name": "Charing Cross", "location": "91 WC" },
+
+{ "name": "Chelsea", "location": "45 SW" },
+
+{ "name": "King's College", "location": "71 WC" },
+
+{ "name": "London Hospital", "location": "92 E" },
+
+{ "name": "Middlesex Hospital", "location": "10 NW" },
+
+{ "name": "Old Montague (Morgue)", "location": "24 E" },
+
+{ "name": "Royal Greenwich", "location": "65 S" },
+
+{ "name": "St Bartholomew's", "location": "38 EC" },
+
+{ "name": "St George's", "location": "57 SW" },
+
+{ "name": "St Thomas'", "location": "29 SE" }
+
+],
+
+"Hotels": [
+
+{ "name": "Bentley's Private", "location": "32 WC" },
+
+{ "name": "Bridge House", "location": "3 SE" },
+
+{ "name": "Charing Cross", "location": "90 WC" },
+
+{ "name": "Claridge", "location": "30 NW" },
+
+{ "name": "Cosmopolitan", "location": "71 SW" },
+
+{ "name": "Dacre", "location": "62 EC" },
+
+{ "name": "De Keyser's Royal Hotel", "location": "31 EC" },
+
+{ "name": "Grand Hotel", "location": "22 WC" },
+
+{ "name": "Grosvenor", "location": "69 SW" },
+
+{ "name": "Halliday's Private", "location": "15 SW" },
+
+{ "name": "Langham", "location": "36 NW" },
+
+{ "name": "Metropole", "location": "27 WC" },
+
+{ "name": "Metropolitan", "location": "10 EC" },
+
+{ "name": "Mexborough Private", "location": "76 EC" },
+
+{ "name": "Midland Grand Hotel", "location": "16 SE" },
+
+{ "name": "Piccadilly", "location": "26 NW" },
+
+{ "name": "Queen's Park Hotel", "location": "85 QP" },
+
+{ "name": "St Pancras", "location": "48 WC" },
+
+{ "name": "Tranter's Temperance", "location": "70 EC" }
+
+],
+
+"Inns": [
+
+{ "name": "Alpha", "location": "65 WC" },
+
+{ "name": "Angel & Crown", "location": "82 E" },
+
+{ "name": "Bishop's Finger", "location": "18 EC" },
+
+{ "name": "Black Crown", "location": "88 EC" },
+
+{ "name": "Black Swan", "location": "25 E" },
+
+{ "name": "Blue Ball", "location": "50 E" },
+
+{ "name": "Britannia", "location": "87 EC" },
+
+{ "name": "Crown", "location": "83 NW" },
+
+{ "name": "Frying Pan", "location": "17 E" },
+
+{ "name": "George & Vulture", "location": "93 WC" },
+
+{ "name": "Lincoln", "location": "13 WC" },
+
+{ "name": "Nelson Tavern", "location": "114 E" },
+
+{ "name": "Pelican", "location": "58 QP" },
+
+{ "name": "Princess Alice", "location": "42 E" },
+
+{ "name": "Queen's Head", "location": "55 E" },
+
+{ "name": "Raven & Rat", "location": "52 EC" },
+
+{ "name": "Red Boar", "location": "34 SE" },
+
+{ "name": "Serjeant's", "location": "21 NW" },
+
+{ "name": "Spaniard's", "location": "25 SW" },
+
+{ "name": "Staple", "location": "35 WC" },
+
+{ "name": "Star & Plow", "location": "73 E" },
+
+{ "name": "Ye Old Cheshire Cheese", "location": "34 EC" }
+
+],
+
+"Inns of the Courts": [
+
+{ "name": "Gray's Inn", "location": "10 WC" },
+
+{ "name": "Lincoln's Inn", "location": "13 WC" },
+
+{ "name": "Temple, The", "location": "33 EC" }
+
+],
+
+"Insurance Companies": [
+
+{ "name": "Lloyd's Shipping Reg.", "location": "17 EC" },
+
+{ "name": "London & Globe", "location": "79 SW" },
+
+{ "name": "Pearl Assurance Co", "location": "86 EC" },
+
+{ "name": "Provident", "location": "68 EC" },
+
+{ "name": "Royal Insurance Co", "location": "68 NW" }
+
+],
+
+"Jewellers": [
+
+{ "name": "A. Marx & Co", "location": "36 SE" },
+
+{ "name": "Carrington & Co", "location": "33 WC" },
+
+{ "name": "De Vries Diamonds", "location": "34 SW" },
+
+{ "name": "Gross & Hankey's", "location": "90 NW" },
+
+{ "name": "J.W. Benson Ltd", "location": "17 NW" },
+
+{ "name": "Lambert's", "location": "88 SW" },
+
+{ "name": "Ortner & Houle", "location": "75 WC" },
+
+{ "name": "R.S. Garrard & Co", "location": "44 EC" },
+
+{ "name": "Rowlands & Frazier", "location": "40 NW" }
+
+],
+
+"Libraries": [
+
+{ "name": "British Museum Library", "location": "38 WC" },
+
+{ "name": "Central News Agency", "location": "63 EC" },
+
+{ "name": "Colonial Institute", "location": "86 SW" },
+
+{ "name": "Guildhall Free Library", "location": "39 EC" },
+
+{ "name": "Law Society Library", "location": "78 WC" },
+
+{ "name": "London Library", "location": "5 SW" },
+
+{ "name": "Mudie's Select Library", "location": "36 WC" }
+
+],
+
+"Map Sellers": [
+
+{ "name": "Bacon & Co", "location": "20 WC" },
+
+{ "name": "C. Smith & Sons", "location": "67 EC" },
+
+{ "name": "Stamford's Geological Est", "location": "29 WC" }
+
+],
+
+"Markets": [
+
+{ "name": "Covent Garden Market", "location": "28 WC" },
+
+{ "name": "Leadenhall Market", "location": "18 EC" },
+
+{ "name": "Royal Victualling Yard", "location": "64 S" },
+
+{ "name": "Smith Meat Market", "location": "44 EC" },
+
+{ "name": "Spitalfields Market", "location": "8 EC" }
+
+],
+
+"Music Halls": [
+
+{ "name": "Alhambra Music Hall", "location": "25 WC" },
+
+{ "name": "Oxford Music Hall", "location": "13 NW" },
+
+{ "name": "Pavilion Music Hall", "location": "20 NW" },
+
+{ "name": "St James's Hall", "location": "22 NW" },
+
+{ "name": "Tivoli Music hall", "location": "23 WC" }
+
+],
+
+"Newspapers": [
+
+{ "name": "Central Press Syndicate", "location": "25 EC" },
+
+{ "name": "Daily Chronicle", "location": "64 EC" },
+
+{ "name": "Daily Gazette", "location": "74 WC" },
+
+{ "name": "Daily News", "location": "71 SE" },
+
+{ "name": "Daily Telegraph", "location": "88 NW" },
+
+{ "name": "Evening News Standard", "location": "9 NW" },
+
+{ "name": "Pall Mall Gazette", "location": "90 SW" },
+
+{ "name": "Police Gazette", "location": "35 EC" },
+
+{ "name": "St James's Gazette", "location": "89 SW" },
+
+{ "name": "Spectator", "location": "51 SE" },
+
+{ "name": "Sporting Times", "location": "47 EC" },
+
+{ "name": "Standard", "location": "40 EC" },
+
+{ "name": "Star", "location": "26 NW" },
+
+{ "name": "Times", "location": "30 EC" }
+
+],
+
+"Parks": [
+
+{ "name": "Archbishop's Park", "location": "90 SE" },
+
+{ "name": "Buckingham Palace (Gardens)", "location": "96 SW" },
+
+{ "name": "Deptford Park", "location": "62 S" },
+
+{ "name": "Green Park", "location": "97 SW" },
+
+{ "name": "Greenwich Park", "location": "63 S" },
+
+{ "name": "Hyde Park", "location": "95 NW" },
+
+{ "name": "Regents Park", "location": "97 NW" },
+
+{ "name": "Southwark Park", "location": "61 S" },
+
+{ "name": "St James's Park", "location": "98 SW" }
+
+],
+
+"Pawnbrokers": [
+
+{ "name": "Hoch's", "location": "26 E" },
+
+{ "name": "Jabez Wilson", "location": "73 EC" },
+
+{ "name": "Saul Leibowitz", "location": "1 E" },
+
+{ "name": "Zebediah", "location": "47 E" }
+
+],
+
+"Police Stations": [
+
+{ "name": "Bow Street", "location": "70 WC" },
+
+{ "name": "Commercial Street", "location": "100 EC" },
+
+{ "name": "Lambeth", "location": "53 SE" },
+
+{ "name": "Old Bailey", "location": "36 EC" },
+
+{ "name": "Scotland Yard", "location": "13 SW" },
+
+{ "name": "Thames Division", "location": "9 E" },
+
+{ "name": "Tichfield", "location": "89 NW" }
+
+],
+
+"Post Offices": [
+
+{ "name": "EC District", "location": "93 EC" },
+
+{ "name": "SW District", "location": "32 SW" },
+
+{ "name": "WC District", "location": "6 WC" },
+
+{ "name": "Investigation Dept", "location": "12 WC" },
+
+{ "name": "Post Office Banks", "location": "6 SE" }
+
+],
+
+"Printers": [
+
+{ "name": "Ackermann", "location": "12 E" },
+
+{ "name": "Lefevre", "location": "3 EC" },
+
+{ "name": "St Bride Foundation", "location": "63 EC" },
+
+{ "name": "Valadon & Co", "location": "1 SE" }
+
+],
+
+"Prisons": [
+
+{ "name": "Military Prison", "location": "9 SE" },
+
+{ "name": "Millbank Prison", "location": "23 SW" },
+
+{ "name": "Newgate Prison/Old Bailey", "location": "36 EC" },
+
+{ "name": "Wormwood", "location": "71 QP" }
+
+],
+
+"Public Houses": [
+
+{ "name": "Anchor", "location": "23 E" },
+
+{ "name": "Angel", "location": "75 E" },
+
+{ "name": "Bar of Gold", "location": "33 SE" },
+
+{ "name": "Elephant's Nest", "location": "25 S" },
+
+{ "name": "Henekey's Wine Lodge", "location": "10 WC" },
+
+{ "name": "Inquisition", "location": "5 S" },
+
+{ "name": "Ivy Plant", "location": "76 SW" },
+
+{ "name": "Jamaica Winehouse", "location": "97 EC" },
+
+{ "name": "Nag's Head", "location": "48 E" },
+
+{ "name": "Pavilion", "location": "20 NW" },
+
+{ "name": "Princess Louise", "location": "90 EC" },
+
+{ "name": "Punch & Judy", "location": "73 WC" },
+
+{ "name": "Queen's Park", "location": "13 QP" },
+
+{ "name": "Sheriff's Wine Lodge", "location": "71 EC" },
+
+{ "name": "Sir Galahad's", "location": "27 EC" },
+
+{ "name": "White Eagle", "location": "50 SE" },
+
+{ "name": "White Hart", "location": "55 SE" }
+
+],
+
+"Restaurants": [
+
+{ "name": "Appenrodt's German", "location": "16 EC" },
+
+{ "name": "Cafe Monico", "location": "90 NW" },
+
+{ "name": "Cafe Royal", "location": "82 SW" },
+
+{ "name": "Driver's Oyster Bar", "location": "72 WC" },
+
+{ "name": "Garraway", "location": "85 EC" },
+
+{ "name": "Globe", "location": "19 NW" },
+
+{ "name": "Goldini's", "location": "48 SW" },
+
+{ "name": "Haxell's", "location": "19 NW" },
+
+{ "name": "Holborn", "location": "61 EC" },
+
+{ "name": "Keen's Chop House", "location": "37 WC" },
+
+{ "name": "Niven", "location": "12 QP" },
+
+{ "name": "Romano", "location": "19 WC" },
+
+{ "name": "Rule's", "location": "19 WC" },
+
+{ "name": "Ship & Turtle", "location": "83 EC" },
+
+{ "name": "Simpson's Dining Rooms", "location": "20 WC" },
+
+{ "name": "Vegetarian Restaurant", "location": "74 EC" }
+
+],
+
+"Scotland Yard": [
+
+{ "name": "Criminal Investigation", "location": "13 SW" },
+
+{ "name": "Criminology Laboratory", "location": "22 SW" },
+
+{ "name": "New Scotland Yard", "location": "13 SW" },
+
+{ "name": "Public Carriage Office", "location": "5 WC" },
+
+{ "name": "Special Branch", "location": "85 SW" },
+
+{ "name": "Thames Division", "location": "9 E" }
+
+],
+
+"Settlement Houses": [
+
+{ "name": "Alms House", "location": "20 E" },
+
+{ "name": "Arlington House", "location": "42 E" },
+
+{ "name": "Baker's Row Asylum", "location": "34 E" },
+
+{ "name": "Mariner's House", "location": "41 S" },
+
+{ "name": "Maryward House", "location": "22 E" },
+
+{ "name": "Pembroke Mission", "location": "63 SE" },
+
+{ "name": "Toynbee Hall", "location": "17 S" },
+
+{ "name": "Working Lads' Institute", "location": "10 E" }
+
+],
+
+"Shoemakers": [
+
+{ "name": "Hoby & Gullick", "location": "89 SW" },
+
+{ "name": "Holden Brothers", "location": "80 NW" },
+
+{ "name": "Lattimer's Bootery", "location": "77 NW" },
+
+{ "name": "Thierry", "location": "77 WC" },
+
+{ "name": "Yapp", "location": "83 SE" }
+
+],
+
+"Solicitors": [
+
+{ "name": "Cartwright, Whitney", "location": "29 WC" },
+
+{ "name": "Cunnigham, Charles", "location": "78 WC" },
+
+{ "name": "Dagit, Philip", "location": "75 WC" },
+
+{ "name": "Davenport, Hiram", "location": "13 WC" },
+
+{ "name": "Diggs, Harold", "location": "33 WC" },
+
+{ "name": "Epsoms, Rory", "location": "69 NW" },
+
+{ "name": "Gunderson, Wilkie", "location": "76 WC" },
+
+{ "name": "Japes, Williams", "location": "39 EC" },
+
+{ "name": "Morris, William", "location": "68 NW" },
+
+{ "name": "Ormond, Reginald", "location": "66 EC" },
+
+{ "name": "Sloane, Sir Sidney", "location": "29 WC" },
+
+{ "name": "Sutro, Arnold", "location": "8 NW" },
+
+{ "name": "Swathmore, Henry", "location": "29 WC" },
+
+{ "name": "Tuttle, Melvin", "location": "29 WC" }
+
+],
+
+"Somerset House": [
+
+{ "name": "Audit Office", "location": "17 WC" },
+
+{ "name": "Inland Revenue Office", "location": "17 WC" },
+
+{ "name": "Registrar of Births", "location": "17 WC" },
+
+{ "name": "Registrar of Deaths", "location": "17 WC" },
+
+{ "name": "Registrar of Marriages", "location": "17 WC" }
+
+],
+
+"Sport (Association)": [
+
+{ "name": "Amateur Athletic Association", "location": "8 NW" },
+
+{ "name": "Croquet Association", "location": "41 SW" },
+
+{ "name": "Cyclists' Touring Club", "location": "75 EC" },
+
+{ "name": "Football Association", "location": "55 NW" },
+
+{ "name": "Friends of Baritsu", "location": "83 WC" },
+
+{ "name": "Lacrosse Association", "location": "2 NW" },
+
+{ "name": "Lawn Tennis Association", "location": "74 EC" },
+
+{ "name": "Life Saving Society", "location": "44 WC" },
+
+{ "name": "London Rowing Club", "location": "66 EC" },
+
+{ "name": "Marylebone Cricket Club", "location": "48 NW" },
+
+{ "name": "Northern Cricket Field", "location": "90 QP" },
+
+{ "name": "Prince's Skating Club", "location": "98 SW" },
+
+{ "name": "Riding Club", "location": "2 NW" },
+
+{ "name": "Royal Blackheath Golf", "location": "61 SW" },
+
+{ "name": "Royal Toxophilite Society", "location": "82 SW" },
+
+{ "name": "Rugby Football Union", "location": "58 NW" },
+
+{ "name": "Shooting Society", "location": "46 NW" },
+
+{ "name": "Sporting Times", "location": "47 EC" },
+
+{ "name": "Wormwood Cricket Field", "location": "72 QP" }
+
+],
+
+"Stables": [
+
+{ "name": "Central Carriage", "location": "5 WC" },
+
+{ "name": "Henry Whitlock Co", "location": "61 EC" },
+
+{ "name": "J. Offord & Co", "location": "82 NW" },
+
+{ "name": "Morgan & Co", "location": "68 NW" },
+
+{ "name": "Rudge & Singer", "location": "21 SE" }
+
+],
+
+"Stationers": [
+
+{ "name": "A.W. Faber", "location": "29 EC" },
+
+{ "name": "Duckett & Co", "location": "27 EC" },
+
+{ "name": "G. Vickers", "location": "95 WC" },
+
+{ "name": "Gillot & Sons", "location": "89 EC" }
+
+],
+
+"Stations": [
+
+{ "name": "Aldersgate Street", "location": "43 EC" },
+
+{ "name": "Aldgate", "location": "12 EC" },
+
+{ "name": "Bow", "location": "101 E" },
+
+{ "name": "Charing Cross", "location": "21 WC" },
+
+{ "name": "Coborn Road", "location": "100 E" },
+
+{ "name": "Deptford Road", "location": "67 S" },
+
+{ "name": "Euston", "location": "52 WC" },
+
+{ "name": "H & S.R. Goods", "location": "104 E" },
+
+{ "name": "Limehouse", "location": "107 E" },
+
+{ "name": "Liverpool Street", "location": "9 EC" },
+
+{ "name": "London Bridge", "location": "4 SE" },
+
+{ "name": "Shadwell", "location": "105 E" },
+
+{ "name": "South Bromley", "location": "103 E" },
+
+{ "name": "Stepney", "location": "106 E" },
+
+{ "name": "St Pancras", "location": "49 WC" },
+
+{ "name": "Victoria", "location": "37 SW" },
+
+{ "name": "Waterloo", "location": "37 SE" },
+
+{ "name": "West India Dock", "location": "108 E" },
+
+{ "name": "West London Railway", "location": "78/79 QP" },
+
+{ "name": "Whitechapel", "location": "102 E" }
+
+],
+
+"Steamship Companies": [
+
+{ "name": "Aberdeen Navigation Co", "location": "26 EC" },
+
+{ "name": "Bloggs Line", "location": "25 E" },
+
+{ "name": "Co. Gen. Transatlantique", "location": "27 S" },
+
+{ "name": "Cunard Line", "location": "83 EC" },
+
+{ "name": "Dominion Line", "location": "71 E" },
+
+{ "name": "Guion Steamship Co", "location": "53 E" },
+
+{ "name": "Hamburg-Amerika Line", "location": "28 E" },
+
+{ "name": "Jardine, Matheson & Co", "location": "15 EC" },
+
+{ "name": "Liverpool, Dublin & London Steam", "location": "55 E" },
+
+{ "name": "Thames Steamboat Co", "location": "40 SE" },
+
+{ "name": "West Indies Steamship Co", "location": "20 EC" }
+
+],
+
+"Synagogues": [
+
+{ "name": "Great Synagogue", "location": "21 SW" },
+
+{ "name": "Spanish Synagogue", "location": "19 E" }
+
+],
+
+"Tailors": [
+
+{ "name": "Poole & Co", "location": "10 EC" },
+
+{ "name": "Radford, Jones & Co", "location": "11 WC" },
+
+{ "name": "Roberts & Partit", "location": "88 SE" },
+
+{ "name": "Tetley & Butler", "location": "16 NW" }
+
+],
+
+"Tea Merchants": [
+
+{ "name": "A.B. Muirhead", "location": "41 EC" },
+
+{ "name": "Dakin & Co", "location": "94 EC" },
+
+{ "name": "Ferguson & Muirhead", "location": "16 EC" },
+
+{ "name": "Ridgways", "location": "24 NW" },
+
+{ "name": "Sipton & Co", "location": "39 EC" },
+
+{ "name": "Twining & Co", "location": "16 WC" }
+
+],
+
+"Tea Rooms": [
+
+{ "name": "Buszard", "location": "84 NW" },
+
+{ "name": "Ladies' Own Tea Association", "location": "31 NW" },
+
+{ "name": "Mrs Robertson", "location": "78 NW" },
+
+{ "name": "Wisteria Lounge", "location": "49 E" }
+
+],
+
+"Theatres": [
+
+{ "name": "Allegro", "location": "94 WC" },
+
+{ "name": "Apollo", "location": "19 NW" },
+
+{ "name": "Covent Garden", "location": "30 WC" },
+
+{ "name": "Drury Lane", "location": "31 WC" },
+
+{ "name": "Elephant & Castle", "location": "13 SE" },
+
+{ "name": "Haymarket", "location": "4 SW" },
+
+{ "name": "Lyceum", "location": "18 WC" },
+
+{ "name": "Olympia, The", "location": "63 SW" },
+
+{ "name": "Princess", "location": "11 NW" },
+
+{ "name": "Royalty", "location": "15 NW" }
+
+],
+
+"Tobacconists": [
+
+{ "name": "Amber & Co", "location": "35 WC" },
+
+{ "name": "Bonds & Honds", "location": "16 NW" },
+
+{ "name": "Bradley's", "location": "54 NW" },
+
+{ "name": "Carlin", "location": "7 SW" },
+
+{ "name": "Dickers'", "location": "86 SW" },
+
+{ "name": "Fribourg & Treyer", "location": "88 SW" },
+
+{ "name": "Little Newspaper Shop", "location": "93 WC" },
+
+{ "name": "Mortimer's", "location": "95 WC" },
+
+{ "name": "Simpson's Cigar Divan", "location": "20 WC" },
+
+{ "name": "Wolff, Philips & Co", "location": "44 SE" }
+
+],
+
+"Watchmakers": [
+
+{ "name": "Barraud & Lunds", "location": "16 EC" },
+
+{ "name": "Charles Frodsham & Co", "location": "38 NW" }
+
+],
+
+  "Wine Merchants": [
+    {
+      "name": "Dolamore & Co",
+      "location": "36 SE"
+    },
+    {
+      "name": "Westhouse & Marbank",
+      "location": "46 EC"
+    }
+  ]
+}

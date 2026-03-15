@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Central Carriage Stables",
+    "location": "5 WC",
+    "description": "Meeting point for London cab drivers. Source of information on the movements of suspects.",
+    "image": "central-carriage-stables.jpg"
+  },
+  {
+    "name": "Lestrade <br> (Scotland Yard)",
+    "location": "13 SW",
+    "description": "Has official reports and information from the London Police.",
+    "image": "lestrade.jpg"
+  },
+  {
+    "name": "Sherlock Holmes <br> (Consulting Detective)",
+    "location": "42 NW",
+    "description": "If you're stuck in your investigation, Sherlock Holmes will set you on the right track with some good advice.",
+    "image": "sherlock-holmes.jpg"
+  },
+  {
+    "name": "Henry Ellis <br> (Reporter for The Times)",
+    "location": "30 EC",
+    "description": "Source of information on the news covered by The Times.",
+    "image": "henry-ellis.jpg"
+  },
+  {
+    "name": "Lomax <br> (Librarian)",
+    "location": "5 SW",
+    "description": "Works at the London Library. To be consulted for any encyclopedic research.",
+    "image": "lomax.jpg"
+  },
+  {
+    "name": "Disraeli O'Brian <br> (National Archives)",
+    "location": "17 WC",
+    "description": "Somerset House. All archives: births, deaths, marriages, wills, land records, and old criminal records.",
+    "image": "disraeli-obrian.jpg"
+  },
+  {
+    "name": "Sir Jasper Meeks <br> (Medical Examiner)",
+    "location": "38 EC",
+    "description": "Performs the autopsies on all bodies found during the investigations.",
+    "image": "sir-jasper-meeks.jpg"
+  },
+  {
+    "name": "Langdale Pike <br> (Social Columnist)",
+    "location": "2 SW",
+    "description": "Knows all London society gossip.",
+    "image": "langdale-pike.jpg"
+  },
+  {
+    "name": "H.R. Murray <br> (Criminologist)",
+    "location": "22 SW",
+    "description": "Analyses all items and substances found during the investigations.",
+    "image": "hr-murray.jpg"
+  },
+  {
+    "name": "Porky Shinwell <br> (Owner of the Raven & Rat Pub)",
+    "location": "52 EC",
+    "description": "Source of information on all illegal affairs and underworld figures.",
+    "image": "porky-shinwell.jpg"
+  }
+]

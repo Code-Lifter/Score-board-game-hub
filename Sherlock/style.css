@@ -1,0 +1,384 @@
+
+      :root {
+        --paper-bg: #f4ecdf;
+
+        --ink: #2b2621;
+
+        --accent-ink: #5a4b3c;
+
+        --border-style: 2px solid var(--ink);
+      }
+
+      body {
+        background-color: var(--paper-bg);
+
+        background-image: url("https://www.transparenttextures.com/patterns/aged-paper.png");
+
+        color: var(--ink);
+
+        font-family: "Libre Baskerville", serif;
+
+        margin: 0;
+
+        padding: 2rem;
+
+        display: flex;
+
+        justify-content: center;
+      }
+
+      .book-container {
+        max-width: 900px;
+
+        width: 100%;
+
+        background: rgba(255, 255, 255, 0.2);
+
+        padding: 3rem;
+
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      h1 {
+        text-align: center;
+
+        text-transform: uppercase;
+
+        letter-spacing: 2px;
+
+        border-bottom: var(--border-style);
+
+        padding-bottom: 0.5rem;
+
+        margin-bottom: 2rem;
+
+        margin-top: 0;
+      }
+
+      /* Tabs Styling */
+
+      .tab-controls {
+        display: grid;
+
+        grid-template-columns: repeat(3, 1fr);
+
+        gap: 10px;
+
+        margin-bottom: 2rem;
+
+        border-bottom: 2px solid var(--accent-ink);
+
+        padding-bottom: 10px;
+      }
+
+      .tab-btn {
+        background: transparent;
+
+        border: 2px solid var(--ink);
+
+        color: var(--ink);
+
+        font-family: "Libre Baskerville", serif;
+
+        font-size: 1rem;
+
+        font-weight: 700;
+
+        text-transform: uppercase;
+
+        padding: 0.75rem;
+
+        cursor: pointer;
+
+        transition: all 0.2s ease;
+
+        box-shadow: 3px 3px 0px rgba(43, 38, 33, 0.2);
+
+        opacity: 0.6;
+      }
+
+      .tab-btn.active {
+        opacity: 1;
+
+        background: rgba(43, 38, 33, 0.05);
+
+        transform: translate(2px, 2px);
+
+        box-shadow: 1px 1px 0px rgba(43, 38, 33, 0.2);
+      }
+
+      .tab-btn:hover:not(.active) {
+        opacity: 0.8;
+
+        transform: translate(-1px, -1px);
+
+        box-shadow: 4px 4px 0px rgba(43, 38, 33, 0.2);
+      }
+
+      .tab-content {
+        display: none;
+
+        animation: fadeIn 0.3s ease;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Search Bar */
+
+      .search-container {
+        text-align: center;
+
+        margin-bottom: 2rem;
+      }
+
+      #directorySearch {
+        width: 100%;
+
+        max-width: 500px;
+
+        padding: 10px;
+
+        font-family: "Libre Baskerville", serif;
+
+        font-size: 1.2rem;
+
+        background: transparent;
+
+        border: none;
+
+        border-bottom: 2px solid var(--accent-ink);
+
+        color: var(--ink);
+
+        outline: none;
+
+        text-align: center;
+      }
+
+      /* Directory List & Multi-Column Layout */
+
+      .multi-column-container {
+        column-count: 2;
+
+        column-gap: 4rem;
+      }
+
+      .letter-header {
+        column-span: all;
+
+        text-align: center;
+
+        font-size: 3rem;
+
+        font-weight: 700;
+
+        margin: 2rem 0 1rem 0;
+
+        padding-bottom: 0.5rem;
+
+        border-bottom: 1px solid var(--accent-ink);
+
+        color: var(--ink);
+
+        line-height: 1;
+      }
+
+      .category-header {
+        column-span: all;
+
+        text-align: center;
+
+        font-size: 1.3rem;
+
+        font-weight: 700;
+
+        text-transform: uppercase;
+
+        letter-spacing: 1px;
+
+        margin: 2.5rem 0 1rem 0;
+
+        padding-bottom: 0.5rem;
+
+        border-bottom: 1px solid var(--accent-ink);
+
+        color: var(--ink);
+      }
+
+      .letter-header:first-child,
+      .category-header:first-child {
+        margin-top: 0;
+      }
+
+      .directory-item {
+        display: flex;
+
+        align-items: baseline;
+
+        margin-bottom: 0.5rem;
+
+        font-size: 1.05rem;
+
+        break-inside: avoid;
+      }
+
+.dir-name {
+        font-weight: 700;
+        /* Removed white-space: nowrap; so long names can wrap naturally */
+        max-width: 80%; /* Prevents a wrapping name from completely crushing the dots and location */
+      }
+
+      .dir-dots {
+        flex-grow: 1;
+        border-bottom: 2px dotted var(--accent-ink);
+        margin: 0 10px;
+        opacity: 0.5;
+      }
+
+      .dir-location {
+        white-space: nowrap;
+      }
+
+      .system-message {
+        text-align: center;
+        font-style: italic;
+        grid-column: 1 / -1;
+      }
+
+      #noResults {
+        display: none;
+      }
+
+/* Informants Layout with Images */
+      .informants-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .informant-card {
+        display: flex;
+        gap: 1.5rem;
+        background: transparent;
+        border: none;
+        padding: 0;
+        align-items: flex-start;
+      }
+
+      .informant-img {
+        width: 110px;
+        height: 110px;
+        object-fit: cover;
+        border: 2px solid var(--ink);
+        box-shadow: 3px 3px 0px rgba(43, 38, 33, 0.15);
+        flex-shrink: 0;
+        background-color: rgba(0,0,0,0.05); /* Placeholder tint if image loads slow */
+      }
+
+      .informant-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .informant-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.5rem;
+        border-bottom: 1px solid var(--accent-ink);
+        padding-bottom: 0.25rem;
+      }
+
+      .informant-name {
+        font-weight: 700;
+        font-size: 1.15rem;
+        margin: 0;
+        color: var(--ink);
+      }
+
+      .informant-location {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--accent-ink);
+        white-space: nowrap;
+        margin-left: 1rem;
+      }
+
+      .informant-desc {
+        font-size: 1rem;
+        line-height: 1.5;
+        margin: 0;
+      }
+
+@media (max-width: 800px) {
+        /* 1. Stop the padding from choking the content */
+        body {
+          padding: 0.5rem;
+        }
+
+        .book-container {
+          padding: 1.5rem 1rem;
+        }
+
+        /* 2. Fix the Tabs so they wrap naturally instead of breaking the box */
+        .tab-controls {
+          display: flex;
+          flex-wrap: wrap; 
+          gap: 5px;
+          border-bottom: 2px solid var(--accent-ink);
+        }
+
+        .tab-btn {
+          flex: 1 1 auto; /* Allows tabs to resize and stack if needed */
+          font-size: 0.85rem;
+          padding: 0.5rem;
+        }
+
+        /* 3. Clean up the single-column layout for Directory & Categories */
+        .multi-column-container {
+          column-count: 1;
+        }
+
+        /* 4. Perfect the Informants Mobile Stack */
+        .informant-card {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          border-bottom: 1px dashed var(--accent-ink); /* Divider between characters */
+          padding-bottom: 1.5rem;
+        }
+        
+        .informant-card:last-child {
+          border-bottom: none;
+        }
+        
+        .informant-header {
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+          border-bottom: none; /* Removes the ugly double-line effect under the location */
+          margin-bottom: 0.5rem;
+        }
+        
+        .informant-location {
+          margin-left: 0;
+          margin-top: 0.25rem;
+        }
+      }

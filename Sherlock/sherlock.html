@@ -1,0 +1,65 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>London Directory & Informants</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+
+  </head>
+
+  <body>
+    <div class="book-container">
+      <h1>London Directory</h1>
+
+      <div class="tab-controls">
+        <button class="tab-btn active" data-tab="tab-directory">
+          A-Z Directory
+        </button>
+
+        <button class="tab-btn" data-tab="tab-categories">By Category</button>
+
+        <button class="tab-btn" data-tab="tab-informants">Informants</button>
+      </div>
+
+      <div class="tab-content active" id="tab-directory">
+        <div class="search-container">
+          <input
+            type="text"
+            id="directorySearch"
+            placeholder="Search by name or location..."
+            autocomplete="off" />
+        </div>
+
+        <div class="multi-column-container" id="directoryList">
+          <p class="system-message" id="loadingMsg">Loading archives...</p>
+        </div>
+
+        <p class="system-message" id="noResults">
+          No records found in the directory.
+        </p>
+      </div>
+
+      <div class="tab-content" id="tab-categories">
+        <div class="multi-column-container" id="categoriesContainer"></div>
+      </div>
+
+      <div class="tab-content" id="tab-informants">
+        <div class="informants-grid" id="informantsContainer"></div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+
+  </body>
+</html>
