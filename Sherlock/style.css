@@ -1,44 +1,35 @@
 
-      :root {
-        --paper-bg: #f4ecdf;
-
+:root {
+        --paper-bg: #e6d8c3; /* A deeper, warmer vintage tone */
         --ink: #2b2621;
-
         --accent-ink: #5a4b3c;
-
         --border-style: 2px solid var(--ink);
       }
 
-      body {
+body {
         background-color: var(--paper-bg);
-
-        background-image: url("https://www.transparenttextures.com/patterns/aged-paper.png");
-
+        /* Layer 1: Darkened edges (Vignette) */
+        /* Layer 2: Embedded SVG Noise (Grit) */
+        background-image: 
+          radial-gradient(circle at center, transparent 30%, rgba(90, 75, 60, 0.15) 100%),
+          url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E");
+        
         color: var(--ink);
-
         font-family: "Libre Baskerville", serif;
-
         margin: 0;
-
         padding: 2rem;
-
         display: flex;
-
         justify-content: center;
+        min-height: 100vh;
       }
 
       .book-container {
         max-width: 900px;
-
         width: 100%;
-
-        background: rgba(255, 255, 255, 0.2);
-
+        background: transparent; /* Stripped out the white overlay */
         padding: 3rem;
-
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        border: none; /* Stripped out the modern border */
+        box-shadow: none; /* Stripped out the modern shadow */
       }
 
       h1 {
