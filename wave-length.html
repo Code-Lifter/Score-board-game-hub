@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WAVELENGTH — Companion</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --space: #070c18;
+      --navy: #0d1628;
+      --card: rgba(255,255,255,0.04);
+      --gold: #e8b84b;
+      --teal: #4ecdc4;
+      --red: #e84855;
+      --cream: #f0ece0;
+      --muted: rgba(240,236,224,0.45);
+      --border: rgba(255,255,255,0.09);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Outfit',sans-serif;background:var(--space);color:var(--cream);min-height:100vh;overflow-x:hidden}
+    h1,h2,h3{font-family:'Cormorant Garamond',serif}
+    canvas#stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+    .page{display:none;position:relative;z-index:1;min-height:100vh}
+    .page.active{display:block;animation:fadeUp .35s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .btn-primary{background:var(--gold);color:#070c18;font-family:'Outfit',sans-serif;font-weight:700;letter-spacing:.05em;border-radius:6px;padding:14px 32px;font-size:1rem;cursor:pointer;transition:all .2s;border:none}
+    .btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+    .btn-primary:active{transform:translateY(0);filter:brightness(.95)}
+    .btn-ghost{background:transparent;color:var(--cream);font-family:'Outfit',sans-serif;font-weight:500;border:1px solid var(--border);border-radius:6px;padding:13px 32px;font-size:1rem;cursor:pointer;transition:all .2s}
+    .btn-ghost:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+    .btn-sm{padding:9px 18px;font-size:.85rem;border-radius:5px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;backdrop-filter:blur(8px)}
+    .card.active-card{border-color:var(--gold)!important;box-shadow:0 0 24px rgba(232,184,75,.15)}
+    .score-num{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:700;line-height:1}
+    .progress-track{background:rgba(255,255,255,.07);border-radius:100px;height:6px;overflow:hidden}
+    .progress-fill{height:100%;border-radius:100px;transition:width .5s cubic-bezier(.34,1.56,.64,1)}
+    .pt-fill-1{background:linear-gradient(90deg,var(--teal),#6ee7e0)}
+    .pt-fill-2{background:linear-gradient(90deg,var(--red),#f08090)}
+    .icon-btn{width:40px;height:40px;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--cream);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:1.1rem}
+    .icon-btn:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
+    .icon-btn:disabled{opacity:.28;cursor:not-allowed}
+    .team-name-input{background:transparent;border:none;border-bottom:1px dashed rgba(240,236,224,.25);color:inherit;font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;text-align:center;width:100%;outline:none;padding:2px 4px}
+    .team-name-input:focus{border-bottom-color:var(--gold)}
+    .concept-input{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:7px;color:var(--cream);font-family:'Outfit',sans-serif;padding:10px 14px;text-align:center;outline:none;width:100%;font-size:.9rem;transition:border-color .2s}
+    .concept-input:focus{border-color:var(--gold)}
+    .concept-input::placeholder{color:rgba(240,236,224,.3)}
+    .winner-banner{background:linear-gradient(135deg,var(--gold),#f5d070);color:#070c18;border-radius:12px;animation:pulseGold 2.2s ease-in-out infinite}
+    @keyframes pulseGold{0%,100%{box-shadow:0 0 0 0 rgba(232,184,75,.4)}50%{box-shadow:0 0 0 14px rgba(232,184,75,0)}}
+    .catchup-alert{background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.3);border-radius:8px;animation:fadeUp .3s ease}
+    .dial-wrap{position:relative;width:100%;max-width:360px;margin:0 auto;touch-action:none}
+    .dial-svg{width:100%;cursor:grab;display:block}
+    .dial-svg:active{cursor:grabbing}
+    ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(232,184,75,.25);border-radius:2px}
+    @media(max-width:400px){.score-num{font-size:3rem}}
+    .peek-btn{touch-action: none; user-select: none; border-style: dashed;}
+  </style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div id="page-home" class="page active">
+  <div class="min-h-screen flex flex-col items-center justify-center px-6 py-16 text-center">
+    <div class="mb-2">
+      <p class="text-xs tracking-widest mb-5" style="color:var(--muted);letter-spacing:.2em">✦ GAME COMPANION FOR ✦</p>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,15vw,8rem);font-weight:700;letter-spacing:.12em;line-height:.9;color:var(--cream)">WAVE<br>LENGTH</h1>
+      <p class="mt-5 text-sm" style="color:var(--muted)">Score tracker &nbsp;·&nbsp; Target Generator</p>
+    </div>
+
+    <div class="flex flex-col gap-3 w-full max-w-xs mt-10">
+      <button class="btn-primary" onclick="showPage('game')">✦ &nbsp;Start Game</button>
+    </div>
+
+    <div class="mt-12 card px-6 py-4 max-w-xs w-full text-sm" style="color:var(--muted)">
+      <p><strong style="color:var(--cream)">First team</strong> starts at <strong style="color:var(--teal)">0 pts</strong></p>
+      <p class="mt-1"><strong style="color:var(--cream)">Second team</strong> starts at <strong style="color:var(--gold)">1 pt</strong></p>
+      <p class="mt-1">First to <strong style="color:var(--cream)">10 points</strong> wins</p>
+    </div>
+  </div>
+</div>
+
+<div id="page-game" class="page">
+  <div class="max-w-lg mx-auto px-4 pb-16">
+
+    <div class="flex items-center justify-between pt-5 pb-4">
+      <button class="btn-ghost btn-sm" onclick="showPage('home')">← Home</button>
+      <div class="flex items-center gap-2">
+        <button class="icon-btn" id="btn-undo" disabled onclick="undo()" title="Undo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a7 7 0 010 14h-1"/></svg>
+        </button>
+        <button class="icon-btn" id="btn-redo" disabled onclick="redo()" title="Redo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a7 7 0 000 14h1"/></svg>
+        </button>
+        <button class="icon-btn" onclick="confirmReset()" title="Reset game" style="color:rgba(240,236,224,.5)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.11"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="winner-banner" class="winner-banner p-5 text-center mb-5 hidden">
+      <p id="winner-text" class="text-xl font-bold" style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700"></p>
+      <p class="text-sm mt-1 opacity-75">First to 10 points! 🎉</p>
+      <button class="mt-3 btn-ghost btn-sm" onclick="confirmReset()">Play Again</button>
+    </div>
+
+    <div id="catchup-alert" class="catchup-alert px-4 py-3 mb-4 text-sm text-center hidden">
+      ⚡ <strong>Catch-up rule!</strong> Scored 4 while losing — stay on the same team!
+    </div>
+
+    <div class="text-center mb-4">
+      <p class="text-xs tracking-widest" style="color:var(--muted);letter-spacing:.15em">ROUND <span id="round-num">1</span></p>
+      <p id="active-label" class="mt-1 text-sm font-medium" style="color:var(--gold)"></p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mb-5">
+      <div id="card-t1" class="card active-card p-4 text-center transition-all duration-300">
+        <input class="team-name-input mb-2" id="name-t1" value="Left Brain" onchange="updateName(1, this.value)" maxlength="14">
+        <div class="score-num mt-1" id="score-t1" style="color:var(--teal)">0</div>
+        <div class="progress-track mt-4">
+          <div class="progress-fill pt-fill-1" id="prog-t1" style="width:0%"></div>
+        </div>
+      </div>
+      <div id="card-t2" class="card p-4 text-center transition-all duration-300">
+        <input class="team-name-input mb-2" id="name-t2" value="Right Brain" onchange="updateName(2, this.value)" maxlength="14">
+        <div class="score-num mt-1" id="score-t2" style="color:var(--red)">1</div>
+        <div class="progress-track mt-4">
+          <div class="progress-fill pt-fill-2" id="prog-t2" style="width:10%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-4 mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-xs" style="color:var(--muted);letter-spacing:.1em">SPECTRUM DIAL</p>
+        <div class="flex gap-2">
+          <button class="btn-ghost py-1 px-3 text-xs" style="border-color:var(--teal); color:var(--teal);" onclick="generateCard()">🃏 New Card</button>
+          <button class="btn-ghost py-1 px-3 text-xs" style="border-color:var(--gold); color:var(--gold);" onclick="generateTarget()">🎯 Spin Target</button>
+        </div>
+      </div>
+      
+            <div id="controls-active" class="flex flex-col gap-3 mt-4">
+        <button class="btn-ghost btn-sm peek-btn" 
+                id="btn-peek"
+                onmousedown="startPeek(event)" onmouseup="endPeek(event)" onmouseleave="endPeek(event)"
+                ontouchstart="startPeek(event)" ontouchend="endPeek(event)" ontouchcancel="endPeek(event)">
+          👁️ Press & Hold to Peek Target (Psychic)
+        </button>
+      </div>
+
+      <div class="dial-wrap" id="dial-wrap">
+        <svg class="dial-svg" id="dial-svg" viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="specGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#4ecdc4" stop-opacity=".75"/>
+              <stop offset="50%" stop-color="rgba(240,236,224,.25)"/>
+              <stop offset="100%" stop-color="#e84855" stop-opacity=".75"/>
+            </linearGradient>
+            <clipPath id="dialClip">
+              <path d="M10,160 A150,150 0 0,1 310,160 Z"/>
+            </clipPath>
+          </defs>
+          
+          <path d="M10,160 A150,150 0 0,1 310,160 Z" fill="#0d1628" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+          <path d="M10,160 A150,150 0 0,1 310,160 Z" fill="url(#specGrad)" clip-path="url(#dialClip)"/>
+          
+          <g id="target-wedges" class="hidden">
+            <path id="wedge-2a" fill="#e8b84b" fill-opacity="0.95"/>
+            <path id="wedge-2b" fill="#e8b84b" fill-opacity="0.95"/>
+            <path id="wedge-3a" fill="#e84855" fill-opacity="0.95"/>
+            <path id="wedge-3b" fill="#e84855" fill-opacity="0.95"/>
+            <path id="wedge-4" fill="#4ecdc4" fill-opacity="1"/>
+          </g>
+
+          <g stroke="rgba(255,255,255,0.4)" stroke-width="2">
+            <line x1="160" y1="10" x2="160" y2="22"/>
+            <line x1="85" y1="28" x2="91" y2="38"/>
+            <line x1="235" y1="28" x2="229" y2="38"/>
+            <line x1="32" y1="93" x2="44" y2="96"/>
+            <line x1="288" y1="93" x2="276" y2="96"/>
+          </g>
+          <path d="M85,160 A75,75 0 0,1 235,160" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="3,4"/>
+          
+          <line id="dial-needle" x1="160" y1="160" x2="160" y2="5" stroke="var(--cream)" stroke-width="4" stroke-linecap="round"/>
+          <circle id="dial-handle" cx="160" cy="5" r="14" fill="rgba(240,236,224,0.15)" stroke="rgba(240,236,224,0.5)" stroke-width="1"/>
+          <circle cx="160" cy="160" r="8" fill="var(--cream)"/>
+          <circle cx="160" cy="160" r="4" fill="#070c18"/>
+          
+          <text id="lbl-left" x="22" y="156" font-family="Outfit,sans-serif" font-size="10" fill="rgba(240,236,224,0.7)" text-anchor="start">←</text>
+          <text id="lbl-right" x="298" y="156" font-family="Outfit,sans-serif" font-size="10" fill="rgba(240,236,224,0.7)" text-anchor="end">→</text>
+        </svg>
+      </div>
+
+            <div class="grid grid-cols-2 gap-2 mb-6">
+        <input class="concept-input" id="concept-left" placeholder="← Left concept" oninput="saveConcepts()">
+        <input class="concept-input" id="concept-right" placeholder="Right concept →" oninput="saveConcepts()">
+      </div>
+
+      <div id="controls-active" class="flex flex-col gap-3 mt-4">
+        <button class="btn-primary btn-sm" id="btn-reveal" onclick="revealAndScore()">
+          🎯 Lock Dial & Reveal Score
+        </button>
+      </div>
+
+      <div id="controls-scored" class="hidden mt-4 bg-opacity-20 border p-5 rounded-lg text-center animation-fade">
+        <p class="font-bold text-2xl mb-1" id="score-announcement">🎯 Scored 4 Points!</p>
+        <p class="text-xs opacity-75 mb-5" style="color:var(--cream)">(Automatically added to active team)</p>
+        
+        <div class="flex gap-2">
+          <button id="btn-opp-bonus" class="flex-1 btn-ghost btn-sm" onclick="addOpponentBonus()">
+            +1 (Opponent Guessed Side)
+          </button>
+          <button class="flex-1 btn-primary btn-sm" onclick="endRound()">
+            End Turn →
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="modal-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center px-6" style="background:rgba(7,12,24,.85);backdrop-filter:blur(6px)">
+  <div class="card p-6 w-full max-w-xs text-center">
+    <p class="font-semibold text-lg mb-2" style="font-family:'Cormorant Garamond',serif">Reset the game?</p>
+    <p class="text-sm mb-5" style="color:var(--muted)">All scores and history will be cleared.</p>
+    <div class="flex gap-3">
+      <button class="flex-1 btn-ghost btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="flex-1 btn-primary btn-sm" onclick="resetGame()">Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ STAR CANVAS ═══
+(function(){
+  const c=document.getElementById('stars');
+  const ctx=c.getContext('2d');
+  let stars=[];
+  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;generateStars();}
+  function generateStars(){
+    stars=[]; const n=Math.floor((c.width*c.height)/3500);
+    for(let i=0;i<n;i++) stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2+.2,a:Math.random(),da:(Math.random()-.5)*.005});
+  }
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    stars.forEach(s=>{
+      s.a=Math.max(.1,Math.min(1,s.a+s.da));
+      if(s.a<=.1||s.a>=1)s.da*=-1;
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(220,210,200,${s.a})`; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize); resize(); draw();
+})();
+
+// ═══ NATIVE DB ═══
+const CONCEPT_DB = [
+  ["Hot", "Cold"], ["Rough", "Smooth"], ["Underrated", "Overrated"],
+  ["Smells Bad", "Smells Good"], ["Requires Luck", "Requires Skill"],
+  ["Hard to Do", "Easy to Do"], ["Useless", "Useful"], ["Tired", "Wired"],
+  ["Villain", "Hero"], ["Unforgivable", "Forgivable"], ["Boring", "Fascinating"],
+  ["Low Calorie", "High Calorie"], ["Temporary", "Permanent"], ["Ugly", "Beautiful"],
+  ["Peaceful", "Chaotic"], ["Guilty Pleasure", "Openly Loved"], ["Bad Habit", "Good Habit"],
+  ["Fantasy", "Sci-Fi"], ["Small", "Large"], ["Light", "Heavy"],
+  ["Thin", "Thick"], ["Short", "Tall"], ["Cheap", "Expensive"],
+  ["Trashy", "Classy"], ["Lame", "Cool"], ["Historical", "Futuristic"],
+  ["Mainstream", "Niche"], ["Old School", "New School"], ["Sad", "Happy"],
+  ["Angry", "Calm"], ["Scary", "Funny"], ["Manual", "Automated"],
+  ["Rare", "Common"], ["Safe", "Dangerous"], ["Healthy", "Unhealthy"],
+  ["Spicy", "Mild"], ["Classic", "Modern"], ["Ethical", "Unethical"],
+  ["Professional", "Amateur"], ["Loud", "Quiet"], ["Wet", "Dry"],
+  ["Hard", "Soft"], ["Dark", "Light"], ["Evil", "Good"],
+  ["Selfish", "Selfless"], ["Illegal", "Legal"], ["Rude", "Polite"],
+  ["Taboo", "Common"], ["Snack", "Meal"], ["Fancy", "Basic"],
+  ["Job", "Passion"], ["Fact", "Fiction"], ["Forgotten", "Famous"],
+  ["Waste of Time", "Productive"], ["Weak", "Strong"], ["Dull", "Sharp"],
+  ["Natural", "Artificial"], ["Stable", "Unstable"], ["Simple", "Complex"],
+  ["Failure", "Success"], ["Casual", "Formal"], ["Unpopular", "Popular"],
+  ["Low Quality", "High Quality"], ["Traditional", "Progressive"], ["Meaningless", "Meaningful"],
+  ["Local", "Global"], ["Literal", "Figurative"], ["Inexpensive", "Priceless"],
+  ["Standard", "Custom"], ["Messy", "Organized"], ["Slow", "Fast"],
+  ["Bitter", "Sweet"], ["Fragile", "Sturdy"], ["Dim", "Brilliant"],
+  ["Stingy", "Generous"], ["Gullible", "Skeptical"], ["Immature", "Mature"],
+  ["Cowardly", "Brave"], ["Timid", "Aggressive"], ["Ephemeral", "Eternal"],
+  ["Subjective", "Objective"], ["Forbidden", "Encouraged"], ["Obsolete", "Cutting Edge"],
+  ["Garbage", "Treasure"], ["Tacky", "Elegant"], ["Underpaid", "Overpaid"],
+  ["Relaxing", "Stressful"], ["Intuitive", "Complex"], ["Lowbrow", "Highbrow"],
+  ["Bad for a Date", "Great for a Date"], ["Style", "Substance"], ["Cheesy", "Sophisticated"],
+  ["Nature", "Nurture"], ["Logic", "Emotion"], ["Guilty", "Innocent"],
+  ["Hidden", "Obvious"], ["Monochrome", "Colorful"], ["Vague", "Specific"],
+  ["Short-term", "Long-term"], ["Predictable", "Unpredictable"], ["Hated", "Adored"],
+  ["Optional", "Mandatory"], ["Useless Superpower", "Useful Superpower"], ["Bad Advice", "Good Advice"],
+  ["Hard to Pronounce", "Easy to Pronounce"], ["Scam", "Bargain"], ["Fake", "Real"],
+  ["Disgusting", "Delicious"], ["Low Tech", "High Tech"], ["Worst Chore", "Best Chore"],
+  ["Uncool", "Cool"], ["Brave", "Foolish"], ["Harmless", "Lethal"],
+  ["Inside", "Outside"], ["Winter", "Summer"], ["Analogue", "Digital"],
+  ["Worst Song Ever", "Best Song Ever"], ["Dirty", "Clean"], ["Sad Movie", "Happy Movie"],
+  ["Ugly Animal", "Cute Animal"], ["Waste of Space", "Essential"], ["Bad Gift", "Good Gift"],
+  ["Low Stakes", "High Stakes"], ["Weak Coffee", "Strong Coffee"], ["Quiet Hobby", "Loud Hobby"],
+  ["Art", "Trash"], ["Forgettable", "Unforgettable"], ["Poorly Made", "Well Made"],
+  ["Overlooked", "Hyped"], ["Generic", "Unique"], ["Outdated", "Trendy"],
+  ["Fragile", "Robust"], ["Awkward", "Smooth"], ["Shallow", "Deep"],
+  ["Rigid", "Flexible"], ["Minor", "Major"], ["Common Sense", "Rocket Science"],
+  ["Low Priority", "Top Priority"], ["Unfair", "Just"], ["Ordinary", "Extraordinary"],
+  ["Tasteless", "Flavorful"], ["Boring Person", "Life of the Party"], ["Small Win", "Big Win"],
+  ["Pointless", "Vital"], ["Childish", "Adult"], ["Socially Acceptable", "Socially Awkward"],
+  ["Underground", "Commercial"], ["Passive", "Active"], ["Private", "Public"],
+  ["Early", "Late"], ["Empty", "Full"], ["Poor", "Rich"],
+  ["Young", "Old"], ["Loose", "Tight"], ["Narrow", "Wide"],
+  ["Round", "Flat"], ["Straight", "Curved"], ["Solid", "Liquid"],
+  ["Still", "Moving"], ["Simple", "Ornate"], ["Ordinary", "Weird"],
+  ["Evil", "Saintly"], ["False", "True"], ["Wrong", "Right"],
+  ["Sour", "Savory"], ["Lazy", "Energetic"], ["Stupid", "Wise"],
+  ["Tame", "Wild"], ["Calm", "Hectic"], ["Thrilling", "Terrifying"],
+  ["Cluttered", "Minimalist"], ["Juvenile", "Sophisticated"], ["Vulgar", "Refined"],
+  ["Chaos", "Harmony"], ["Dishonest", "Truthful"], ["Cruel", "Compassionate"],
+  ["Arrogant", "Humble"], ["Greedy", "Charitable"], ["Pessimistic", "Optimistic"],
+  ["Nightmare", "Paradise"], ["Hell", "Heaven"], ["Sinner", "Saint"],
+  ["Burden", "Blessing"], ["Curse", "Gift"], ["Tragedy", "Comedy"],
+  ["Bland", "Zesty"], ["Unstable", "Steady"], ["Unreliable", "Trustworthy"],
+  ["Synthetic", "Organic"], ["Disposable", "Keepsake"], ["Understated", "Flamboyant"],
+  ["Pretentious", "Humble"], ["Cringe", "Iconic"], ["Dull", "Vibrant"],
+  ["Tiny", "Gargantuan"], ["Insignificant", "Life-Changing"], ["Dreary", "Cheerful"],
+  ["Hard to Find", "Ubiquitous"], ["Shabby", "Luxe"], ["Unhealthy Habit", "Life Hack"],
+  ["Weak Flavor", "Strong Flavor"], ["Overpowering", "Subtle"], ["Grim", "Optimistic"],
+  ["Uncomfortable", "Cozy"], ["Useless Skill", "Life Skill"], ["Monotonous", "Diverse"],
+  ["Clumsy", "Graceful"], ["Flimsy", "Solid"], ["Inaccurate", "Precise"],
+  ["Gloomy", "Radiant"], ["Unimpressive", "Stunning"], ["Tedious", "Engrossing"]
+];
+
+// ═══ STATE ═══
+const STORAGE_KEY='wavelength_v5';
+let state={
+  team1:{name:'Left Brain',score:0}, team2:{name:'Right Brain',score:1},
+  activeTeam:1, round:1, dialAngle:90,
+  conceptLeft:'', conceptRight:'',
+  targetAngle:90, isScored:false, earnedPts:0, oppAwarded:false,
+  history:[], future:[]
+};
+
+function loadState(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) state={...state,...JSON.parse(raw)}; }catch(e){} }
+function saveState(){ try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); }catch(e){} }
+function getSnapshot(){
+  return{
+    t1S:state.team1.score, t2S:state.team2.score, aT:state.activeTeam, rnd:state.round,
+    tA:state.targetAngle, dA:state.dialAngle, scr:state.isScored, pts:state.earnedPts, opp:state.oppAwarded
+  };
+}
+function applySnapshot(s){
+  state.team1.score=s.t1S; state.team2.score=s.t2S; state.activeTeam=s.aT; state.round=s.rnd;
+  state.targetAngle=s.tA||90; state.dialAngle=s.dA||90; state.isScored=s.scr||false; 
+  state.earnedPts=s.pts||0; state.oppAwarded=s.opp||false;
+}
+
+// ═══ PAGES ═══
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  window.scrollTo(0,0); if(name==='game') renderGame();
+}
+
+// ═══ GAME LOGIC ═══
+function updateName(team,val){
+  if(team===1) state.team1.name=val||'Left Brain'; else state.team2.name=val||'Right Brain';
+  saveState(); renderGame();
+}
+
+function addOpponentBonus(){
+  if (state.oppAwarded) return;
+  state.history.push(getSnapshot()); state.future=[];
+  const other=state.activeTeam===1?state.team2:state.team1;
+  other.score=Math.max(0,other.score+1);
+  state.oppAwarded = true;
+  saveState(); renderGame();
+}
+
+function endRound(){
+  state.history.push(getSnapshot()); state.future=[];
+  if (!state._catchup) state.activeTeam = state.activeTeam === 1 ? 2 : 1;
+  state._catchup = false; state.round++; state.dialAngle = 90; state.isScored = false; state.oppAwarded = false;
+  saveState(); renderGame();
+}
+
+function generateCard(){
+  state.history.push(getSnapshot()); state.future=[];
+  const pair = CONCEPT_DB[Math.floor(Math.random() * CONCEPT_DB.length)];
+  const flip = Math.random() > 0.5;
+  state.conceptLeft = flip ? pair[1] : pair[0]; state.conceptRight = flip ? pair[0] : pair[1];
+  saveState(); renderGame();
+}
+
+function generateTarget(){
+  state.history.push(getSnapshot()); state.future=[];
+  state.targetAngle = Math.floor(Math.random() * 120) + 30; // Between 30 and 150
+  state.isScored = false; state.dialAngle = 90; state.oppAwarded = false;
+  saveState(); renderGame();
+}
+
+// ═══ DUAL REVEAL LOGIC ═══
+function startPeek(e){
+  if(state.isScored) return; e.preventDefault();
+  document.getElementById('target-wedges').classList.remove('hidden'); updateWedges(state.targetAngle);
+}
+function endPeek(e){
+  if(state.isScored) return; e.preventDefault();
+  document.getElementById('target-wedges').classList.add('hidden');
+}
+
+function revealAndScore(){
+  if(state.isScored) return;
+  state.history.push(getSnapshot()); state.future=[];
+  
+  state.isScored = true;
+  state.oppAwarded = false;
+  
+  const diff = Math.abs(state.targetAngle - state.dialAngle);
+  let pts = 0;
+  if (diff <= 5) pts = 4;
+  else if (diff <= 15) pts = 3;
+  else if (diff <= 25) pts = 2;
+  
+  state.earnedPts = pts;
+  
+  const team = state.activeTeam === 1 ? state.team1 : state.team2;
+  team.score = Math.max(0, team.score + pts);
+  
+  const stillLosing = (state.activeTeam === 1 && state.team1.score < state.team2.score) || 
+                      (state.activeTeam === 2 && state.team2.score < state.team1.score);
+  state._catchup = (pts === 4 && stillLosing);
+
+  saveState(); renderGame();
+}
+
+// ═══ UNDO/REDO & MODAL ═══
+function undo(){ if(!state.history.length) return; state.future.push(getSnapshot()); applySnapshot(state.history.pop()); state._catchup=false; saveState(); renderGame(); }
+function redo(){ if(!state.future.length) return; state.history.push(getSnapshot()); applySnapshot(state.future.pop()); state._catchup=false; saveState(); renderGame(); }
+function confirmReset(){ document.getElementById('modal-overlay').classList.remove('hidden'); }
+function closeModal(){ document.getElementById('modal-overlay').classList.add('hidden'); }
+function resetGame(){ state.team1={name:state.team1.name,score:0}; state.team2={name:state.team2.name,score:1}; state.activeTeam=1; state.round=1; state.history=[]; state.future=[]; state._catchup=false; state.dialAngle=90; state.isScored=false; updateDialNeedle(90); saveState(); closeModal(); renderGame(); }
+function saveConcepts(){ state.conceptLeft=document.getElementById('concept-left').value; state.conceptRight=document.getElementById('concept-right').value; saveState(); }
+
+// ═══ SVG ARC MATH ═══
+function describeArc(x, y, radius, startAngleDeg, endAngleDeg){
+    startAngleDeg = Math.max(0, Math.min(180, startAngleDeg)); endAngleDeg = Math.max(0, Math.min(180, endAngleDeg));
+    if (startAngleDeg === endAngleDeg) return "";
+    function p2C(cX, cY, r, aD) { let aR = (180 - aD) * Math.PI / 180.0; return { x: cX + r * Math.cos(aR), y: cY - r * Math.sin(aR) }; }
+    let s = p2C(x, y, radius, endAngleDeg); let e = p2C(x, y, radius, startAngleDeg);
+    return ["M", x, y, "L", s.x, s.y, "A", radius, radius, 0, "0", 0, e.x, e.y, "Z"].join(" ");
+}
+function updateWedges(t) {
+  const CX = 160, CY = 160, R = 150;
+  document.getElementById('wedge-2a').setAttribute('d', describeArc(CX, CY, R, t-25, t-15));
+  document.getElementById('wedge-2b').setAttribute('d', describeArc(CX, CY, R, t+15, t+25));
+  document.getElementById('wedge-3a').setAttribute('d', describeArc(CX, CY, R, t-15, t-5));
+  document.getElementById('wedge-3b').setAttribute('d', describeArc(CX, CY, R, t+5, t+15));
+  document.getElementById('wedge-4').setAttribute('d', describeArc(CX, CY, R, t-5, t+5));
+}
+
+// ═══ RENDER ═══
+function renderGame(){
+  const t1=state.team1, t2=state.team2; const maxScore=10;
+
+  document.getElementById('score-t1').textContent=t1.score; document.getElementById('score-t2').textContent=t2.score;
+  document.getElementById('prog-t1').style.width=Math.min(100,(t1.score/maxScore)*100)+'%';
+  document.getElementById('prog-t2').style.width=Math.min(100,(t2.score/maxScore)*100)+'%';
+  document.getElementById('name-t1').value=t1.name; document.getElementById('name-t2').value=t2.name;
+
+  document.getElementById('card-t1').classList.toggle('active-card',state.activeTeam===1);
+  document.getElementById('card-t2').classList.toggle('active-card',state.activeTeam===2);
+  document.getElementById('round-num').textContent=state.round;
+  document.getElementById('active-label').textContent=`${state.activeTeam===1?t1.name:t2.name}'s turn`;
+
+  document.getElementById('btn-undo').disabled=!state.history.length;
+  document.getElementById('btn-redo').disabled=!state.future.length;
+
+  if(t1.score>=maxScore||t2.score>=maxScore){
+    document.getElementById('winner-text').textContent=`🏆 ${t1.score>t2.score?t1.name:(t2.score>t1.score?t2.name:'Tie!')} Wins!`;
+    document.getElementById('winner-banner').classList.remove('hidden');
+  } else document.getElementById('winner-banner').classList.add('hidden');
+
+  if(state._catchup) document.getElementById('catchup-alert').classList.remove('hidden');
+  else document.getElementById('catchup-alert').classList.add('hidden');
+
+  document.getElementById('concept-left').value=state.conceptLeft||'';
+  document.getElementById('concept-right').value=state.conceptRight||'';
+
+  const scoredPanel = document.getElementById('controls-scored');
+  if(state.isScored) {
+    document.getElementById('target-wedges').classList.remove('hidden');
+    updateWedges(state.targetAngle);
+    document.getElementById('controls-active').classList.add('hidden');
+    scoredPanel.classList.remove('hidden');
+    
+    // Dynamic Colors based on Score
+    let color = 'var(--muted)'; let bgColor = 'rgba(255,255,255,0.05)'; let borderColor = 'var(--border)';
+    if(state.earnedPts === 4){ color = 'var(--teal)'; bgColor = 'rgba(78,205,196,0.1)'; borderColor = 'rgba(78,205,196,0.3)'; }
+    if(state.earnedPts === 3){ color = 'var(--red)'; bgColor = 'rgba(232,72,85,0.1)'; borderColor = 'rgba(232,72,85,0.3)'; }
+    if(state.earnedPts === 2){ color = 'var(--gold)'; bgColor = 'rgba(232,184,75,0.1)'; borderColor = 'rgba(232,184,75,0.3)'; }
+    
+    scoredPanel.style.backgroundColor = bgColor;
+    scoredPanel.style.borderColor = borderColor;
+    
+    const banner = document.getElementById('score-announcement');
+    banner.textContent = state.earnedPts > 0 ? `🎯 Scored ${state.earnedPts} Points!` : `❌ Missed! 0 Points`;
+    banner.style.color = color;
+    
+    // Handle Opponent Bonus Logic
+    const oppBtn = document.getElementById('btn-opp-bonus');
+    if(state.earnedPts === 4) {
+      oppBtn.disabled = true;
+      oppBtn.textContent = "No Opponent Bonus (Bullseye)";
+      oppBtn.style.opacity = '0.4';
+    } else if (state.oppAwarded) {
+      oppBtn.disabled = true;
+      oppBtn.textContent = "Bonus Awarded ✓";
+      oppBtn.style.opacity = '0.8';
+      oppBtn.style.borderColor = 'var(--gold)';
+      oppBtn.style.color = 'var(--gold)';
+    } else {
+      oppBtn.disabled = false;
+      oppBtn.textContent = "+1 (Opponent Guessed Side)";
+      oppBtn.style.opacity = '1';
+      oppBtn.style.borderColor = 'var(--border)';
+      oppBtn.style.color = 'var(--cream)';
+    }
+
+  } else {
+    document.getElementById('target-wedges').classList.add('hidden');
+    document.getElementById('controls-active').classList.remove('hidden');
+    scoredPanel.classList.add('hidden');
+  }
+
+  updateDialNeedle(state.dialAngle);
+}
+
+// ═══ DIAL EVENTS ═══
+function updateDialNeedle(deg){
+  const rad=(180-deg)*Math.PI/180;
+  const tipX = 160 + 155 * Math.cos(rad); const tipY = 160 - 155 * Math.sin(rad);
+  const needle = document.getElementById('dial-needle'); const handle = document.getElementById('dial-handle');
+  if(needle){ needle.setAttribute('x2', tipX); needle.setAttribute('y2', tipY); }
+  if(handle){ handle.setAttribute('cx', tipX); handle.setAttribute('cy', tipY); }
+}
+
+function initDial(){
+  const svg=document.getElementById('dial-svg'); if(!svg) return;
+  let dragging=false;
+
+  function getAngle(clientX,clientY){
+    const rect=svg.getBoundingClientRect();
+    const x=(clientX-rect.left)*(320/rect.width)-160;
+    const y=(clientY-rect.top)*(180/rect.height)-160;
+    if(y>10) return null;
+    
+    // Fixed Drag Math: Properly aligns pointer movement with dial arc
+    let angle = Math.atan2(-y, x) * 180 / Math.PI;
+    return Math.max(0, Math.min(180, 180 - angle)); 
+  }
+  
+  function onMove(clientX,clientY){
+    if(!dragging || state.isScored) return;
+    const deg=getAngle(clientX,clientY);
+    if(deg!==null){ state.dialAngle=deg; updateDialNeedle(deg); }
+  }
+
+  svg.addEventListener('mousedown',e=>{if(!state.isScored){dragging=true;e.preventDefault();}});
+  window.addEventListener('mouseup',()=>{if(dragging){dragging=false;saveState();}});
+  window.addEventListener('mousemove',e=>{onMove(e.clientX,e.clientY);});
+
+  svg.addEventListener('touchstart',e=>{if(!state.isScored){dragging=true;e.preventDefault();}},{passive:false});
+  window.addEventListener('touchend',()=>{if(dragging){dragging=false;saveState();}});
+  window.addEventListener('touchmove',e=>{if(!dragging||state.isScored)return;e.preventDefault();onMove(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
+}
+
+// ═══ INIT ═══
+loadState(); initDial(); renderGame();
+</script>
+</body>
+</html>
