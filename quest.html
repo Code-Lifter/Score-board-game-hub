@@ -1,1 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quest — Moderator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #09070a;
+      --surface:   #120f0b;
+      --raised:    #1b1610;
+      --border:    #3a2c18;
+      --border-hi: #6b4e28;
+      --gold:      #c8902a;
+      --gold-hi:   #e8b84a;
+      --evil:      #9a1c1c;
+      --evil-hi:   #d94040;
+      --good:      #1a5276;
+      --good-hi:   #4a9eda;
+      --text:      #cfc0a0;
+      --text-dim:  #7a6a52;
+      --parchment: #f0e6c8;
+      --ink:       #261808;
+      --ink-dim:   #5a3a18;
+    }
 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      background-image: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(180,100,20,0.07) 0%, transparent 60%);
+      color: var(--text);
+      font-family: 'Crimson Text', Georgia, serif;
+      min-height: 100vh;
+      padding: 1.5rem 1rem 4rem;
+    }
+
+    /* ── PANELS ── */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 3px;
+      box-shadow: 0 0 0 4px var(--surface), 0 0 0 5px var(--border), 0 12px 48px rgba(0,0,0,0.85);
+      position: relative;
+    }
+    .panel::before {
+      content: '';
+      position: absolute;
+      inset: 7px;
+      border: 1px solid rgba(110,80,35,0.2);
+      pointer-events: none;
+      border-radius: 2px;
+    }
+
+    .inner-card {
+      background: var(--raised);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1.25rem 1.375rem;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    .display { font-family: 'Cinzel', serif; letter-spacing: 0.12em; text-transform: uppercase; }
+    .label-sm { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); }
+
+    /* ── DIVIDERS ── */
+    .orn-divider {
+      display: flex; align-items: center; gap: 0.875rem;
+      color: var(--border-hi);
+    }
+    .orn-divider::before, .orn-divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-hi), transparent);
+    }
+    .orn-divider span { font-size: 0.75rem; color: var(--gold); opacity: 0.65; }
+
+    .orn-divider-ink {
+      display: flex; align-items: center; gap: 0.875rem;
+    }
+    .orn-divider-ink::before, .orn-divider-ink::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, transparent, rgba(100,70,20,0.5), transparent);
+    }
+    .orn-divider-ink span { font-size: 0.75rem; color: rgba(100,60,10,0.7); }
+
+    /* ── MODE TABS ── */
+    .mode-tab {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.45rem 1.1rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.18s;
+      color: var(--text-dim);
+      border: 1px solid transparent;
+      user-select: none;
+    }
+    .mode-tab:has(input:checked) {
+      background: rgba(200,144,42,0.13);
+      color: var(--gold-hi);
+      border-color: var(--border-hi);
+      text-shadow: 0 0 14px rgba(232,184,74,0.45);
+    }
+    .mode-tab input { display: none; }
+
+    /* ── PLAYER COIN BUTTONS ── */
+    .coin-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      width: 2.7rem;
+      height: 2.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--text-dim);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+      user-select: none;
+    }
+    .coin-btn:has(input:checked) {
+      background: var(--gold);
+      color: var(--ink);
+      border-color: var(--gold-hi);
+      box-shadow: 0 0 16px rgba(200,144,42,0.55), 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .coin-btn input { display: none; }
+
+    /* ── ROLE CHECKBOXES ── */
+    .role-check {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      cursor: pointer;
+      padding: 0.45rem 0.7rem;
+      border-radius: 2px;
+      border: 1px solid transparent;
+      transition: background 0.12s, border-color 0.12s;
+      user-select: none;
+    }
+    .role-check:hover { background: rgba(255,255,255,0.025); border-color: var(--border); }
+    .role-check input { display: none; }
+    .check-icon {
+      width: 1.2rem; height: 1.2rem;
+      border-radius: 2px;
+      border: 1.5px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.13s;
+      opacity: 0.45;
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: inherit;
+    }
+    .role-check input:checked ~ .check-icon {
+      opacity: 1;
+      background: currentColor;
+    }
+    .role-check input:checked ~ .check-icon::after {
+      content: '✓';
+      color: var(--ink);
+    }
+    .role-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+    }
+    .evil-role { color: var(--evil-hi); }
+    .good-role { color: var(--good-hi); }
+
+    /* ── FIXED ROLE BADGES ── */
+    .fixed-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.875rem;
+      border-radius: 2px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+    }
+    .fixed-badge-good {
+      color: var(--good-hi);
+      background: rgba(74,158,218,0.07);
+      border: 1px solid rgba(74,158,218,0.25);
+    }
+    .fixed-badge-evil {
+      color: var(--evil-hi);
+      background: rgba(217,64,64,0.07);
+      border: 1px solid rgba(217,64,64,0.25);
+    }
+
+    /* ── DECK ITEMS ── */
+    .deck-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 1rem;
+    }
+    .deck-item:last-child { border-bottom: none; }
+    .deck-qty {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── DC RADIO ── */
+    .dc-radio {
+      display: flex; align-items: center; gap: 0.7rem;
+      cursor: pointer; padding: 0.45rem 0.7rem;
+      border-radius: 2px; border: 1px solid transparent;
+      transition: all 0.15s; user-select: none;
+      font-family: 'Cinzel', serif; font-size: 0.85rem;
+      color: var(--good-hi);
+    }
+    .dc-radio:has(input:checked) {
+      background: rgba(74,158,218,0.08);
+      border-color: rgba(74,158,218,0.3);
+    }
+    .dc-radio input { accent-color: var(--good-hi); width: 1rem; height: 1rem; }
+
+    /* ── GENERATE BUTTON ── */
+    .gen-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 0.95rem 2.75rem;
+      background: linear-gradient(160deg, #c8902a 0%, #d8a030 50%, #c07820 100%);
+      color: #120800;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 0 1px rgba(232,184,74,0.35), 0 5px 22px rgba(200,144,42,0.38), inset 0 1px 0 rgba(255,220,100,0.25);
+      position: relative;
+    }
+    .gen-btn:hover {
+      background: linear-gradient(160deg, #d9a030 0%, #ebb040 50%, #d09030 100%);
+      box-shadow: 0 0 0 1px rgba(232,184,74,0.55), 0 7px 30px rgba(200,144,42,0.55), inset 0 1px 0 rgba(255,220,100,0.3);
+      transform: translateY(-1px);
+    }
+    .gen-btn:active { transform: translateY(0); }
+
+    /* ── STATUS BADGE ── */
+    .status-badge {
+      background: var(--raised);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 0.55rem 0.9rem;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ── PARCHMENT (SCRIPT) ── */
+    #firstNightSection {
+      background: var(--parchment);
+      background-image: radial-gradient(ellipse at 50% 100%, rgba(180,140,60,0.12) 0%, transparent 60%);
+      border: 1px solid #c8a060;
+      border-radius: 3px;
+      box-shadow: 0 0 0 4px rgba(240,230,200,0.07), 0 0 0 5px rgba(180,140,60,0.25), 0 20px 64px rgba(0,0,0,0.9);
+    }
+
+    #firstNightSection h2 {
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    #firstNightList li {
+      font-family: 'Crimson Text', serif;
+      font-size: 1.25rem;
+      line-height: 1.75;
+      color: var(--ink);
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(140,100,40,0.14);
+    }
+    #firstNightList li:last-child { border-bottom: none; }
+    #firstNightList li::marker {
+      font-family: 'Cinzel', serif;
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.9em;
+    }
+
+    /* ── ROLE PILLS IN SCRIPT ── */
+    .role-evil {
+      display: inline-block;
+      background: rgba(130,20,20,0.1);
+      color: #7a1010;
+      border: 1px solid rgba(120,20,20,0.28);
+      padding: 0.1rem 0.55rem;
+      border-radius: 3px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.88em;
+      font-weight: 600;
+      margin: 0 0.1rem;
+    }
+    .role-good {
+      display: inline-block;
+      background: rgba(20,60,120,0.1);
+      color: #153e7a;
+      border: 1px solid rgba(20,60,120,0.24);
+      padding: 0.1rem 0.55rem;
+      border-radius: 3px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.88em;
+      font-weight: 600;
+      margin: 0 0.1rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes parchmentReveal {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    #firstNightSection:not(.hidden) { animation: parchmentReveal 0.38s ease-out; }
+
+    /* ── UTILITY ── */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div style="max-width: 720px; margin: 0 auto;">
+
+    <!-- ══ HEADER ══ -->
+    <header style="text-align: center; padding: 1.5rem 0 2rem;">
+      <p class="label-sm" style="margin-bottom: 0.4rem; opacity: 0.55;">Don Eskridge's</p>
+      <h1 class="display" style="font-size: 3rem; color: var(--gold-hi); text-shadow: 0 0 40px rgba(200,140,40,0.35), 0 2px 6px rgba(0,0,0,0.9); line-height: 1.1; margin-bottom: 0.2rem;">Quest</h1>
+      <p class="label-sm" style="opacity: 0.4; letter-spacing: 0.22em;">Moderator Tool</p>
+      <div class="orn-divider" style="margin-top: 1.25rem; max-width: 360px; margin-left: auto; margin-right: auto;"><span>✦</span></div>
+    </header>
+
+    <!-- ══ SETUP PANEL ══ -->
+    <section class="panel" style="padding: 1.75rem 2rem 2rem; margin-bottom: 2rem;">
+
+      <!-- Top bar: mode + status -->
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.75rem;">
+        <div>
+          <p class="label-sm" style="margin-bottom: 0.5rem;">Game Mode</p>
+          <div style="display: flex; gap: 3px; background: var(--bg); padding: 4px; border-radius: 3px; border: 1px solid var(--border);">
+            <label class="mode-tab"><input type="radio" name="gameMode" value="standard" checked>Standard</label>
+            <label class="mode-tab"><input type="radio" name="gameMode" value="directors">Director's Cut</label>
+          </div>
+        </div>
+
+        <div id="setupAnalyzer" class="status-badge" aria-live="polite">
+          <div id="playerCountReq" class="label-sm">Player Count: 4</div>
+          <div id="balanceStatus" class="display" style="font-size: 0.75rem; color: var(--gold); margin-top: 3px;">Status: Standard</div>
+        </div>
+      </div>
+
+      <!-- ── STANDARD SETUP ── -->
+      <form id="standardSetup" style="display: flex; flex-direction: column; gap: 1.1rem;">
+
+        <div class="inner-card">
+          <p class="label-sm" style="margin-bottom: 0.875rem;">Total Players</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.55rem;" id="stdPlayerCounts">
+            <label class="coin-btn"><input type="radio" name="stdPlayerCount" value="4" checked>4</label>
+            <label class="coin-btn"><input type="radio" name="stdPlayerCount" value="5">5</label>
+            <label class="coin-btn"><input type="radio" name="stdPlayerCount" value="6">6</label>
+            <label class="coin-btn"><input type="radio" name="stdPlayerCount" value="7">7</label>
+            <label class="coin-btn"><input type="radio" name="stdPlayerCount" value="8">8</label>
+            <label class="coin-btn"><input type="radio" name="stdPlayerCount" value="9">9</label>
+            <label class="coin-btn"><input type="radio" name="stdPlayerCount" value="10">10</label>
+          </div>
+        </div>
+
+        <div class="inner-card">
+          <p class="label-sm" style="margin-bottom: 0.35rem;">Optional Script Modifiers</p>
+          <p style="font-size: 0.95rem; color: var(--text-dim); font-style: italic; margin-bottom: 1rem; line-height: 1.5;">Roles that don't alter the Reveal Stage script are handled automatically.</p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px;" id="optionalRolesList">
+
+            <div class="orn-divider" style="grid-column: 1/-1; margin: 0.25rem 0 0.5rem;"><span style="font-size: 0.6rem; letter-spacing: 0.1em; font-family: 'Cinzel', serif; color: var(--evil-hi); opacity: 0.7;">EVIL</span></div>
+
+            <label class="role-check evil-role" id="scionLabel">
+              <input type="checkbox" name="stdRole" value="Scion" data-team="evil" checked>
+              <span class="check-icon"></span><span class="role-name">Scion</span>
+            </label>
+            <label class="role-check evil-role hidden" id="changelingLabel">
+              <input type="checkbox" name="stdRole" value="Changeling" data-team="evil" checked>
+              <span class="check-icon"></span><span class="role-name">Changeling</span>
+            </label>
+            <label class="role-check evil-role">
+              <input type="checkbox" name="stdRole" value="Blind Hunter" data-team="evil">
+              <span class="check-icon"></span><span class="role-name">Blind Hunter</span>
+            </label>
+            <label class="role-check evil-role">
+              <input type="checkbox" name="stdRole" value="Mutineer" data-team="evil">
+              <span class="check-icon"></span><span class="role-name">Mutineer</span>
+            </label>
+
+            <div class="orn-divider" style="grid-column: 1/-1; margin: 0.5rem 0;"><span style="font-size: 0.6rem; letter-spacing: 0.1em; font-family: 'Cinzel', serif; color: var(--good-hi); opacity: 0.7;">GOOD</span></div>
+
+            <label class="role-check good-role">
+              <input type="checkbox" name="stdRole" value="Cleric" data-team="good">
+              <span class="check-icon"></span><span class="role-name">Cleric</span>
+            </label>
+            <label class="role-check good-role">
+              <input type="checkbox" name="stdRole" value="Arthur" data-team="good">
+              <span class="check-icon"></span><span class="role-name">Arthur</span>
+            </label>
+            <label class="role-check good-role">
+              <input type="checkbox" name="stdRole" value="Troublemaker" data-team="good">
+              <span class="check-icon"></span><span class="role-name">Troublemaker</span>
+            </label>
+          </div>
+        </div>
+      </form>
+
+      <!-- ── DIRECTOR'S CUT SETUP ── -->
+      <form id="directorsSetup" class="hidden" style="flex-direction: column; gap: 1.1rem;">
+
+        <div class="inner-card">
+          <p class="label-sm" style="margin-bottom: 0.875rem;">Total Players</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.55rem;">
+            <label class="coin-btn"><input type="radio" name="dcPlayerCount" value="4" checked>4</label>
+            <label class="coin-btn"><input type="radio" name="dcPlayerCount" value="5">5</label>
+            <label class="coin-btn"><input type="radio" name="dcPlayerCount" value="6">6</label>
+            <label class="coin-btn"><input type="radio" name="dcPlayerCount" value="7">7</label>
+            <label class="coin-btn"><input type="radio" name="dcPlayerCount" value="8">8</label>
+            <label class="coin-btn"><input type="radio" name="dcPlayerCount" value="9">9</label>
+            <label class="coin-btn"><input type="radio" name="dcPlayerCount" value="10">10</label>
+          </div>
+        </div>
+
+        <!-- FIXED ROLES — always in DC -->
+        <div class="inner-card">
+          <p class="label-sm" style="margin-bottom: 0.35rem;">Always Included in Director's Cut</p>
+          <p style="font-size: 0.95rem; color: var(--text-dim); font-style: italic; margin-bottom: 1rem; line-height: 1.5;">These roles are fixed at every player count and cannot be swapped out.</p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <div class="fixed-badge fixed-badge-good">
+              <span style="font-size: 0.8rem; opacity: 0.7;">✦</span> Cleric
+            </div>
+            <div class="fixed-badge fixed-badge-evil">
+              <span style="font-size: 0.8rem; opacity: 0.7;">✦</span> Blind Hunter
+            </div>
+          </div>
+        </div>
+
+        <!-- 4–5 PLAYER DISTRIBUTION NOTE -->
+        <div id="dcRandomNote" class="inner-card hidden" style="border-color: rgba(200,144,42,0.35); background: rgba(200,144,42,0.04);">
+          <p class="label-sm" style="color: var(--gold); margin-bottom: 0.6rem;">4–5 Player Distribution</p>
+          <p style="font-size: 1rem; line-height: 1.65; color: var(--text);">The Good deck contains three cards:
+            <span style="color: var(--good-hi); font-family: 'Cinzel', serif; font-size: 0.85em;">Loyal Servant</span>,
+            <span style="color: var(--good-hi); font-family: 'Cinzel', serif; font-size: 0.85em;">Cleric</span>, and
+            <span style="color: var(--good-hi); font-family: 'Cinzel', serif; font-size: 0.85em;">Youth</span>.
+            Randomly remove one Good card face-down and place it under the tableau before dealing. The hidden card may be identified by the
+            <span style="color: var(--evil-hi); font-family: 'Cinzel', serif; font-size: 0.85em;">Blind Hunter</span>.</p>
+        </div>
+
+        <div id="dcRoleChoice" class="inner-card opacity-50 pointer-events-none" style="transition: opacity 0.2s;">
+          <p class="label-sm" style="margin-bottom: 0.35rem;">Good Role Selector</p>
+          <p style="font-size: 0.95rem; color: var(--text-dim); font-style: italic; margin-bottom: 1rem; line-height: 1.5;">In games of 6 or more, you must include one of these roles.</p>
+          <div style="display: flex; gap: 0.5rem;">
+            <label class="dc-radio"><input type="radio" name="dcRole" value="Youth" checked> Youth</label>
+            <label class="dc-radio"><input type="radio" name="dcRole" value="Troublemaker"> Troublemaker</label>
+          </div>
+        </div>
+      </form>
+
+      <!-- ── DECK BUILDER ── -->
+      <div class="orn-divider" style="margin: 1.75rem 0 1.25rem;"><span>✦</span></div>
+
+      <div class="inner-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <p class="label-sm">Required Deck</p>
+          <span class="label-sm" style="background: var(--bg); border: 1px solid var(--border); padding: 2px 8px; border-radius: 2px; opacity: 0.7;">Auto-calculated</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 2px; padding: 0.875rem 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--good-hi); box-shadow: 0 0 6px var(--good-hi); flex-shrink: 0;"></span>
+              <span class="label-sm" style="color: var(--good-hi);">Good Team</span>
+              <span class="label-sm" style="margin-left: auto; color: var(--text-dim);">(<span id="goodCountDisplay">0</span>)</span>
+            </div>
+            <ul id="goodDeckList"></ul>
+          </div>
+
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 2px; padding: 0.875rem 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--evil-hi); box-shadow: 0 0 6px var(--evil-hi); flex-shrink: 0;"></span>
+              <span class="label-sm" style="color: var(--evil-hi);">Evil Team</span>
+              <span class="label-sm" style="margin-left: auto; color: var(--text-dim);">(<span id="evilCountDisplay">0</span>)</span>
+            </div>
+            <ul id="evilDeckList"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate button -->
+      <div style="display: flex; justify-content: center; margin-top: 1.75rem;">
+        <button id="generateFirstNightBtn" type="button" class="gen-btn">
+          ⚔&ensp;Generate Script&ensp;⚔
+        </button>
+      </div>
+    </section>
+
+    <!-- ══ PROCLAMATION / SCRIPT ══ -->
+    <section id="firstNightSection" class="hidden scroll-mt-6" style="padding: 2.25rem 2.5rem 2.75rem; margin-bottom: 4rem;">
+      <div style="text-align: center; margin-bottom: 1.75rem;">
+        <div class="orn-divider-ink" style="margin-bottom: 1rem;"><span>✦</span></div>
+        <h2 style="font-size: 1.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); font-family: 'Cinzel', serif; margin-bottom: 0.2rem;">The Reveal Stage</h2>
+        <p style="font-family: 'Crimson Text', serif; font-style: italic; font-size: 1rem; color: var(--ink-dim); margin-bottom: 1rem;">Read aloud with eyes closed</p>
+        <div class="orn-divider-ink"><span>✦</span></div>
+      </div>
+
+      <ol id="firstNightList" style="list-style-type: decimal; padding-left: 2.25rem; display: flex; flex-direction: column;"></ol>
+    </section>
+
+  </div>
+
+  <script>
+    // ── BASE DECK DATA ──────────────────────────────────────────────────────────
+
+    // Standard game deck (from the rulebook Determining Allegiances table, p.4)
+    const baseAllegiances = {
+      "4":  { good: {"Loyal Servant": 2},                              evil: {"Morgan le Fey": 1, "Scion": 1} },
+      "5":  { good: {"Loyal Servant": 3},                              evil: {"Morgan le Fey": 1, "Scion": 1} },
+      "6":  { good: {"Loyal Servant": 3},                              evil: {"Minion": 1, "Morgan le Fey": 1, "Changeling": 1} },
+      "7":  { good: {"Loyal Servant": 3, "Duke": 1},                   evil: {"Minion": 1, "Morgan le Fey": 1, "Changeling": 1} },
+      "8":  { good: {"Loyal Servant": 3, "Duke": 1},                   evil: {"Minion": 1, "Morgan le Fey": 1, "Scion": 1, "Changeling": 1} },
+      "9":  { good: {"Loyal Servant": 4, "Duke": 1, "Archduke": 1},    evil: {"Minion": 1, "Morgan le Fey": 1, "Changeling": 1} },
+      "10": { good: {"Loyal Servant": 4, "Duke": 1, "Archduke": 1},    evil: {"Minion": 2, "Morgan le Fey": 1, "Changeling": 1} }
+    };
+
+    // Director's Cut deck (from the DC back card)
+    // NOTE: for 4–5 players the deck shows 3 Good cards; one is removed randomly before deal.
+    // For 6–10 players, Youth or Troublemaker is added dynamically by updateDeckBuilder.
+const dcAllegiances = {
+      "4":  { good: {"Cleric": 1, "BLIND_POOL": 2}, evil: {"Morgan le Fey": 1, "Blind Hunter": 1} },
+      "5":  { good: {"Cleric": 1, "BLIND_POOL": 2}, evil: {"Minion": 1, "Morgan le Fey": 1, "Blind Hunter": 1} },
+      "6":  { good: {"Cleric": 1, "DYNAMIC_ROLE": 1, "Duke": 1}, evil: {"Minion": 1, "Morgan le Fey": 1, "Blind Hunter": 1} },
+      "7":  { good: {"Cleric": 1, "DYNAMIC_ROLE": 1, "Duke": 1}, evil: {"Minion": 2, "Morgan le Fey": 1, "Blind Hunter": 1} },
+      "8":  { good: {"Loyal Servant": 1, "Cleric": 1, "DYNAMIC_ROLE": 1, "Duke": 1}, evil: {"Minion": 2, "Morgan le Fey": 1, "Blind Hunter": 1} },
+      "9":  { good: {"Loyal Servant": 1, "Cleric": 1, "DYNAMIC_ROLE": 1, "Duke": 1, "Archduke": 1}, evil: {"Minion": 3, "Morgan le Fey": 1, "Blind Hunter": 1} },
+      "10": { good: {"Loyal Servant": 1, "Cleric": 1, "DYNAMIC_ROLE": 1, "Duke": 1, "Archduke": 1}, evil: {"Minion": 3, "Morgan le Fey": 1, "Blind Hunter": 1} }
+    };
+
+    // ── DOM REFS ────────────────────────────────────────────────────────────────
+
+    const stdSetupForm       = document.getElementById('standardSetup');
+    const dcSetupForm        = document.getElementById('directorsSetup');
+    const dcRoleChoice       = document.getElementById('dcRoleChoice');
+    const dcRandomNote       = document.getElementById('dcRandomNote');
+    const playerCountDisplay = document.getElementById('playerCountReq');
+    const balanceStatus      = document.getElementById('balanceStatus');
+    const scionLabel         = document.getElementById('scionLabel');
+    const changelingLabel    = document.getElementById('changelingLabel');
+    const stdCheckboxes      = document.querySelectorAll('input[name="stdRole"]');
+
+    // ── UI UPDATE ───────────────────────────────────────────────────────────────
+
+    function updateUI() {
+      const mode         = document.querySelector('input[name="gameMode"]:checked').value;
+      const stdCount     = document.querySelector('input[name="stdPlayerCount"]:checked').value;
+      const dcCount      = document.querySelector('input[name="dcPlayerCount"]:checked').value;
+      const currentCount    = mode === 'standard' ? stdCount : dcCount;
+      const currentCountInt = parseInt(currentCount);
+
+      if (mode === 'standard') {
+        stdSetupForm.classList.remove('hidden');
+        stdSetupForm.style.display = 'flex';
+        dcSetupForm.classList.add('hidden');
+        balanceStatus.textContent = "Status: Standard";
+
+        // Show Scion only at player counts where it's in the base deck
+        if ([4, 5, 8].includes(currentCountInt)) {
+          scionLabel.classList.remove('hidden');
+        } else {
+          scionLabel.classList.add('hidden');
+        }
+
+        // Show Changeling only at 6+
+        if (currentCountInt >= 6) {
+          changelingLabel.classList.remove('hidden');
+        } else {
+          changelingLabel.classList.add('hidden');
+        }
+
+      } else {
+        stdSetupForm.classList.add('hidden');
+        dcSetupForm.classList.remove('hidden');
+        dcSetupForm.style.display = 'flex';
+        balanceStatus.textContent = "Status: Director's Cut";
+
+        // Enable Good Role Selector only at 6+
+        if (currentCountInt >= 6) {
+          dcRoleChoice.classList.remove('opacity-50', 'pointer-events-none');
+          dcRandomNote.classList.add('hidden');
+        } else {
+          dcRoleChoice.classList.add('opacity-50', 'pointer-events-none');
+          dcRandomNote.classList.remove('hidden');
+        }
+      }
+
+      playerCountDisplay.textContent = `Player Count: ${currentCount}`;
+      updateDeckBuilder(mode, currentCount);
+    }
+
+    // ── DECK BUILDER ────────────────────────────────────────────────────────────
+
+    function updateDeckBuilder(mode, currentCount) {
+      if (mode === 'directors') {
+        const deck = JSON.parse(JSON.stringify(dcAllegiances[currentCount]));
+        if (parseInt(currentCount) >= 6) {
+          const chosenGoodRole = document.querySelector('input[name="dcRole"]:checked').value;
+          deck.good[chosenGoodRole] = 1;
+        }
+        renderDeckList('good', deck.good, 'goodDeckList', 'goodCountDisplay');
+        renderDeckList('evil', deck.evil, 'evilDeckList', 'evilCountDisplay');
+        return;
+      }
+
+      // Standard mode
+      const deck = JSON.parse(JSON.stringify(baseAllegiances[currentCount]));
+
+      stdCheckboxes.forEach(cb => {
+        if (!cb.parentElement.classList.contains('hidden')) {
+          const roleName = cb.value;
+          const team     = cb.dataset.team;
+
+          if (roleName === "Scion" && [4, 5, 8].includes(parseInt(currentCount))) {
+            if (!cb.checked) {
+              deck.evil["Scion"] = 0;
+              deck.evil["Minion"] = (deck.evil["Minion"] || 0) + 1;
+            }
+          } else if (roleName === "Changeling" && parseInt(currentCount) >= 6) {
+            if (!cb.checked) {
+              deck.evil["Changeling"] = 0;
+              deck.evil["Minion"] = (deck.evil["Minion"] || 0) + 1;
+            }
+          } else {
+            if (cb.checked) {
+              deck[team][roleName] = 1;
+              if (team === 'good' && deck.good["Loyal Servant"] > 0) deck.good["Loyal Servant"]--;
+              if (team === 'evil' && deck.evil["Minion"]         > 0) deck.evil["Minion"]--;
+            }
+          }
+        }
+      });
+
+// Lock checkboxes if team limits are reached
+      if (mode === 'standard') {
+        const goodSlotsLeft = deck.good["Loyal Servant"] || 0;
+        const evilSlotsLeft = deck.evil["Minion"] || 0;
+        
+        stdCheckboxes.forEach(cb => {
+          const team = cb.dataset.team;
+          // We only lock the optional add-on roles, not the base-swap toggles
+          if (cb.value !== "Scion" && cb.value !== "Changeling") {
+            if (!cb.checked) {
+              if (team === 'good' && goodSlotsLeft <= 0) {
+                cb.disabled = true;
+                cb.parentElement.style.opacity = '0.4';
+                cb.parentElement.style.pointerEvents = 'none';
+              } else if (team === 'evil' && evilSlotsLeft <= 0) {
+                cb.disabled = true;
+                cb.parentElement.style.opacity = '0.4';
+                cb.parentElement.style.pointerEvents = 'none';
+              } else {
+                cb.disabled = false;
+                cb.parentElement.style.opacity = '1';
+                cb.parentElement.style.pointerEvents = 'auto';
+              }
+            }
+          }
+        });
+      }
+
+      renderDeckList('good', deck.good, 'goodDeckList', 'goodCountDisplay');
+      renderDeckList('evil', deck.evil, 'evilDeckList', 'evilCountDisplay');
+    }
+
+    function renderDeckList(team, deckObj, listId, countId) {
+      const listEl   = document.getElementById(listId);
+      const colorVar = team === 'good' ? 'var(--good-hi)' : 'var(--evil-hi)';
+      let total = 0, html = '';
+      for (const [role, qty] of Object.entries(deckObj)) {
+        if (qty > 0) {
+          total += qty;
+          html += `<li class="deck-item"><span>${role}</span><span class="deck-qty" style="color:${colorVar}">×${qty}</span></li>`;
+        }
+      }
+      listEl.innerHTML = html;
+      document.getElementById(countId).textContent = total;
+    }
+
+    // ── SCRIPT GENERATOR ────────────────────────────────────────────────────────
+
+    document.getElementById('generateFirstNightBtn').addEventListener('click', () => {
+      const section  = document.getElementById('firstNightSection');
+      const list     = document.getElementById('firstNightList');
+      const mode     = document.querySelector('input[name="gameMode"]:checked').value;
+      const count    = document.querySelector(
+        mode === 'standard' ? 'input[name="stdPlayerCount"]:checked' : 'input[name="dcPlayerCount"]:checked'
+      ).value;
+      const countInt = parseInt(count);
+
+      // ── Determine which optional roles are active ──
+      const hasScion      = mode === 'standard'
+                            && !scionLabel.classList.contains('hidden')
+                            && scionLabel.querySelector('input').checked;
+      const hasChangeling = mode === 'standard'
+                            && countInt >= 6
+                            && !changelingLabel.classList.contains('hidden')
+                            && changelingLabel.querySelector('input').checked;
+      const hasArthur     = mode === 'standard'
+                            && document.querySelector('input[name="stdRole"][value="Arthur"]').checked;
+      const hasCleric     = mode === 'standard'
+                            && document.querySelector('input[name="stdRole"][value="Cleric"]').checked;
+      const hasBH         = mode === 'standard'
+                            && document.querySelector('input[name="stdRole"][value="Blind Hunter"]').checked;
+      const hasMutineer   = mode === 'standard'
+                            && document.querySelector('input[name="stdRole"][value="Mutineer"]').checked;
+
+      let s = `<li>Everyone close your eyes.</li>`;
+
+      // ── STANDARD MODE ──────────────────────────────────────────────────────
+
+      if (mode === 'standard') {
+
+        // Evil reveal — priority: Blind Hunter > Mutineer > standard 6+ > 4-5
+        if (hasBH) {
+          // Blind Hunter reveal (p.10): BH extends thumb so Minions may know them,
+          // then Minions (not BH) open to see each other and BH's identity.
+          s += `<li><span class="role-evil">Blind Hunter</span>, extend your thumb so the Minions of Mordred may know of you.</li>`;
+          s += `<li>Minions of Mordred — not <span class="role-evil">Blind Hunter</span> — open your eyes and look around so that you know all agents of Evil.</li>`;
+          s += `<li>Minions of Mordred, close your eyes.</li>`;
+          s += `<li><span class="role-evil">Blind Hunter</span>, re-form your hand into a fist.</li>`;
+
+        } else if (hasMutineer) {
+          // Mutineer reveal (p.11): Mutineer extends thumb so Minions know them,
+          // then Minions (not Mutineer) open. Mutineer is isolated from the group.
+          s += `<li><span class="role-evil">Mutineer</span>, extend your thumb so the Minions of Mordred may know of you.</li>`;
+          s += `<li>Minions of Mordred — not <span class="role-evil">Mutineer</span> — open your eyes and look around so that you know all agents of Evil.</li>`;
+          s += `<li>Minions of Mordred, close your eyes.</li>`;
+          s += `<li><span class="role-evil">Mutineer</span>, re-form your hand into a fist.</li>`;
+
+        } else if (countInt >= 6) {
+          // Standard 6+ reveal. Changeling does NOT open — they don't know other Minions.
+          if (hasChangeling) {
+            s += `<li>Minions of Mordred and <span class="role-evil">Morgan le Fay</span> — not <span class="role-evil">Changeling</span> — open your eyes and look around so that you may know of each other.</li>`;
+          } else {
+            s += `<li>Minions of Mordred and <span class="role-evil">Morgan le Fay</span>, open your eyes and look around so that you may know of each other.</li>`;
+          }
+          s += `<li>Minions of Mordred and <span class="role-evil">Morgan le Fay</span>, close your eyes.</li>`;
+
+        } else {
+          // Standard 4–5 player reveal
+          if (hasScion) {
+            s += `<li><span class="role-evil">Scion</span>, extend your thumb so that <span class="role-evil">Morgan le Fay</span> may know of you.</li>`;
+            s += `<li><span class="role-evil">Morgan le Fay</span>, open your eyes and look around so that you know your <span class="role-evil">Scion</span>.</li>`;
+            s += `<li><span class="role-evil">Scion</span>, re-form your hand into a fist.</li>`;
+            s += `<li><span class="role-evil">Morgan le Fay</span>, close your eyes.</li>`;
+          } else {
+            s += `<li>Minions of Mordred and <span class="role-evil">Morgan le Fay</span>, open your eyes and look around.</li>`;
+            s += `<li>Minions of Mordred and <span class="role-evil">Morgan le Fay</span>, close your eyes.</li>`;
+          }
+        }
+
+        // Arthur reveal (p.11): Morgan signals Arthur so Arthur knows who Morgan is.
+        if (hasArthur) {
+          s += `<li><span class="role-evil">Morgan le Fay</span>, extend your thumb so <span class="role-good">Arthur</span> may know of you.</li>`;
+          s += `<li><span class="role-good">Arthur</span>, open your eyes and look around so that you know <span class="role-evil">Morgan le Fay</span>.</li>`;
+          s += `<li><span class="role-good">Arthur</span>, close your eyes.</li>`;
+          s += `<li><span class="role-evil">Morgan le Fay</span>, re-form your hand into a fist.</li>`;
+        }
+
+        // Cleric reveal (p.10): Cleric learns whether the first Leader is Good or Evil.
+        if (hasCleric) {
+          s += `<li>Leader, extend your thumb if you are Evil.</li>`;
+          s += `<li><span class="role-good">Cleric</span>, open your eyes.</li>`;
+          s += `<li><span class="role-good">Cleric</span>, close your eyes.</li>`;
+          s += `<li>Leader, re-form your hand into a fist.</li>`;
+        }
+
+      // ── DIRECTOR'S CUT MODE ────────────────────────────────────────────────
+
+      } else {
+
+        if (countInt <= 5) {
+          // DC 4–5: Blind Hunter DOES raise their thumb (DC rules, p.8)
+          s += `<li><span class="role-evil">Blind Hunter</span>, extend your thumb so the Minions of Mordred may know of you.</li>`;
+          s += `<li>Minions of Mordred — not <span class="role-evil">Blind Hunter</span> — open your eyes and look around so that you know all agents of Evil.</li>`;
+          s += `<li>Minions of Mordred, close your eyes.</li>`;
+          s += `<li><span class="role-evil">Blind Hunter</span>, re-form your hand into a fist.</li>`;
+        } else {
+          // DC 6+: Blind Hunter does NOT raise their thumb; Evil does not know them (DC rules, p.8)
+          s += `<li>Minions of Mordred and <span class="role-evil">Morgan le Fay</span>, open your eyes and look around so that you may know of each other.</li>`;
+          s += `<li>Minions of Mordred and <span class="role-evil">Morgan le Fay</span>, close your eyes.</li>`;
+        }
+
+        // DC always includes Cleric
+        s += `<li>Leader, extend your thumb if you are Evil.</li>`;
+        s += `<li><span class="role-good">Cleric</span>, open your eyes.</li>`;
+        s += `<li><span class="role-good">Cleric</span>, close your eyes.</li>`;
+        s += `<li>Leader, re-form your hand into a fist.</li>`;
+      }
+
+      s += `<li>Everyone open your eyes.</li>`;
+      list.innerHTML = s;
+
+      section.classList.remove('hidden');
+      section.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ── EVENT LISTENERS ─────────────────────────────────────────────────────────
+
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+      input.addEventListener('change', updateUI);
+    });
+
+    document.addEventListener('DOMContentLoaded', updateUI);
+  </script>
+</body>
+</html>
