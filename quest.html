@@ -505,6 +505,8 @@
       </div>
 
       <!-- Generate button -->
+      <div id="synergyWarnings" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.5rem;"></div>
+
       <div style="display: flex; justify-content: center; margin-top: 1.75rem;">
         <button id="generateFirstNightBtn" type="button" class="gen-btn">
           ⚔&ensp;Generate Script&ensp;⚔
@@ -686,6 +688,47 @@ const dcAllegiances = {
 
       renderDeckList('good', deck.good, 'goodDeckList', 'goodCountDisplay');
       renderDeckList('evil', deck.evil, 'evilDeckList', 'evilCountDisplay');
+      
+      validateSynergies(deck, mode, currentCount);
+    }
+
+    function validateSynergies(deck, mode, count) {
+      const warningsContainer = document.getElementById('synergyWarnings');
+      let warnings = [];
+
+      if (mode === 'standard') {
+        const hasCleric = deck.good["Cleric"] > 0;
+        const hasBlindHunter = deck.evil["Blind Hunter"] > 0;
+        const hasMutineer = deck.evil["Mutineer"] > 0;
+        
+        // Synergy Check 1: Cleric effectiveness
+        if (hasCleric && !hasBlindHunter && !hasMutineer) {
+          warnings.push("The Cleric is most effective when Evil doesn't have perfect information. Consider adding the Blind Hunter or Mutineer.");
+        }
+        
+        // Synergy Check 2: Overcomplication Trap
+        const totalOptional = (deck.good["Cleric"]||0) + (deck.good["Arthur"]||0) + (deck.good["Troublemaker"]||0) + (deck.evil["Blind Hunter"]||0) + (deck.evil["Mutineer"]||0);
+        if (totalOptional >= 3) {
+           warnings.push("Heavy modifiers detected. Running 3+ optional roles simultaneously can easily break game balance for newer groups.");
+        }
+      } else if (mode === 'directors') {
+        // Synergy Check 3: 4-Player DC Warning
+        if (parseInt(count) === 4) {
+           warnings.push("Director's Cut at 4 players is highly volatile. Ensure the Good team understands the Blind Pool mechanic.");
+        }
+      }
+
+      // Render the warnings
+      if (warnings.length > 0) {
+        warningsContainer.innerHTML = warnings.map(w => 
+          `<div style="background: rgba(154, 28, 28, 0.1); border: 1px solid var(--evil-hi); color: var(--text); padding: 0.75rem 1rem; border-radius: 2px; font-size: 0.85rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+            <span style="color: var(--evil-hi); font-size: 1rem; line-height: 1;">⚠️</span> 
+            <span style="line-height: 1.4;">${w}</span>
+          </div>`
+        ).join('');
+      } else {
+        warningsContainer.innerHTML = ''; // Clear warnings if synergies are fine
+      }
     }
 
     function renderDeckList(team, deckObj, listId, countId) {
