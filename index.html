@@ -2,38 +2,37 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Game Night Hub</title>
+    
+    <!-- External Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- ==========================================
+         CUSTOM STYLES
+         ========================================== -->
     <style>
+      /* --- Fonts --- */
       @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lato:wght@400;700&display=swap");
 
-      /* App Shell Setup */
-      html,
-      body {
+      /* --- App Shell & Base Setup --- */
+      html, body {
         height: 100%;
         width: 100%;
         margin: 0;
         overflow: hidden; /* Lock body scroll */
         background-color: #1c1917;
-        background-image: radial-gradient(
-          circle at center,
-          #292524 0%,
-          #1c1917 100%
-        );
+        background-image: radial-gradient(circle at center, #292524 0%, #1c1917 100%);
         font-family: "Lato", sans-serif;
         color: #d6d3d1;
       }
 
-      h1,
-      h2,
-      .fantasy-font {
+      /* --- Typography --- */
+      h1, h2, .fantasy-font {
         font-family: "Cinzel", serif;
       }
 
-      /* Scrollbar Styling for the grid area */
+      /* --- Custom Scrollbar (Grid Area) --- */
       .custom-scroll::-webkit-scrollbar {
         width: 6px;
       }
@@ -48,7 +47,7 @@
         background: #78716c;
       }
 
-      /* Card Hover Effects */
+      /* --- Components: Game Cards --- */
       .game-card {
         transition: all 0.2s ease-out;
         border: 1px solid #44403c;
@@ -64,26 +63,33 @@
       }
     </style>
   </head>
+  
   <body class="flex flex-col">
-    <header
-      class="h-[10dvh] min-h-[60px] flex items-center justify-center bg-stone-900 border-b-4 border-amber-700 shadow-xl z-20 shrink-0">
-      <h1
-        class="text-amber-500 font-bold tracking-widest uppercase drop-shadow-md"
-        style="font-size: min(6vw, 4vh)">
+    
+    <!-- ==========================================
+         HEADER
+         ========================================== -->
+    <header class="h-[10dvh] min-h-[60px] flex items-center justify-center bg-stone-900 border-b-4 border-amber-700 shadow-xl z-20 shrink-0">
+      <h1 class="text-amber-500 font-bold tracking-widest uppercase drop-shadow-md" style="font-size: min(6vw, 4vh)">
         Tabletop Tools
       </h1>
     </header>
 
+    <!-- ==========================================
+         MAIN CONTENT AREA
+         ========================================== -->
     <main class="flex-grow overflow-y-auto custom-scroll p-4 sm:p-8">
       <div class="max-w-6xl mx-auto">
         
+        <!-- --- Search Bar Section --- -->
         <div class="mb-8 relative max-w-md mx-auto">
+            <!-- Search Icon -->
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <svg class="h-5 w-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
             </div>
-            
+            <!-- Search Input -->
             <input 
                 type="text" 
                 id="gameSearch" 
@@ -92,309 +98,173 @@
             >
         </div>
 
-        <!-- Fox -->
-
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          <a
-            href="fox-in-the-forest.html"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+        <!-- --- Game Cards Grid --- -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          
+          <!-- Game Card: Fox in the Forest -->
+          <a href="fox-in-the-forest.html" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src="img/Fox in the Forest Title Card.png"
-                alt="Fox in the Forest"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="img/Fox in the Forest Title Card.png" alt="Fox in the Forest" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
                 Fox in the Forest
               </h2>
             </div>
           </a>
 
-<!-- Arboretum -->
-
-          
-          <a
-            href="arboretum.html"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+          <!-- Game Card: Arboretum -->
+          <a href="arboretum.html" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src="img/Arboretum Card Game Cover.png"
-                alt="Arboretum"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="img/Arboretum Card Game Cover.png" alt="Arboretum" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
                 Arboretum
               </h2>
             </div>
           </a>
 
-<!-- Hyde -->
-          <a
-            href="hyde.html"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+          <!-- Game Card: Hyde -->
+          <a href="hyde.html" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src="https://cf.geekdo-images.com/b7ElE00K6FojMB77rDy7cg__imagepage/img/Dc59lCSaL1UqW9FnLhjoegtXcCI=/fit-in/900x600/filters:no_upscale():strip_icc()/pic5316646.jpg"
-                alt="Jekyll and Hyde"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="https://cf.geekdo-images.com/b7ElE00K6FojMB77rDy7cg__imagepage/img/Dc59lCSaL1UqW9FnLhjoegtXcCI=/fit-in/900x600/filters:no_upscale():strip_icc()/pic5316646.jpg" alt="Jekyll and Hyde" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
                 Hyde
               </h2>
             </div>
           </a>
           
-          <!-- Wizard -->
-
-          <a
-            href="wizard.html"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+          <!-- Game Card: Wizard -->
+          <a href="wizard.html" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src="img/Wizard Card Game Cover.jpg"
-                alt="Wizard"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="img/Wizard Card Game Cover.jpg" alt="Wizard" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
                 Wizard
               </h2>
             </div>
           </a>
 
-<!-- avalon -->
-          <a
-            href="avalon.html"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+          <!-- Game Card: Avalon -->
+          <a href="avalon.html" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src="https://cf.geekdo-images.com/uI6LtXOb-Yed0-cUpQ9lew__imagepage@2x/img/iQ-dKRPDvoLXxzdoZI5Ad9TYTO8=/fit-in/1800x1200/filters:strip_icc()/pic7037062.png"
-                alt="Avalon"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="https://cf.geekdo-images.com/uI6LtXOb-Yed0-cUpQ9lew__imagepage@2x/img/iQ-dKRPDvoLXxzdoZI5Ad9TYTO8=/fit-in/1800x1200/filters:strip_icc()/pic7037062.png" alt="Avalon" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
                 Avalon
               </h2>
             </div>
           </a>
 
-          <!-- score-tracker -->
-          <a
-            href="score-tracker.html"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+          <!-- Game Card: Score Tracker -->
+          <a href="score-tracker.html" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src=""
-                alt="score-tracker"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="" alt="score-tracker" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
-                score-tracker
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+                Score-tracker
               </h2>
             </div>
           </a>
           
-          <!-- Uno -->
-          <a
-            href="uno.html"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+          <!-- Game Card: Uno -->
+          <a href="uno.html" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src="img/Uno Card Color Scheme.jpg"
-                alt="Uno"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="img/Uno Card Color Scheme.jpg" alt="Uno" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
                 Uno
               </h2>
             </div>
           </a>
 
-<!-- Quest -->
-          <a
-            href="quest.html"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+          <!-- Game Card: Quest -->
+          <a href="quest.html" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src="https://cf.geekdo-images.com/IwEAO-GRsYdO6WeA0uWtFg__imagepage/img/I5Ik515S8PeIMGJJj0KVOEcX4P0=/fit-in/900x600/filters:no_upscale():strip_icc()/pic5578189.jpg"
-                alt="Quest"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="https://cf.geekdo-images.com/IwEAO-GRsYdO6WeA0uWtFg__imagepage/img/I5Ik515S8PeIMGJJj0KVOEcX4P0=/fit-in/900x600/filters:no_upscale():strip_icc()/pic5578189.jpg" alt="Quest" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
                 Quest
               </h2>
             </div>
           </a>
 
-
-<!-- Sherlock-Holmes-Consulting-Detective--Demo -->
-          <a
-            href="https://code-lifter.github.io/Sherlock-Holmes-Consulting-Detective--Demo/"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+          <!-- Game Card: Sherlock Holmes Consulting Detective Demo -->
+          <a href="https://code-lifter.github.io/Sherlock-Holmes-Consulting-Detective--Demo/" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src="https://cf.geekdo-images.com/demwo7nCkIHbUcFohLwfsQ__imagepage/img/uuKYUId8QBUiET2Vjcstzofp6cA=/fit-in/900x600/filters:no_upscale():strip_icc()/pic5198810.jpg"
-                alt="Sherlock Holmes Consulting Detective: Demo"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="https://cf.geekdo-images.com/demwo7nCkIHbUcFohLwfsQ__imagepage/img/uuKYUId8QBUiET2Vjcstzofp6cA=/fit-in/900x600/filters:no_upscale():strip_icc()/pic5198810.jpg" alt="Sherlock Holmes Consulting Detective: Demo" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
                 Sherlock-Holmes-Consulting-Detective: Demo
               </h2>
             </div>
           </a>
 
-<!-- wave-length -->
-          <a
-            href="wave-length.html"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+          <!-- Game Card: Wavelength -->
+          <a href="wave-length.html" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src="https://cf.geekdo-images.com/z4fbPdmJg_5yphJEvql4ZA__imagepage@2x/img/aeaTc0ItDioSjvdggdTpnqfFMaI=/fit-in/1800x1200/filters:strip_icc()/pic4552862.png"
-                alt="Wavelength"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="https://cf.geekdo-images.com/z4fbPdmJg_5yphJEvql4ZA__imagepage@2x/img/aeaTc0ItDioSjvdggdTpnqfFMaI=/fit-in/1800x1200/filters:strip_icc()/pic4552862.png" alt="Wavelength" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
                 Wavelength
               </h2>
             </div>
           </a>
 
-          <!-- Chips -->
-<a
-  href="https://e.pcloud.link/publink/show?code=XZW7LrZMmuh93PYVvbU2Wz3Vg5CKLngK1MX"
-  target="_blank"
-  rel="noopener noreferrer"
-  class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-  <div
-    class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
-  <div class="w-full h-48 bg-stone-900 relative">
-    <img
-      src="img/Chips Card Game Cover.jpg"
-      alt="Chips"
-      class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
-  </div>
-
-  <div
-    class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-    <h2
-      class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
-      Chips
-    </h2>
-  </div>
-</a>
-
-          <!-- Sherlock Directory -->
-          <a
-            href="./Sherlock/sherlock.html"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+          <!-- Game Card: Chips (External Link) -->
+          <a href="https://e.pcloud.link/publink/show?code=XZW7LrZMmuh93PYVvbU2Wz3Vg5CKLngK1MX" target="_blank" rel="noopener noreferrer" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src="img/london-directory.jpg"
-                alt="Sherlock Directory"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="img/Chips Card Game Cover.jpg" alt="Chips" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+                Chips
+              </h2>
+            </div>
+          </a>
 
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+          <!-- Game Card: Sherlock Directory -->
+          <a href="./Sherlock/sherlock.html" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
+            <div class="w-full h-48 bg-stone-900 relative">
+              <img src="img/london-directory.jpg" alt="Sherlock Directory" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
                 Sherlock Directory
               </h2>
             </div>
           </a>
 
-          <!-- detective -->
-          <a
-            href="detective.html"
-            class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
-            <div
-              class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
-
+          <!-- Game Card: Detective -->
+          <a href="detective.html" class="game-card bg-stone-800 rounded-xl flex flex-col group relative overflow-hidden">
+            <div class="absolute inset-0 bg-amber-500 opacity-0 group-hover:opacity-10 transition-opacity z-10 pointer-events-none"></div>
             <div class="w-full h-48 bg-stone-900 relative">
-              <img
-                src="img/Detective Modern Board Game Cover.jpeg"
-                alt="detective"
-                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+              <img src="img/Detective Modern Board Game Cover.jpeg" alt="detective" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
             </div>
-
-            <div
-              class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
-              <h2
-                class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
+            <div class="p-4 flex-grow flex items-center justify-center bg-stone-800 border-t border-stone-700 z-20">
+              <h2 class="fantasy-font text-lg font-bold text-stone-200 group-hover:text-amber-500 transition-colors">
                 Detective
               </h2>
             </div>
@@ -404,21 +274,27 @@
       </div>
     </main>
 
+    <!-- ==========================================
+         JAVASCRIPT
+         ========================================== -->
     <script>
+        // Listen for user typing in the search bar
         document.getElementById('gameSearch').addEventListener('input', function(e) {
+            // Get the user's input and convert to lowercase for case-insensitive matching
             const searchTerm = e.target.value.toLowerCase();
+            // Select all game card anchor tags
             const cards = document.querySelectorAll('.game-card');
 
             cards.forEach(card => {
-                // Find the title inside the card
+                // Find the game title text inside the card's <h2> element
                 const title = card.querySelector('h2').innerText.toLowerCase();
                 
-                // Check if title includes the search term
-                if(title.includes(searchTerm)) {
+                // Toggle card visibility based on whether the title includes the search string
+                if (title.includes(searchTerm)) {
                     card.classList.remove('hidden');
-                    card.classList.add('flex'); // Keep the flex layout
+                    card.classList.add('flex'); // Restore the required flex layout class
                 } else {
-                    card.classList.add('hidden');
+                    card.classList.add('hidden'); // Hide unmatched cards
                     card.classList.remove('flex');
                 }
             });
