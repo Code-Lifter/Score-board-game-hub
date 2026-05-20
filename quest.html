@@ -337,7 +337,6 @@
 <body>
   <div style="max-width: 720px; margin: 0 auto;">
 
-    <!-- ══ HEADER ══ -->
     <header style="text-align: center; padding: 1.5rem 0 2rem;">
       <p class="label-sm" style="margin-bottom: 0.4rem; opacity: 0.55;">Don Eskridge's</p>
       <h1 class="display" style="font-size: 3rem; color: var(--gold-hi); text-shadow: 0 0 40px rgba(200,140,40,0.35), 0 2px 6px rgba(0,0,0,0.9); line-height: 1.1; margin-bottom: 0.2rem;">Quest</h1>
@@ -345,10 +344,8 @@
       <div class="orn-divider" style="margin-top: 1.25rem; max-width: 360px; margin-left: auto; margin-right: auto;"><span>✦</span></div>
     </header>
 
-    <!-- ══ SETUP PANEL ══ -->
     <section class="panel" style="padding: 1.75rem 2rem 2rem; margin-bottom: 2rem;">
 
-      <!-- Top bar: mode + status -->
       <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.75rem;">
         <div>
           <p class="label-sm" style="margin-bottom: 0.5rem;">Game Mode</p>
@@ -364,7 +361,6 @@
         </div>
       </div>
 
-      <!-- ── STANDARD SETUP ── -->
       <form id="standardSetup" style="display: flex; flex-direction: column; gap: 1.1rem;">
 
         <div class="inner-card">
@@ -377,6 +373,24 @@
             <label class="coin-btn"><input type="radio" name="stdPlayerCount" value="8">8</label>
             <label class="coin-btn"><input type="radio" name="stdPlayerCount" value="9">9</label>
             <label class="coin-btn"><input type="radio" name="stdPlayerCount" value="10">10</label>
+          </div>
+        </div>
+
+        <div id="std4PlayerReminder" class="inner-card hidden" style="border-color: rgba(200,144,42,0.35); background: rgba(200,144,42,0.04);">
+          <p class="label-sm" style="color: var(--gold); margin-bottom: 0.6rem;">4-Player Final Quest Reminder</p>
+          <div style="font-size: 0.95rem; line-height: 1.5; color: var(--text); display: flex; flex-direction: column; gap: 0.6rem;">
+            <p>If two Quests fail (tying the score 2-2), the game immediately enters the Final Quest:</p>
+            <ul style="padding-left: 0.5rem; list-style-type: none; display: flex; flex-direction: column; gap: 0.4rem;">
+              <li><strong style="color: var(--text-dim);">1. The Discussion:</strong> All players have 5 minutes to discuss who Evil might be.</li>
+              
+              <li id="reminderStepHunt" class="hidden"><strong style="color: var(--evil-hi);">2. The Hunt (Optional):</strong> The <span style="font-family: 'Cinzel', serif; font-size: 0.9em; color: var(--evil-hi);">Blind Hunter</span> may identify two Good players by role. <br><span style="font-size: 0.85em; opacity: 0.8;">(Correct = Evil Wins, Incorrect = Good Wins). If they choose not to hunt, proceed to Good's Last Chance.</span></li>
+              
+              <li id="reminderStepPoint"><strong style="color: var(--good-hi);"><span id="pointStepNum">2</span>. Good's Last Chance:</strong> On "three", everyone must point at two suspected Evil players. <br><span style="font-size: 0.85em; opacity: 0.8;">Good wins if Good players point <em>only</em> at all Evil players. Otherwise, Evil wins.</span></li>
+            </ul>
+
+            <div style="margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px dashed rgba(200,144,42,0.3);">
+              <p style="font-size: 0.85rem; color: var(--gold-hi);"><strong>⚠️ Crucial Exception:</strong> If the Leader for <em>every single Quest</em> during the game was an Evil player, Good wins automatically instead!</p>
+            </div>
           </div>
         </div>
 
@@ -423,7 +437,6 @@
         </div>
       </form>
 
-      <!-- ── DIRECTOR'S CUT SETUP ── -->
       <form id="directorsSetup" class="hidden" style="flex-direction: column; gap: 1.1rem;">
 
         <div class="inner-card">
@@ -439,7 +452,6 @@
           </div>
         </div>
 
-        <!-- FIXED ROLES — always in DC -->
         <div class="inner-card">
           <p class="label-sm" style="margin-bottom: 0.35rem;">Always Included in Director's Cut</p>
           <p style="font-size: 0.95rem; color: var(--text-dim); font-style: italic; margin-bottom: 1rem; line-height: 1.5;">These roles are fixed at every player count and cannot be swapped out.</p>
@@ -448,12 +460,14 @@
               <span style="font-size: 0.8rem; opacity: 0.7;">✦</span> Cleric
             </div>
             <div class="fixed-badge fixed-badge-evil">
+              <span style="font-size: 0.8rem; opacity: 0.7;">✦</span> Morgan le Fay
+            </div>
+            <div class="fixed-badge fixed-badge-evil">
               <span style="font-size: 0.8rem; opacity: 0.7;">✦</span> Blind Hunter
             </div>
           </div>
         </div>
 
-        <!-- 4–5 PLAYER DISTRIBUTION NOTE -->
         <div id="dcRandomNote" class="inner-card hidden" style="border-color: rgba(200,144,42,0.35); background: rgba(200,144,42,0.04);">
           <p class="label-sm" style="color: var(--gold); margin-bottom: 0.6rem;">4–5 Player Distribution</p>
           <p style="font-size: 1rem; line-height: 1.65; color: var(--text);">The Good deck contains three cards:
@@ -474,7 +488,6 @@
         </div>
       </form>
 
-      <!-- ── DECK BUILDER ── -->
       <div class="orn-divider" style="margin: 1.75rem 0 1.25rem;"><span>✦</span></div>
 
       <div class="inner-card">
@@ -504,7 +517,6 @@
         </div>
       </div>
 
-      <!-- Generate button -->
       <div id="synergyWarnings" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.5rem;"></div>
 
       <div style="display: flex; justify-content: center; margin-top: 1.75rem;">
@@ -514,7 +526,6 @@
       </div>
     </section>
 
-    <!-- ══ PROCLAMATION / SCRIPT ══ -->
     <section id="firstNightSection" class="hidden scroll-mt-6" style="padding: 2.25rem 2.5rem 2.75rem; margin-bottom: 4rem;">
       <div style="text-align: center; margin-bottom: 1.75rem;">
         <div class="orn-divider-ink" style="margin-bottom: 1rem;"><span>✦</span></div>
@@ -545,7 +556,7 @@
     // Director's Cut deck (from the DC back card)
     // NOTE: for 4–5 players the deck shows 3 Good cards; one is removed randomly before deal.
     // For 6–10 players, Youth or Troublemaker is added dynamically by updateDeckBuilder.
-const dcAllegiances = {
+    const dcAllegiances = {
       "4":  { good: {"Cleric": 1, "BLIND_POOL": 2}, evil: {"Morgan le Fey": 1, "Blind Hunter": 1} },
       "5":  { good: {"Cleric": 1, "BLIND_POOL": 2}, evil: {"Minion": 1, "Morgan le Fey": 1, "Blind Hunter": 1} },
       "6":  { good: {"Cleric": 1, "DYNAMIC_ROLE": 1, "Duke": 1}, evil: {"Minion": 1, "Morgan le Fey": 1, "Blind Hunter": 1} },
@@ -561,6 +572,9 @@ const dcAllegiances = {
     const dcSetupForm        = document.getElementById('directorsSetup');
     const dcRoleChoice       = document.getElementById('dcRoleChoice');
     const dcRandomNote       = document.getElementById('dcRandomNote');
+    const std4PlayerReminder = document.getElementById('std4PlayerReminder');
+    const reminderStepHunt   = document.getElementById('reminderStepHunt');
+    const reminderStepPoint  = document.getElementById('reminderStepPoint');
     const playerCountDisplay = document.getElementById('playerCountReq');
     const balanceStatus      = document.getElementById('balanceStatus');
     const scionLabel         = document.getElementById('scionLabel');
@@ -581,6 +595,24 @@ const dcAllegiances = {
         stdSetupForm.style.display = 'flex';
         dcSetupForm.classList.add('hidden');
         balanceStatus.textContent = "Status: Standard";
+
+        // Show 4-Player reminder only when count is 4 and toggle steps
+        if (currentCountInt === 4) {
+          std4PlayerReminder.classList.remove('hidden');
+          const hasBH = document.querySelector('input[name="stdRole"][value="Blind Hunter"]').checked;
+          
+          if (hasBH) {
+            // Blind Hunter is in play: Show the Hunt, and make Pointing step #3
+            reminderStepHunt.classList.remove('hidden');
+            document.getElementById('pointStepNum').textContent = "3";
+          } else {
+            // No Blind Hunter: Hide the Hunt, make Pointing step #2
+            reminderStepHunt.classList.add('hidden');
+            document.getElementById('pointStepNum').textContent = "2";
+          }
+        } else {
+          std4PlayerReminder.classList.add('hidden');
+        }
 
         // Show Scion only at player counts where it's in the base deck
         if ([4, 5, 8].includes(currentCountInt)) {
@@ -658,7 +690,7 @@ const dcAllegiances = {
         }
       });
 
-// Lock checkboxes if team limits are reached
+      // Lock checkboxes if team limits are reached
       if (mode === 'standard') {
         const goodSlotsLeft = deck.good["Loyal Servant"] || 0;
         const evilSlotsLeft = deck.evil["Minion"] || 0;
