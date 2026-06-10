@@ -305,6 +305,66 @@ body {
         margin: 0;
       }
 
+/* --- Vertical Scrubber & Indicator --- */
+.directory-scrubber {
+  position: fixed;
+  top: 55%;
+  right: 5px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  touch-action: none; 
+  background: rgba(230, 216, 195, 0.8);
+  border-radius: 10px;
+  padding: 5px 0;
+}
+
+.scrub-letter {
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ledger-green);
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+  opacity: 0.6;
+  transition: opacity 0.1s;
+}
+
+.scrub-letter:hover,
+.scrub-letter.active-scrub {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.scrub-indicator {
+  position: fixed;
+  right: 50px; 
+  width: 60px;
+  height: 60px;
+  background: var(--paper-bg);
+  border: var(--border-style);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ledger-green);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%) scale(0.8);
+  transition: opacity 0.1s ease-out, transform 0.1s ease-out;
+  z-index: 101;
+}
+
+.scrub-indicator.visible {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
 @media (max-width: 800px) {
         /* 1. Stop the padding from choking the content */
         body {
@@ -358,5 +418,20 @@ body {
         .informant-location {
           margin-left: 0;
           margin-top: 0.25rem;
+        }
+
+        /* Scrubber Mobile Adjustments */
+        .directory-scrubber {
+          right: 2px;
+        }
+        .scrub-letter {
+          padding: 3px 6px;
+          font-size: 0.75rem;
+        }
+        .scrub-indicator {
+          right: 35px;
+          width: 50px;
+          height: 50px;
+          font-size: 1.5rem;
         }
       }
