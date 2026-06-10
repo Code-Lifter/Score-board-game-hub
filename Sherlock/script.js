@@ -74,6 +74,7 @@
           // Initialize Views
 
           renderDirectory(masterDirectoryData);
+          renderScrubber(masterDirectoryData);
 
           renderCategories(categoriesData);
 
@@ -176,6 +177,68 @@ function renderInformants(data) {
           .join("");
       }
       
+      // --- VERTICAL SCRUBBER LOGIC ---
+      function renderScrubber(data) {
+        const scrubber = document.getElementById("scrubber");
+        const indicator = document.getElementById("scrubIndicator");
+        if (!scrubber) return;
+
+        if (data.length === 0) {
+          scrubber.innerHTML = "";
+          return;
+        }
+
+        const uniqueLetters = [...new Set(data.map((item) => item.name.charAt(0).toUpperCase()))].sort();
+
+        scrubber.innerHTML = uniqueLetters
+          .map((letter) => `<div class="scrub-letter" data-letter="${letter}">${letter}</div>`)
+          .join("");
+
+        let isDragging = false;
+
+        const handleScrub = (e) => {
+          e.preventDefault(); 
+          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+          const target = document.elementFromPoint(clientX, clientY);
+
+          if (target && target.classList.contains("scrub-letter")) {
+            const letter = target.dataset.letter;
+            
+            if (indicator) {
+              indicator.textContent = letter;
+              indicator.style.top = `${clientY}px`;
+              indicator.classList.add("visible");
+            }
+            
+            const headers = document.querySelectorAll(".letter-header");
+            for (let header of headers) {
+              if (header.textContent === letter) {
+                header.scrollIntoView({ behavior: "auto", block: "start" });
+                break;
+              }
+            }
+          } else if (indicator) {
+            indicator.classList.remove("visible");
+          }
+        };
+
+        const stopScrubbing = () => {
+          isDragging = false;
+          if (indicator) indicator.classList.remove("visible");
+        };
+
+        scrubber.addEventListener("mousedown", (e) => { isDragging = true; handleScrub(e); });
+        window.addEventListener("mouseup", stopScrubbing);
+        window.addEventListener("mousemove", (e) => { if (isDragging) handleScrub(e); });
+
+        scrubber.addEventListener("touchstart", (e) => { isDragging = true; handleScrub(e); }, { passive: false });
+        scrubber.addEventListener("touchmove", (e) => { if (isDragging) handleScrub(e); }, { passive: false });
+        window.addEventListener("touchend", stopScrubbing);
+        window.addEventListener("touchcancel", stopScrubbing);
+      }
+
       // --- LIVE SEARCH ---
 
       searchInput.addEventListener("input", (e) => {
@@ -188,6 +251,7 @@ function renderInformants(data) {
         );
 
         renderDirectory(filteredData);
+        renderScrubber(filteredData);
       });
 
       // Boot the app
