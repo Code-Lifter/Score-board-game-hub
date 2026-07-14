@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summit Character Tracker - Wilma Hezemans</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for crisp clean icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-stone-900 text-stone-100 min-h-screen flex items-center justify-center p-4 antialiased">
+
+    <div class="w-full max-w-6xl bg-stone-800 border border-amber-900/40 rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row relative">
+        
+        <!-- STAMP OVERLAY -->
+        <div class="absolute right-12 top-6 border-4 border-dashed border-emerald-600/30 text-emerald-600/30 uppercase font-black tracking-widest text-2xl px-4 py-2 rotate-12 pointer-events-none rounded">
+            Approved
+        </div>
+
+        <!-- LEFT COLUMN: CHARACTER ID PASSPORT -->
+        <div class="w-full md:w-1/3 bg-stone-850 p-6 border-b md:border-b-0 md:border-r border-stone-700/50 flex flex-col space-y-6 overflow-y-auto">
+            <div>
+                <div class="border-b-2 border-amber-700 pb-4 mb-4 text-center">
+                    <h1 class="text-3xl font-serif font-black tracking-wider text-amber-500 uppercase">Summit</h1>
+                    <p class="text-xs tracking-widest text-stone-400 uppercase">The Board Game</p>
+                </div>
+
+                <div class="bg-amber-50 text-stone-950 p-4 rounded shadow-md border-l-4 border-amber-600 flex flex-col space-y-4">
+                    <div class="flex gap-4 items-center">
+                        <div class="w-24 h-28 bg-stone-800 border-2 border-stone-950 flex items-center justify-center text-amber-500 overflow-hidden shrink-0">
+                            <i class="fa-solid fa-user-ninja text-5xl"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs uppercase font-bold text-stone-500 tracking-wider">Name</span>
+                            <div class="text-xl font-mono font-bold leading-tight border-b border-stone-400 pb-1">Wilma Hezemans</div>
+                            
+                            <div class="mt-2 grid grid-cols-2 gap-2">
+                                <div>
+                                    <span class="text-[10px] uppercase font-bold text-stone-500 block">Age</span>
+                                    <span class="font-mono text-sm font-semibold">58</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] uppercase font-bold text-stone-500 block">Height</span>
+                                    <span class="font-mono text-sm font-semibold">181.6cm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-xs uppercase font-bold text-stone-500 tracking-wider block">Base Weight</span>
+                        <div class="font-mono text-lg font-bold">79.4 kg</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gear Cards Counter -->
+            <div class="bg-stone-900 border border-stone-700/50 p-4 rounded-lg flex items-center justify-between">
+                <div>
+                    <h4 class="text-amber-400 uppercase font-bold tracking-wider text-xs mb-1">Equipped Gear</h4>
+                    <p class="text-[10px] text-stone-400 uppercase tracking-widest leading-none">Added Weight</p>
+                </div>
+                <div class="flex items-center space-x-2 bg-stone-950 p-1.5 rounded-lg border border-stone-800 shadow-inner">
+                    <button onclick="adjustGear(-1)" class="w-8 h-8 flex items-center justify-center rounded bg-stone-800 hover:bg-red-900/40 text-stone-400 hover:text-red-400 transition font-bold border border-stone-700"><i class="fa-solid fa-minus"></i></button>
+                    <span id="gear-weight-display" class="font-mono font-bold text-lg text-amber-500 w-6 text-center">0</span>
+                    <button onclick="adjustGear(1)" class="w-8 h-8 flex items-center justify-center rounded bg-stone-800 hover:bg-emerald-900/40 text-stone-400 hover:text-emerald-400 transition font-bold border border-stone-700"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+
+            <!-- Day / Night Cycle Switch -->
+            <div class="bg-stone-900 border border-stone-700/50 p-4 rounded-lg flex items-center justify-between">
+                <div>
+                    <h4 class="text-amber-400 uppercase font-bold tracking-wider text-xs mb-1">Time of Day</h4>
+                    <p class="text-[10px] text-stone-400 uppercase tracking-widest leading-none">Night halves speed</p>
+                </div>
+                <button id="day-night-toggle" onclick="toggleTime()" class="relative w-16 h-8 flex items-center rounded-full bg-cyan-700 border border-stone-700 transition-colors duration-300 focus:outline-none px-1 shadow-inner">
+                    <div id="toggle-knob" class="w-6 h-6 rounded-full bg-stone-100 shadow-md transform transition-transform duration-300 flex items-center justify-center text-cyan-700">
+                        <i id="toggle-icon" class="fa-solid fa-sun text-xs"></i>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Abilities Card -->
+            <div class="bg-amber-900/20 border border-amber-700/30 p-4 rounded-lg mt-auto">
+                <h4 class="text-amber-400 uppercase font-bold tracking-wider text-xs mb-2">Abilities</h4>
+                <p class="text-sm italic leading-relaxed text-stone-300">
+                    "On your turn you may look at the top 3 tiles and replace in any order. Your tile hand is permanently increased by 1."
+                </p>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: DYNAMIC TRACKS -->
+        <div class="w-full md:w-2/3 p-6 flex flex-col justify-between space-y-6 bg-radial from-stone-800 to-stone-900">
+            
+            <!-- TRACK CONTROLS -->
+            <div class="space-y-6">
+                
+                <!-- 1. FOOD TRACK -->
+                <div>
+                    <div class="flex items-center space-x-2 mb-2">
+                        <div class="w-8 h-8 rounded bg-amber-700 flex items-center justify-center text-stone-900 font-bold"><i class="fa-solid fa-utensils"></i></div>
+                        <span class="text-sm font-bold uppercase tracking-wider text-stone-300">Food Track</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1 bg-stone-950 p-2 rounded-lg border border-stone-800 shadow-inner">
+                        <button onclick="setTrack('food', 0)" id="food-0" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">S</button>
+                        <button onclick="setTrack('food', 1)" id="food-1" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">1</button>
+                        <button onclick="setTrack('food', 2)" id="food-2" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">2</button>
+                        <button onclick="setTrack('food', 3)" id="food-3" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">3</button>
+                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
+                        <button onclick="setTrack('food', 4)" id="food-4" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">4</button>
+                        <button onclick="setTrack('food', 5)" id="food-5" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">5</button>
+                        <button onclick="setTrack('food', 6)" id="food-6" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">6</button>
+                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
+                        <button onclick="setTrack('food', 7)" id="food-7" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">7</button>
+                        <button onclick="setTrack('food', 8)" id="food-8" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">8</button>
+                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
+                        <button onclick="setTrack('food', 9)" id="food-9" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">9</button>
+                        <button onclick="setTrack('food', 10)" id="food-10" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">10</button>
+                    </div>
+                </div>
+
+                <!-- 2. OXYGEN TRACK -->
+                <div>
+                    <div class="flex items-center space-x-2 mb-2">
+                        <div class="w-8 h-8 rounded bg-cyan-700 flex items-center justify-center text-stone-900 font-bold"><i class="fa-solid fa-bottle-water"></i></div>
+                        <span class="text-sm font-bold uppercase tracking-wider text-stone-300">Oxygen Track</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1 bg-stone-950 p-2 rounded-lg border border-stone-800 shadow-inner">
+                        <button onclick="setTrack('oxygen', 0)" id="oxygen-0" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">S</button>
+                        <button onclick="setTrack('oxygen', 1)" id="oxygen-1" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">1</button>
+                        <button onclick="setTrack('oxygen', 2)" id="oxygen-2" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">2</button>
+                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
+                        <button onclick="setTrack('oxygen', 3)" id="oxygen-3" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">3</button>
+                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
+                        <button onclick="setTrack('oxygen', 4)" id="oxygen-4" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">4</button>
+                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
+                        <button onclick="setTrack('oxygen', 5)" id="oxygen-5" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">5</button>
+                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
+                        <button onclick="setTrack('oxygen', 6)" id="oxygen-6" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">6</button>
+                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
+                        <button onclick="setTrack('oxygen', 7)" id="oxygen-7" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">7</button>
+                    </div>
+                </div>
+
+                <!-- 3. WEIGHT TRACK -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 rounded bg-red-700 flex items-center justify-center text-stone-900 font-bold"><i class="fa-solid fa-dumbbell"></i></div>
+                            <span class="text-sm font-bold uppercase tracking-wider text-stone-300">Weight Track</span>
+                        </div>
+                        <span class="text-xs text-red-400 font-mono">Auto-syncs across limits, tap to adjust</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1 bg-stone-950 p-2 rounded-lg border border-stone-800 shadow-inner">
+                        <button onclick="setTrack('weight', 0)" id="weight-0" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">S</button>
+                        <button onclick="setTrack('weight', 1)" id="weight-1" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">1</button>
+                        <button onclick="setTrack('weight', 2)" id="weight-2" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">2</button>
+                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
+                        <button onclick="setTrack('weight', 3)" id="weight-3" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">3</button>
+                        <button onclick="setTrack('weight', 4)" id="weight-4" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">4</button>
+                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
+                        <button onclick="setTrack('weight', 5)" id="weight-5" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">5</button>
+                        <button onclick="setTrack('weight', 6)" id="weight-6" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">6</button>
+                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
+                        <button onclick="setTrack('weight', 7)" id="weight-7" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">7</button>
+                    </div>
+                </div>
+
+                <hr class="border-stone-700/60 my-2">
+
+                <!-- 4. HEALTH TRACK -->
+                <div>
+                    <div class="flex items-center space-x-2 mb-2">
+                        <div class="w-8 h-8 rounded bg-emerald-700 flex items-center justify-center text-stone-900 font-bold"><i class="fa-solid fa-heart"></i></div>
+                        <span class="text-sm font-bold uppercase tracking-wider text-stone-300">Health Track</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1 bg-stone-950 p-2 rounded-lg border border-stone-800 shadow-inner">
+                        <button onclick="setTrack('health', 10)" id="health-10" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">S</button>
+                        <button onclick="setTrack('health', 9)" id="health-9" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">9</button>
+                        <button onclick="setTrack('health', 8)" id="health-8" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">8</button>
+                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
+                        <button onclick="setTrack('health', 7)" id="health-7" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">7</button>
+                        <button onclick="setTrack('health', 6)" id="health-6" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">6</button>
+                        <button onclick="setTrack('health', 5)" id="health-5" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">5</button>
+                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
+                        <button onclick="setTrack('health', 4)" id="health-4" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">4</button>
+                        <button onclick="setTrack('health', 3)" id="health-3" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">3</button>
+                        <button onclick="setTrack('health', 2)" id="health-2" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">2</button>
+                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
+                        <button onclick="setTrack('health', 1)" id="health-1" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">1</button>
+                    </div>
+                </div>
+
+                <!-- 5. SPEED TRACK -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 rounded bg-amber-500 flex items-center justify-center text-stone-900 font-bold"><i class="fa-solid fa-person-running"></i></div>
+                            <span class="text-sm font-bold uppercase tracking-wider text-stone-300">Calculated Speed</span>
+                        </div>
+                        <span id="speed-modifier-badge" class="px-2 py-0.5 text-xs font-mono rounded bg-stone-900 border border-stone-700 text-stone-400">Modifier: 0</span>
+                    </div>
+                    <div class="flex gap-1 bg-stone-950 p-3 rounded-lg border-2 border-amber-500/30 justify-between items-center relative overflow-hidden">
+                        <div class="px-4 py-2 bg-stone-900 border border-stone-800 rounded text-amber-500 font-serif font-bold">S</div>
+                        
+                        <div class="flex space-x-2 grow justify-center">
+                            <div id="speed-block-6" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">6</div>
+                            <div id="speed-block-5" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">5</div>
+                            <div id="speed-block-4" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">4</div>
+                            <div id="speed-block-3" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">3</div>
+                            <div id="speed-block-2" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">2</div>
+                            <div id="speed-block-1" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">1</div>
+                        </div>
+
+                        <div class="ml-4 px-6 py-2 bg-amber-500 text-stone-950 rounded font-black text-2xl shadow-lg shadow-amber-500/20 font-mono" id="current-speed-value">
+                            6
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RESET BUTTON -->
+            <div class="text-right pt-4">
+                <button onclick="resetBoard()" class="text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-red-400 border border-stone-700 hover:border-red-900/40 rounded px-4 py-2 bg-stone-900/50 transition">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Reset Board
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTOMATIC SYSTEM ENGINE -->
+    <script>
+        let states = {
+            food: 0,
+            oxygen: 0,
+            weight: 0, 
+            health: 10,
+            gearCards: 0,
+            isNight: false
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            resetBoard();
+        });
+
+        // Day/Night Toggle Engine
+        function toggleTime() {
+            states.isNight = !states.isNight;
+            const toggleBtn = document.getElementById('day-night-toggle');
+            const knob = document.getElementById('toggle-knob');
+            const icon = document.getElementById('toggle-icon');
+
+            if (states.isNight) {
+                // Switch styling to night mode (dark blue, moon, slide right)
+                toggleBtn.className = "relative w-16 h-8 flex items-center rounded-full bg-indigo-950 border border-stone-700 transition-colors duration-300 focus:outline-none px-1 shadow-inner";
+                knob.className = "w-6 h-6 rounded-full bg-stone-300 shadow-md transform translate-x-8 transition-transform duration-300 flex items-center justify-center text-indigo-900";
+                icon.className = "fa-solid fa-moon text-xs";
+            } else {
+                // Switch styling to day mode (cyan, sun, slide left)
+                toggleBtn.className = "relative w-16 h-8 flex items-center rounded-full bg-cyan-700 border border-stone-700 transition-colors duration-300 focus:outline-none px-1 shadow-inner";
+                knob.className = "w-6 h-6 rounded-full bg-stone-100 shadow-md transform translate-x-0 transition-transform duration-300 flex items-center justify-center text-cyan-700";
+                icon.className = "fa-solid fa-sun text-xs";
+            }
+            
+            calculateSpeed();
+        }
+
+        // Gear Engine
+        function adjustGear(delta) {
+            if (states.gearCards + delta < 0) return;
+            
+            states.gearCards += delta;
+            document.getElementById('gear-weight-display').innerText = states.gearCards;
+            
+            states.weight += delta;
+            if (states.weight > 7) states.weight = 7;
+            if (states.weight < 0) states.weight = 0;
+            
+            updateTrackUI('weight', states.weight);
+            calculateSpeed();
+        }
+
+        function setTrack(track, value) {
+            if (track === 'food' || track === 'oxygen') {
+                const oldVal = states[track];
+                const newVal = value;
+                let weightDelta = 0;
+                
+                const barriers = track === 'food' 
+                    ? [3.5, 6.5, 8.5] 
+                    : [2.5, 3.5, 4.5, 5.5, 6.5];
+                
+                barriers.forEach(barrier => {
+                    if (oldVal < barrier && newVal > barrier) {
+                        weightDelta += 1;
+                    } 
+                    else if (oldVal > barrier && newVal < barrier) {
+                        weightDelta -= 1;
+                    }
+                });
+
+                if (weightDelta !== 0) {
+                    states.weight += weightDelta;
+                    if (states.weight > 7) states.weight = 7;
+                    if (states.weight < 0) states.weight = 0;
+                    
+                    updateTrackUI('weight', states.weight);
+                }
+            }
+
+            states[track] = value;
+            updateTrackUI(track, value);
+            calculateSpeed();
+        }
+
+        function updateTrackUI(track, activeVal) {
+            const buttons = document.querySelectorAll(`[id^="${track}-"]`);
+            buttons.forEach(btn => {
+                const btnVal = parseInt(btn.id.split('-')[1]);
+                
+                let activeClass = 'bg-amber-600 text-stone-950 shadow-md ring-2 ring-amber-400';
+                if(track === 'oxygen') activeClass = 'bg-cyan-500 text-stone-950 shadow-md ring-2 ring-cyan-400';
+                if(track === 'weight') activeClass = 'bg-red-600 text-stone-100 shadow-md ring-2 ring-red-400';
+                if(track === 'health') activeClass = 'bg-emerald-600 text-stone-950 shadow-md ring-2 ring-emerald-400';
+
+                const isStartBlock = (btnVal === 0 || btnVal === 10);
+
+                if (btnVal === activeVal) {
+                    btn.className = `track-btn px-4 py-2 rounded font-bold transition ${activeClass} ${isStartBlock ? 'font-serif' : ''}`;
+                } else {
+                    btn.className = `track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-stone-700 transition border border-stone-700/50 ${isStartBlock ? 'text-amber-500 font-serif' : 'text-stone-400'}`;
+                }
+            });
+        }
+
+        function calculateSpeed() {
+            let baseMaxSpeed = 6;
+            let totalPenalties = 0;
+
+            // 1. Accumulate Weight Penalties
+            if (states.weight >= 3 && states.weight < 5) totalPenalties += 1;
+            else if (states.weight >= 5 && states.weight < 7) totalPenalties += 2;
+            else if (states.weight >= 7) totalPenalties += 3;
+
+            // 2. Accumulate Health Penalties
+            if (states.health <= 7 && states.health > 4) totalPenalties += 1;
+            else if (states.health <= 4 && states.health > 1) totalPenalties += 2;
+            else if (states.health <= 1) totalPenalties += 3;
+
+            // 3. Subtract Base Penalties First
+            let finalSpeed = baseMaxSpeed - totalPenalties;
+            if (finalSpeed < 1) finalSpeed = 1; // Floor it before night calculation just in case
+
+            // 4. Apply Night Time Modifier (Halved, rounded up)
+            let nightStatusText = "";
+            if (states.isNight) {
+                finalSpeed = Math.ceil(finalSpeed / 2);
+                nightStatusText = " | NIGHT PENALTY APPLIED";
+            }
+            
+            // Hard floor limit
+            if (finalSpeed < 1) finalSpeed = 1;
+
+            // 5. Visual Rendering Updates
+            const badge = document.getElementById('speed-modifier-badge');
+            badge.innerText = `Base Pen: -${totalPenalties}${nightStatusText}`;
+            if(totalPenalties > 0 || states.isNight) {
+                badge.className = "px-2 py-0.5 text-xs font-mono rounded bg-red-950 border border-red-800 text-red-400";
+            } else {
+                badge.className = "px-2 py-0.5 text-xs font-mono rounded bg-stone-900 border border-stone-700 text-stone-400";
+            }
+
+            document.getElementById('current-speed-value').innerText = finalSpeed;
+
+            for (let i = 1; i <= 6; i++) {
+                const block = document.getElementById(`speed-block-${i}`);
+                if (i === finalSpeed) {
+                    block.className = "w-12 py-3 rounded text-center font-bold border-2 border-amber-400 bg-amber-500 text-stone-950 transform scale-110 shadow-md shadow-amber-500/30 transition-all duration-300";
+                } else if (i > finalSpeed) {
+                    block.className = "w-12 py-3 rounded text-center font-bold border border-stone-800 bg-stone-900/40 text-stone-600 line-through opacity-40 transition-all duration-300";
+                } else {
+                    block.className = "w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 text-stone-400 transition-all duration-300";
+                }
+            }
+        }
+
+        function resetBoard() {
+            // Reset track data
+            states = { food: 0, oxygen: 0, weight: 0, health: 10, gearCards: 0, isNight: false };
+            
+            // Force night switch back to day visually
+            const toggleBtn = document.getElementById('day-night-toggle');
+            const knob = document.getElementById('toggle-knob');
+            const icon = document.getElementById('toggle-icon');
+            toggleBtn.className = "relative w-16 h-8 flex items-center rounded-full bg-cyan-700 border border-stone-700 transition-colors duration-300 focus:outline-none px-1 shadow-inner";
+            knob.className = "w-6 h-6 rounded-full bg-stone-100 shadow-md transform translate-x-0 transition-transform duration-300 flex items-center justify-center text-cyan-700";
+            icon.className = "fa-solid fa-sun text-xs";
+            
+            document.getElementById('gear-weight-display').innerText = '0';
+            
+            updateTrackUI('food', 0);
+            updateTrackUI('oxygen', 0);
+            updateTrackUI('weight', 0);
+            updateTrackUI('health', 10);
+            
+            calculateSpeed();
+        }
+    </script>
+</body>
+</html>
