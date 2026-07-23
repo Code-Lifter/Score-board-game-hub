@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robinson Crusoe: Adventures on the Cursed Island</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Smooth transitions for mobile tapping */
+        button { transition: all 0.15s ease-in-out; }
+        button:active { transform: scale(0.96); }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <nav class="w-full bg-stone-900 text-stone-200 p-4 flex justify-between items-center shadow-md">
+        <a href="#" class="font-bold tracking-widest text-amber-500 hover:text-amber-400">🏠 HOME</a>
+        <button id="resetBtn" class="text-xs font-bold uppercase bg-red-700 hover:bg-red-600 text-white px-3 py-2 rounded shadow">
+            Reset Game
+        </button>
+    </nav>
+
+    <main class="flex-grow w-full max-w-md mx-auto p-4 flex flex-col">
+        
+        <div id="setupScreen" class="flex flex-col flex-grow justify-center items-center space-y-6 hidden">
+            <div class="text-center">
+                <h1 class="text-3xl font-extrabold text-stone-900 mb-2">Expedition Setup</h1>
+                <p class="text-stone-500 text-sm">Configure your scenario limit.</p>
+            </div>
+            
+            <div class="w-full bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                <label class="block text-sm font-bold text-stone-700 mb-2">Total Days / Rounds</label>
+                <input type="number" id="dayLimitInput" min="1" max="99" value="12" 
+                    class="w-full p-3 border border-stone-300 rounded focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-lg mb-6">
+                
+                <button id="startBtn" class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold py-4 rounded-lg shadow-md text-lg">
+                    Begin Survival
+                </button>
+            </div>
+        </div>
+
+        <div id="gameScreen" class="flex flex-col flex-grow hidden">
+            
+            <div class="flex justify-between items-center mb-4 pb-4 border-b border-stone-300">
+                <div class="flex space-x-2">
+                    <button id="undoBtn" class="p-2 bg-stone-200 text-stone-600 rounded disabled:opacity-30 disabled:cursor-not-allowed">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                    </button>
+                    <button id="redoBtn" class="p-2 bg-stone-200 text-stone-600 rounded disabled:opacity-30 disabled:cursor-not-allowed">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg>
+                    </button>
+                </div>
+                <div class="text-xl font-black text-stone-800 tracking-tight">
+                    DAY <span id="currentDayDisplay" class="text-amber-600">1</span> / <span id="maxDayDisplay">12</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-200 flex-grow flex flex-col mb-4 overflow-hidden relative">
+                
+                <div id="phaseColorStrip" class="h-3 w-full bg-green-600"></div>
+                
+                <div class="p-6 flex-grow flex flex-col">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div id="phaseNumber" class="text-3xl font-black text-stone-300">1</div>
+                        <h2 id="phaseTitle" class="text-2xl font-bold text-stone-800 leading-tight">Event Phase</h2>
+                    </div>
+                    
+                    <div id="phaseDescription" class="prose prose-stone text-stone-600 space-y-3 leading-relaxed text-[15px]">
+                        </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-auto">
+                <button id="prevBtn" class="bg-stone-200 hover:bg-stone-300 text-stone-800 font-semibold py-4 px-2 rounded-xl flex justify-center items-center">
+                    &larr; Previous
+                </button>
+                <button id="nextBtn" class="bg-stone-900 hover:bg-stone-800 text-white font-semibold py-4 px-2 rounded-xl shadow-md flex justify-center items-center">
+                    Next &rarr;
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Phase Data extracted directly from the reference
+        const phaseData = [
+            {
+                title: "Event Phase",
+                color: "bg-green-700",
+                desc: `<p><strong>The first round of the game has no Event Phase.</strong></p>
+                       <p>From round 2 onward:</p>
+                       <ol class="list-decimal pl-5 space-y-1">
+                           <li>Draw the top card from the Event deck and resolve ❔.
+                               <ul class="list-disc pl-5 mt-1 text-sm text-stone-500">
+                                   <li>If it wasn't an Event card, draw another card.</li>
+                                   <li>If the card shows a 📖 book icon, resolve the effect on the scenario sheet.</li>
+                                   <li>If the card shows an adventure icon, place the matching Adventure token on the matching Adventure deck.</li>
+                               </ul>
+                           </li>
+                           <li>Resolve the event text.</li>
+                           <li>Place the card in the right-hand Threat space and move cards to the left. If a card is moved off the board, resolve its Threat Effect.</li>
+                       </ol>`
+            },
+            {
+                title: "Morale Phase",
+                color: "bg-amber-500",
+                desc: `<p>Check Morale. If you are the first player, gain or discard 🌟 Determination tokens (or heal 1 ❤️ Wound).</p>
+                       <p class="text-red-600 font-medium">If you can't discard enough tokens, take 1 💔 Wound per missing token.</p>`
+            },
+            {
+                title: "Production Phase",
+                color: "bg-orange-600",
+                desc: `<p>Take 🪵 wood and 🍌 food according to the sources on the Island tile with the 🏕️ camp.</p>`
+            },
+            {
+                title: "Action Phase",
+                color: "bg-red-700",
+                desc: `<ol class="list-decimal pl-5 space-y-2">
+                           <li>Assign 🟦 pawns and resources.</li>
+                           <li>Resolve Actions, removing 🟦 pawns as you do.</li>
+                           <li>Resolve newly acquired 🧰 Treasures.</li>
+                           <li>Resolve newly built Items and place on board.</li>
+                           <li>Move resources and tokens to Available Resources space.</li>
+                       </ol>`
+            },
+            {
+                title: "Weather Phase",
+                color: "bg-blue-600",
+                desc: `<ol class="list-decimal pl-5 space-y-2">
+                           <li>Roll dice according to scenario sheet and add tokens in Weather space.</li>
+                           <li>Discard 1 🪵 wood per 🌨️ snow cloud.</li>
+                           <li>Discard 1 🪵 wood and 1 🍌 food per point of difference between ⛺ Roof level and sum of 🌨️ snow and 🌧️ rain clouds.</li>
+                           <li>Resolve 🐺 Hungry Animals die.</li>
+                           <li>Reduce 🛡️ Palisade level by 1 if 🌪️ storm is present.</li>
+                           <li>Discard all Weather tokens.</li>
+                       </ol>`
+            },
+            {
+                title: "Night Phase",
+                color: "bg-stone-800",
+                desc: `<ol class="list-decimal pl-5 space-y-2">
+                           <li>Each player discards 1 🍌 food or takes 2 💔 Wounds.</li>
+                           <li>Move camp if desired.</li>
+                           <li>Each character takes 1 💔 Wound if there is no ⛺ Shelter.</li>
+                           <li>Discard all food except 🍞 non-perishable.</li>
+                           <li>Remove ⬛ markers from characters' special ability spaces.</li>
+                           <li>Move round marker and pass 🧭 First Player token.</li>
+                       </ol>`
+            }
+        ];
+
+        // State variables
+        let state = {
+            isActive: false,
+            dayLimit: 12,
+            currentDay: 1,
+            phaseIndex: 0
+        };
+
+        let historyStack = [];
+        let redoStack = [];
+
+        // DOM Elements
+        const setupScreen = document.getElementById('setupScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const dayLimitInput = document.getElementById('dayLimitInput');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        const currentDayDisplay = document.getElementById('currentDayDisplay');
+        const maxDayDisplay = document.getElementById('maxDayDisplay');
+        const phaseColorStrip = document.getElementById('phaseColorStrip');
+        const phaseNumber = document.getElementById('phaseNumber');
+        const phaseTitle = document.getElementById('phaseTitle');
+        const phaseDescription = document.getElementById('phaseDescription');
+        
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const undoBtn = document.getElementById('undoBtn');
+        const redoBtn = document.getElementById('redoBtn');
+
+        // Initialization
+        function init() {
+            loadFromStorage();
+            render();
+        }
+
+        // Core Render Loop
+        function render() {
+            if (!state.isActive) {
+                setupScreen.classList.remove('hidden');
+                gameScreen.classList.add('hidden');
+                resetBtn.classList.add('hidden');
+            } else {
+                setupScreen.classList.add('hidden');
+                gameScreen.classList.remove('hidden');
+                resetBtn.classList.remove('hidden');
+
+                // Update Header
+                currentDayDisplay.innerText = state.currentDay;
+                maxDayDisplay.innerText = state.dayLimit;
+
+                // Update Phase UI
+                const currentPhase = phaseData[state.phaseIndex];
+                phaseColorStrip.className = `h-3 w-full ${currentPhase.color}`;
+                phaseNumber.innerText = state.phaseIndex + 1;
+                phaseTitle.innerText = currentPhase.title;
+                phaseDescription.innerHTML = currentPhase.desc;
+
+                // Button States
+                undoBtn.disabled = historyStack.length === 0;
+                redoBtn.disabled = redoStack.length === 0;
+
+                // Handle End Game limits
+                if (state.currentDay >= state.dayLimit && state.phaseIndex === phaseData.length - 1) {
+                    nextBtn.innerHTML = "Game Over 💀";
+                    nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    nextBtn.innerHTML = "Next &rarr;";
+                    nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+            saveToStorage();
+        }
+
+        // Logic Mechanics
+        function pushStateToHistory() {
+            historyStack.push(JSON.parse(JSON.stringify(state)));
+            redoStack = []; // Clear future timelines when a new action is taken
+        }
+
+        function goNext() {
+            if (state.currentDay >= state.dayLimit && state.phaseIndex === phaseData.length - 1) return;
+            pushStateToHistory();
+            
+            if (state.phaseIndex < phaseData.length - 1) {
+                state.phaseIndex++;
+            } else {
+                state.phaseIndex = 0;
+                state.currentDay++;
+            }
+            render();
+        }
+
+        function goPrev() {
+            if (state.currentDay === 1 && state.phaseIndex === 0) return;
+            pushStateToHistory();
+            
+            if (state.phaseIndex > 0) {
+                state.phaseIndex--;
+            } else {
+                state.phaseIndex = phaseData.length - 1;
+                state.currentDay--;
+            }
+            render();
+        }
+
+        function undo() {
+            if (historyStack.length === 0) return;
+            redoStack.push(JSON.parse(JSON.stringify(state)));
+            state = historyStack.pop();
+            render();
+        }
+
+        function redo() {
+            if (redoStack.length === 0) return;
+            historyStack.push(JSON.parse(JSON.stringify(state)));
+            state = redoStack.pop();
+            render();
+        }
+
+        // Local Storage Handlers
+        function saveToStorage() {
+            try {
+                localStorage.setItem('robinsonCrusoeState', JSON.stringify({
+                    state, historyStack, redoStack
+                }));
+            } catch (e) { console.warn("Local storage blocked or unavailable."); }
+        }
+
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem('robinsonCrusoeState');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    state = parsed.state;
+                    historyStack = parsed.historyStack || [];
+                    redoStack = parsed.redoStack || [];
+                }
+            } catch (e) { console.warn("Failed to read local storage."); }
+        }
+
+        function resetGame() {
+            if (confirm("Abandon current expedition and reset?")) {
+                state = { isActive: false, dayLimit: 12, currentDay: 1, phaseIndex: 0 };
+                historyStack = [];
+                redoStack = [];
+                localStorage.removeItem('robinsonCrusoeState');
+                render();
+            }
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', () => {
+            const limit = parseInt(dayLimitInput.value) || 12;
+            state = { isActive: true, dayLimit: limit, currentDay: 1, phaseIndex: 0 };
+            historyStack = [];
+            redoStack = [];
+            render();
+        });
+
+        nextBtn.addEventListener('click', goNext);
+        prevBtn.addEventListener('click', goPrev);
+        undoBtn.addEventListener('click', undo);
+        redoBtn.addEventListener('click', redo);
+        resetBtn.addEventListener('click', resetGame);
+
+        // Start the engine
+        init();
+    </script>
+</body>
+</html>
