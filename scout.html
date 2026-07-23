@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOUT Digital Scoreboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-6">
+
+    <div class="max-w-3xl mx-auto bg-slate-800 p-8 rounded-xl shadow-2xl border border-slate-700">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-orange-400 mb-2">🎪 SCOUT Scoreboard 🎪</h1>
+            <p class="text-slate-400">Put together a show that will beat out your rivals.</p>
+        </div>
+
+        <!-- Setup Screen -->
+        <div id="setup-screen" class="space-y-6">
+            <div>
+                <label class="block text-lg font-semibold mb-2">How many circus leaders? (2-5)</label>
+                <input type="number" id="player-count" min="2" max="5" value="3" 
+                    class="w-full bg-slate-700 border border-slate-600 rounded p-3 text-white focus:outline-none focus:border-orange-500 transition-colors">
+            </div>
+            <button onclick="generatePlayerInputs()" 
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded transition-colors">
+                Set Player Names
+            </button>
+            <div id="player-names-container" class="space-y-3 hidden"></div>
+            <button id="start-btn" onclick="startGame()" 
+                class="w-full bg-orange-500 hover:bg-orange-400 text-white font-bold py-3 px-4 rounded transition-colors hidden">
+                Start Game
+            </button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="hidden space-y-8">
+            <h2 id="round-header" class="text-2xl font-bold text-center text-blue-400">Round 1</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-700 border-b border-slate-600" id="table-head">
+                            <th class="p-3">Player</th>
+                            <!-- Round headers generated dynamically -->
+                            <th class="p-3 text-right text-orange-400">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="bg-slate-800">
+                        <!-- Player rows generated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Current Round Input Form -->
+            <div class="bg-slate-700 p-6 rounded-lg border border-slate-600">
+                <h3 class="text-xl font-bold mb-4 text-center">Score Entry</h3>
+                <div id="score-inputs" class="space-y-6">
+                    <!-- Score inputs generated dynamically -->
+                </div>
+                <button onclick="submitRound()" 
+                    class="w-full mt-6 bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 rounded transition-colors">
+                    Calculate & Next Round
+                </button>
+            </div>
+        </div>
+
+        <!-- Final Results Screen -->
+        <div id="results-screen" class="hidden text-center space-y-6">
+            <h2 class="text-4xl font-bold text-green-400">Game Over!</h2>
+            <div id="winner-announcement" class="text-2xl font-semibold"></div>
+            <button onclick="location.reload()" 
+                class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded transition-colors">
+                Play Again
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let players = [];
+        let totalRounds = 0;
+        let currentRound = 1;
+
+        function generatePlayerInputs() {
+            const count = parseInt(document.getElementById('player-count').value);
+            if (count < 2 || count > 5) {
+                alert("Game rules require 2 to 5 players.");
+                return;
+            }
+            totalRounds = count; 
+            
+            const container = document.getElementById('player-names-container');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < count; i++) {
+                container.innerHTML += `
+                    <input type="text" id="player-name-${i}" placeholder="Player ${i + 1} Name" 
+                        class="w-full bg-slate-700 border border-slate-600 rounded p-3 text-white focus:outline-none focus:border-orange-500">
+                `;
+            }
+            container.classList.remove('hidden');
+            document.getElementById('start-btn').classList.remove('hidden');
+        }
+
+        function startGame() {
+            const count = parseInt(document.getElementById('player-count').value);
+            players = [];
+            
+            for (let i = 0; i < count; i++) {
+                let name = document.getElementById(`player-name-${i}`).value || `Player ${i + 1}`;
+                players.push({ name: name, scores: [], total: 0 });
+            }
+
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            
+            setupScoreTable();
+            renderScoreInputs();
+        }
+
+        function setupScoreTable() {
+            const head = document.getElementById('table-head');
+            head.innerHTML = '<th class="p-3">Player</th>';
+            for (let i = 1; i <= totalRounds; i++) {
+                head.innerHTML += `<th class="p-3 text-center">R${i}</th>`;
+            }
+            head.innerHTML += '<th class="p-3 text-right text-orange-400">Total</th>';
+            updateScoreTable();
+        }
+
+        function updateScoreTable() {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            
+            players.forEach(player => {
+                let row = `<tr class="border-b border-slate-700"><td class="p-3 font-semibold">${player.name}</td>`;
+                for (let i = 0; i < totalRounds; i++) {
+                    row += `<td class="p-3 text-center text-slate-300">${player.scores[i] !== undefined ? player.scores[i] : '-'}</td>`;
+                }
+                row += `<td class="p-3 text-right font-bold text-orange-400">${player.total}</td></tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function renderScoreInputs() {
+            document.getElementById('round-header').innerText = `Round ${currentRound} of ${totalRounds}`;
+            const container = document.getElementById('score-inputs');
+            container.innerHTML = '';
+
+            players.forEach((player, index) => {
+                container.innerHTML += `
+                    <div class="bg-slate-800 p-4 rounded border border-slate-600 flex flex-wrap items-end gap-4">
+                        <div class="w-full text-lg font-bold text-blue-300">${player.name}</div>
+                        <div class="flex-1 min-w-[120px]">
+                            <label class="block text-sm mb-1 text-slate-400">Collected Cards</label>
+                            <input type="number" id="collected-${index}" min="0" value="0" class="w-full bg-slate-700 border-none rounded p-2 text-white">
+                        </div>
+                        <div class="flex-1 min-w-[120px]">
+                            <label class="block text-sm mb-1 text-slate-400">Scout Chips</label>
+                            <input type="number" id="scout-${index}" min="0" value="0" class="w-full bg-slate-700 border-none rounded p-2 text-white">
+                        </div>
+                        <div class="flex-1 min-w-[120px]">
+                            <label class="block text-sm mb-1 text-slate-400">Cards Left in Hand</label>
+                            <input type="number" id="left-${index}" min="0" value="0" class="w-full bg-slate-700 border-none rounded p-2 text-white">
+                        </div>
+                        <div class="w-full mt-2 flex items-center gap-2">
+                            <input type="checkbox" id="immune-${index}" class="w-4 h-4 rounded text-blue-500 focus:ring-blue-500 focus:ring-2">
+                            <label for="immune-${index}" class="text-sm text-slate-400">Did not end round by emptying hand, but everyone else Scouted (Immune to negative points)</label>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function submitRound() {
+            players.forEach((player, index) => {
+                const collected = parseInt(document.getElementById(`collected-${index}`).value) || 0;
+                const scoutTokens = parseInt(document.getElementById(`scout-${index}`).value) || 0;
+                const cardsLeft = parseInt(document.getElementById(`left-${index}`).value) || 0;
+                const isImmune = document.getElementById(`immune-${index}`).checked;
+
+                // Points = (Collected + Scout Chips) - (Cards left, unless immune)
+                const penalty = isImmune ? 0 : cardsLeft;
+                const roundScore = (collected + scoutTokens) - penalty;
+
+                player.scores.push(roundScore);
+                player.total += roundScore;
+            });
+
+            updateScoreTable();
+
+            if (currentRound >= totalRounds) {
+                endGame();
+            } else {
+                currentRound++;
+                renderScoreInputs();
+            }
+        }
+
+        function endGame() {
+            document.getElementById('game-screen').classList.add('hidden');
+            const results = document.getElementById('results-screen');
+            results.classList.remove('hidden');
+
+            const sortedPlayers = [...players].sort((a, b) => b.total - a.total);
+            const winner = sortedPlayers[0];
+            
+            // Handle ties
+            const tiedWinners = sortedPlayers.filter(p => p.total === winner.total);
+            
+            if (tiedWinners.length > 1) {
+                const names = tiedWinners.map(w => w.name).join(" & ");
+                document.getElementById('winner-announcement').innerHTML = `It's a tie! <br><span class="text-blue-400 text-4xl">${names}</span> share the taste of victory with ${winner.total} points!`;
+            } else {
+                document.getElementById('winner-announcement').innerHTML = `The best circus leader is <br><span class="text-blue-400 text-5xl block mt-4">${winner.name}</span><br>with ${winner.total} points!`;
+            }
+        }
+    </script>
+</body>
+</html>
