@@ -19,9 +19,15 @@
         <div id="setup-screen" class="space-y-6">
             <div>
                 <label class="block text-lg font-semibold mb-2">How many circus leaders? (2-5)</label>
-                <input type="number" id="player-count" min="2" max="5" value="3" 
+                <input type="number" id="player-count" min="2" max="5" value="3" oninput="updateSetupInstructions()"
                     class="w-full bg-slate-700 border border-slate-600 rounded p-3 text-white focus:outline-none focus:border-orange-500 transition-colors">
+                
+                <!-- Dynamic Setup Instructions Box -->
+                <div id="setup-instructions" class="mt-4 bg-slate-900 border border-blue-500/50 p-4 rounded-lg shadow-inner text-slate-300 min-h-[100px] flex items-center">
+                    <!-- Populated by JS -->
+                </div>
             </div>
+
             <button onclick="generatePlayerInputs()" 
                 class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded transition-colors">
                 Set Player Names
@@ -80,6 +86,28 @@
         let players = [];
         let totalRounds = 0;
         let currentRound = 1;
+
+        // --- NEW: Setup Rules Dictionary ---
+        const setupRules = {
+            2: "<strong>🃏 2-Player Setup:</strong><br>• Return the single card with both '9' and '10' to the box.<br>• Give each player <strong>3 Scout chips</strong> (Scout & Show chips are NOT used).<br>• Deal <strong>11 cards</strong> to each player. Set the remaining 22 cards aside for Round 2.",
+            3: "<strong>🃏 3-Player Setup:</strong><br>• Return all <strong>(9 cards) with a '10'</strong> on them to the box.<br>• Give each player <strong>1 Scout & Show chip</strong>.<br>• Deal <strong>12 cards</strong> to each player.",
+            4: "<strong>🃏 4-Player Setup:</strong><br>• Return the single 1 card, with the '9' and '10' on it, to the box.<br>• Give each player <strong>1 Scout & Show chip</strong>.<br>• Deal <strong>11 cards</strong> to each player.",
+            5: "<strong>🃏 5-Player Setup:</strong><br>• Use <strong>all cards</strong> (return none to the box).<br>• Give each player <strong>1 Scout & Show chip</strong>.<br>• Deal <strong>9 cards</strong> to each player."
+        };
+
+        function updateSetupInstructions() {
+            const count = parseInt(document.getElementById('player-count').value);
+            const container = document.getElementById('setup-instructions');
+            
+            if (setupRules[count]) {
+                container.innerHTML = `<p class="leading-relaxed">${setupRules[count]}</p>`;
+            } else {
+                container.innerHTML = `<p class="text-red-400 italic">Please select a valid player count between 2 and 5.</p>`;
+            }
+        }
+
+        // Initialize setup instructions on page load
+        document.addEventListener("DOMContentLoaded", updateSetupInstructions);
 
         function generatePlayerInputs() {
             const count = parseInt(document.getElementById('player-count').value);
@@ -160,12 +188,12 @@
                             <input type="number" id="scout-${index}" min="0" value="0" class="w-full bg-slate-700 border-none rounded p-2 text-white">
                         </div>
                         <div class="flex-1 min-w-[120px]">
-                            <label class="block text-sm mb-1 text-slate-400">Cards Left in Hand</label>
+                            <label class="block text-sm mb-1 text-slate-400">Cards Left</label>
                             <input type="number" id="left-${index}" min="0" value="0" class="w-full bg-slate-700 border-none rounded p-2 text-white">
                         </div>
                         <div class="w-full mt-2 flex items-center gap-2">
                             <input type="checkbox" id="immune-${index}" class="w-4 h-4 rounded text-blue-500 focus:ring-blue-500 focus:ring-2">
-                            <label for="immune-${index}" class="text-sm text-slate-400">Did not end round by emptying hand, but everyone else Scouted (Immune to negative points)</label>
+                            <label for="immune-${index}" class="text-sm text-slate-400">Immune to negative points (Round ended because everyone else Scouted)</label>
                         </div>
                     </div>
                 `;
@@ -179,7 +207,6 @@
                 const cardsLeft = parseInt(document.getElementById(`left-${index}`).value) || 0;
                 const isImmune = document.getElementById(`immune-${index}`).checked;
 
-                // Points = (Collected + Scout Chips) - (Cards left, unless immune)
                 const penalty = isImmune ? 0 : cardsLeft;
                 const roundScore = (collected + scoutTokens) - penalty;
 
@@ -205,7 +232,6 @@
             const sortedPlayers = [...players].sort((a, b) => b.total - a.total);
             const winner = sortedPlayers[0];
             
-            // Handle ties
             const tiedWinners = sortedPlayers.filter(p => p.total === winner.total);
             
             if (tiedWinners.length > 1) {
