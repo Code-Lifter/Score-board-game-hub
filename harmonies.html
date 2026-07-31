@@ -1,559 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>Harmonies Scorepad</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --paper:#E7D9B9;
-    --paper-dark:#D8C69C;
-    --ink:#3A2B1F;
-    --ink-soft:#6b5a48;
-    --trees:#6F8F4E;
-    --trees-d:#586f3d;
-    --mountains:#8B93A0;
-    --mountains-d:#6d7481;
-    --fields:#DFAE33;
-    --fields-d:#b8890f;
-    --buildings:#BC4C3B;
-    --buildings-d:#93392b;
-    --water:#3D8AA1;
-    --water-d:#2c6577;
-    --accent:#C1543F;
-  }
-  *{ -webkit-tap-highlight-color: transparent; }
-  body{
-    background-color: var(--paper);
-    background-image:
-      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.15), transparent 40%),
-      radial-gradient(circle at 80% 90%, rgba(0,0,0,0.05), transparent 40%);
-    font-family:'Nunito', sans-serif;
-    color: var(--ink);
-  }
-  .font-display{ font-family:'Fraunces', serif; }
-  .torn-edge{
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='12'><path d='M0,6 Q4,0 8,6 T16,6 T24,6 T32,6 T40,6 T48,6 T56,6 T64,6 T72,6 T80,6 T88,6 T96,6 T100,6 V12 H0 Z' fill='black'/></svg>");
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='12'><path d='M0,6 Q4,0 8,6 T16,6 T24,6 T32,6 T40,6 T48,6 T56,6 T64,6 T72,6 T80,6 T88,6 T96,6 T100,6 V12 H0 Z' fill='black'/></svg>");
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-  }
-  .badge{
-    width:2.75rem;height:2.75rem;border-radius:9999px;
-    display:flex;align-items:center;justify-content:center;
-    box-shadow: inset 0 -4px 0 rgba(0,0,0,0.18), inset 0 2px 0 rgba(255,255,255,0.25), 0 2px 3px rgba(0,0,0,0.25);
-    flex-shrink:0;
-  }
-  .score-input{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-variant-numeric: tabular-nums;
-  }
-  .score-input:focus{ outline: 2px solid var(--accent); outline-offset: 2px; }
-  .card-col{
-    scroll-snap-align: start;
-  }
-  .btn-tool{
-    transition: transform .12s ease, box-shadow .12s ease;
-  }
-  .btn-tool:active{ transform: translateY(1px) scale(0.97); }
-  .btn-tool:disabled{ opacity:.4; cursor:not-allowed; }
-  .winner-glow{
-    box-shadow: 0 0 0 3px var(--accent), 0 8px 20px rgba(193,84,63,0.35);
-  }
-  ::-webkit-scrollbar{ height:10px; }
-  ::-webkit-scrollbar-thumb{ background: var(--paper-dark); border-radius: 9999px; }
-  @media (prefers-reduced-motion: reduce){
-    .btn-tool{ transition:none; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Harmonies Smart Scorepad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Nunito:wght@400;700;800&display=swap');
+        
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background-color: #E7D9B9; 
+            overscroll-behavior-y: none;
+        }
+
+        .font-display { font-family: 'Fraunces', serif; }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .score-input {
+            font-family: 'Fraunces', serif;
+            font-weight: bold;
+            color: #3A2B1F;
+            background: transparent;
+            font-size: 1.15rem; 
+        }
+        
+        .score-input:focus {
+            background-color: #fff;
+            outline: none;
+            box-shadow: inset 0 0 0 2px #C1543F;
+        }
+
+        @keyframes pulse-accent {
+            0%, 100% { color: #C1543F; text-shadow: 0 0 5px rgba(193, 84, 63, 0.4); }
+            50% { color: #e06851; text-shadow: 0 0 15px rgba(193, 84, 63, 0.8); }
+        }
+        .winner-text { animation: pulse-accent 2s infinite; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body class="min-h-screen pb-16">
+<body class="text-[#3A2B1F] h-screen flex flex-col overflow-hidden">
 
-<!-- Top bar (not fixed) -->
-<div class="max-w-6xl mx-auto px-4 sm:px-6 pt-5">
-  <a href="/" class="inline-flex items-center gap-1.5 text-sm font-bold text-[var(--ink-soft)] hover:text-[var(--accent)] transition-colors">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
-    Home
-  </a>
-</div>
+    <div class="max-w-lg mx-auto bg-[#F3E9CE] w-full h-full shadow-2xl flex flex-col relative border-x border-black/10">
+        
+        <!-- Header -->
+        <div class="bg-[#3A2B1F] text-[#E7D9B9] py-3 text-center border-b-4 border-[#C1543F] shadow-md z-30 flex-none relative">
+            <h1 class="font-display text-2xl tracking-[0.15em] font-bold relative inline-block">
+                HARMONIES
+                <i class="fas fa-tree absolute -left-7 top-1 text-[#6F8F4E] opacity-90 text-lg"></i>
+                <i class="fas fa-paw absolute -right-7 top-1 text-[#DFAE33] opacity-90 text-lg"></i>
+            </h1>
+            <p class="text-[#D8C69C] text-[10px] uppercase tracking-widest mt-0 font-bold">Smart Scorepad</p>
+        </div>
 
-<!-- Header -->
-<header class="max-w-6xl mx-auto px-4 sm:px-6 pt-3 pb-6 text-center">
-  <p class="uppercase tracking-[0.3em] text-xs font-bold text-[var(--ink-soft)]">Landscapes &amp; Habitats</p>
-  <h1 class="font-display text-4xl sm:text-5xl font-semibold mt-1" style="color:var(--ink)">Harmonies Scorepad</h1>
-  <p class="text-sm text-[var(--ink-soft)] mt-2 max-w-md mx-auto">Tally Trees, Mountains, Fields, Buildings, Water and Animals for every player — right from your table.</p>
-</header>
+        <!-- Controls -->
+        <div class="bg-[#D8C69C] p-3 border-b border-black/10 flex justify-between items-center z-20 shadow-sm flex-none">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center bg-white/60 rounded-lg border border-black/20 px-2 py-1 shadow-inner">
+                    <i class="fas fa-users text-[#6b5a48] text-xs mr-2"></i>
+                    <select id="playerCount" class="bg-transparent text-[#3A2B1F] font-bold focus:outline-none text-sm cursor-pointer" onchange="changePlayerCount()">
+                        <option value="2">2 Players</option>
+                        <option value="3">3 Players</option>
+                        <option value="4" selected>4 Players</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="resetGame()" class="text-xs font-bold text-white uppercase tracking-wider bg-[#BC4C3B] px-3 py-1.5 rounded-lg hover:brightness-110 transition-all shadow border border-black/20">
+                <i class="fas fa-rotate-right mr-1"></i> Reset
+            </button>
+        </div>
 
-<!-- Toolbar -->
-<div class="max-w-6xl mx-auto px-4 sm:px-6">
-  <div class="flex flex-wrap items-center gap-2 justify-center bg-[var(--paper-dark)]/60 rounded-2xl p-3 border border-black/10">
-
-    <button id="addPlayerBtn" class="btn-tool flex items-center gap-1.5 bg-[var(--trees)] text-white font-bold text-sm px-3.5 py-2 rounded-xl shadow hover:brightness-105">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-      Add player
-    </button>
-
-    <div class="w-px h-6 bg-black/15 mx-1 hidden sm:block"></div>
-
-    <button id="undoBtn" class="btn-tool bg-white/70 text-[var(--ink)] font-bold text-sm px-3 py-2 rounded-xl shadow flex items-center gap-1.5 hover:bg-white">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
-      Undo
-    </button>
-    <button id="redoBtn" class="btn-tool bg-white/70 text-[var(--ink)] font-bold text-sm px-3 py-2 rounded-xl shadow flex items-center gap-1.5 hover:bg-white">
-      Redo
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg>
-    </button>
-
-    <div class="w-px h-6 bg-black/15 mx-1 hidden sm:block"></div>
-
-    <button id="saveJsonBtn" class="btn-tool bg-white/70 text-[var(--ink)] font-bold text-sm px-3 py-2 rounded-xl shadow flex items-center gap-1.5 hover:bg-white">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-      Save file
-    </button>
-    <button id="loadJsonBtn" class="btn-tool bg-white/70 text-[var(--ink)] font-bold text-sm px-3 py-2 rounded-xl shadow flex items-center gap-1.5 hover:bg-white">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9m0 0l-4 4m4-4l4 4"/><path d="M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/></svg>
-      Load file
-    </button>
-    <input type="file" id="fileInput" accept="application/json" class="hidden">
-
-    <div class="w-px h-6 bg-black/15 mx-1 hidden sm:block"></div>
-
-    <button id="resetBtn" class="btn-tool bg-[var(--buildings)] text-white font-bold text-sm px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5 hover:brightness-105">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
-      Reset
-    </button>
-  </div>
-  <p id="statusMsg" class="text-center text-xs text-[var(--ink-soft)] mt-2 h-4"></p>
-</div>
-
-<!-- Player columns -->
-<main class="max-w-6xl mx-auto px-4 sm:px-6 mt-6">
-  <div id="playerRow" class="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory">
-    <!-- columns injected by JS -->
-  </div>
-</main>
-
-<!-- Leaderboard -->
-<section class="max-w-6xl mx-auto px-4 sm:px-6 mt-2">
-  <div id="leaderboard" class="bg-white/50 border border-black/10 rounded-2xl p-4"></div>
-</section>
-
-<template id="playerTemplate">
-  <div class="card-col snap-start shrink-0 w-[300px] sm:w-[320px] bg-[#F3E9CE] rounded-2xl border border-black/10 shadow-lg overflow-hidden flex flex-col">
-    <!-- header -->
-    <div class="bg-[var(--paper-dark)] px-4 pt-4 pb-3 flex items-center gap-2">
-      <input class="playerName font-display text-xl font-semibold bg-transparent border-b-2 border-black/20 focus:border-[var(--accent)] outline-none w-full min-w-0" maxlength="20" spellcheck="false">
-      <button class="removePlayerBtn shrink-0 w-7 h-7 rounded-full bg-black/10 hover:bg-[var(--buildings)] hover:text-white flex items-center justify-center transition-colors" title="Remove player">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
+        <!-- Scrollable Table Area (Single Table Architecture) -->
+        <div class="flex-grow overflow-y-auto no-scrollbar relative">
+            <table class="w-full border-collapse table-fixed h-full" id="scoreTable">
+                <thead class="sticky top-0 z-20 shadow-[0_2px_4px_rgba(0,0,0,0.05)] bg-[#D8C69C]" id="tableHead">
+                    <!-- Head injected by JS -->
+                </thead>
+                <tbody id="tableBody" class="bg-[#F3E9CE]">
+                    <!-- Body injected by JS -->
+                </tbody>
+                <tfoot id="tableFooter" class="sticky bottom-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.15)] bg-[#3A2B1F] text-white">
+                    <!-- Footer injected by JS -->
+                </tfoot>
+            </table>
+        </div>
     </div>
-
-    <!-- Landscape section -->
-    <div class="px-4 pt-4">
-      <p class="text-[11px] uppercase tracking-widest font-extrabold text-[var(--ink-soft)] mb-2">Landscape</p>
-      <div class="space-y-2">
-
-        <div class="flex items-center gap-3">
-          <div class="badge" style="background:var(--trees)">🌳</div>
-          <label class="flex-1 text-sm font-bold">Trees</label>
-          <input type="number" inputmode="numeric" data-field="trees" class="score-input w-16 text-right text-lg bg-white/70 rounded-lg px-2 py-1 border border-black/10" placeholder="0">
-        </div>
-
-        <div class="flex items-center gap-3">
-          <div class="badge" style="background:var(--mountains)">⛰️</div>
-          <label class="flex-1 text-sm font-bold">Mountains</label>
-          <input type="number" inputmode="numeric" data-field="mountains" class="score-input w-16 text-right text-lg bg-white/70 rounded-lg px-2 py-1 border border-black/10" placeholder="0">
-        </div>
-
-        <div class="flex items-center gap-3">
-          <div class="badge" style="background:var(--fields)">🌾</div>
-          <label class="flex-1 text-sm font-bold">Fields</label>
-          <input type="number" inputmode="numeric" data-field="fields" class="score-input w-16 text-right text-lg bg-white/70 rounded-lg px-2 py-1 border border-black/10" placeholder="0">
-        </div>
-
-        <div class="flex items-center gap-3">
-          <div class="badge" style="background:var(--buildings)">🏠</div>
-          <label class="flex-1 text-sm font-bold">Buildings</label>
-          <input type="number" inputmode="numeric" data-field="buildings" class="score-input w-16 text-right text-lg bg-white/70 rounded-lg px-2 py-1 border border-black/10" placeholder="0">
-        </div>
-
-        <div class="flex items-center gap-3">
-          <div class="badge" style="background:var(--water)">💧</div>
-          <label class="flex-1 text-sm font-bold">Water</label>
-          <input type="number" inputmode="numeric" data-field="water" class="score-input w-16 text-right text-lg bg-white/70 rounded-lg px-2 py-1 border border-black/10" placeholder="0">
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between mt-3 pt-2 border-t border-dashed border-black/20">
-        <span class="text-xs font-extrabold uppercase tracking-wide text-[var(--ink-soft)]">Landscape total</span>
-        <span class="landscapeTotal font-display text-xl font-bold">0</span>
-      </div>
-    </div>
-
-    <!-- Animals section -->
-    <div class="px-4 pt-4 mt-2">
-      <p class="text-[11px] uppercase tracking-widest font-extrabold text-[var(--ink-soft)] mb-2">Animals</p>
-      <div class="space-y-2">
-        <div class="flex items-center gap-3">
-          <div class="badge bg-[#7a6a54] text-white text-sm font-display">1</div>
-          <label class="flex-1 text-sm font-bold">Animal card</label>
-          <input type="number" inputmode="numeric" data-field="animal1" class="score-input w-16 text-right text-lg bg-white/70 rounded-lg px-2 py-1 border border-black/10" placeholder="0">
-        </div>
-        <div class="flex items-center gap-3">
-          <div class="badge bg-[#7a6a54] text-white text-sm font-display">2</div>
-          <label class="flex-1 text-sm font-bold">Animal card</label>
-          <input type="number" inputmode="numeric" data-field="animal2" class="score-input w-16 text-right text-lg bg-white/70 rounded-lg px-2 py-1 border border-black/10" placeholder="0">
-        </div>
-        <div class="flex items-center gap-3">
-          <div class="badge bg-[#7a6a54] text-white text-sm font-display">3</div>
-          <label class="flex-1 text-sm font-bold">Animal card</label>
-          <input type="number" inputmode="numeric" data-field="animal3" class="score-input w-16 text-right text-lg bg-white/70 rounded-lg px-2 py-1 border border-black/10" placeholder="0">
-        </div>
-        <div class="flex items-center gap-3">
-          <div class="badge bg-[#7a6a54] text-white text-sm font-display">4</div>
-          <label class="flex-1 text-sm font-bold">Animal card</label>
-          <input type="number" inputmode="numeric" data-field="animal4" class="score-input w-16 text-right text-lg bg-white/70 rounded-lg px-2 py-1 border border-black/10" placeholder="0">
-        </div>
-        <div class="flex items-center gap-3">
-          <div class="badge bg-[#4a4038] text-white text-base">✦</div>
-          <label class="flex-1 text-sm font-bold">Nature's Spirit</label>
-          <input type="number" inputmode="numeric" data-field="nature" class="score-input w-16 text-right text-lg bg-white/70 rounded-lg px-2 py-1 border border-black/10" placeholder="0">
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between mt-3 pt-2 border-t border-dashed border-black/20">
-        <span class="text-xs font-extrabold uppercase tracking-wide text-[var(--ink-soft)]">Animal total</span>
-        <span class="animalTotal font-display text-xl font-bold">0</span>
-      </div>
-    </div>
-
-    <!-- Tiebreaker -->
-    <div class="px-4 pt-3">
-      <div class="flex items-center gap-3">
-        <div class="badge bg-white/60 border border-black/10 text-xs">🐾</div>
-        <label class="flex-1 text-xs font-bold text-[var(--ink-soft)]">Animal cubes placed <span class="opacity-70">(tiebreak)</span></label>
-        <input type="number" inputmode="numeric" data-field="cubes" class="score-input w-16 text-right text-base bg-white/70 rounded-lg px-2 py-1 border border-black/10" placeholder="0">
-      </div>
-    </div>
-
-    <!-- Grand total -->
-    <div class="mt-auto px-4 py-4">
-      <div class="totalBox bg-[var(--ink)] text-[var(--paper)] rounded-2xl px-4 py-3 flex items-center justify-between transition-shadow">
-        <span class="font-display text-sm uppercase tracking-widest font-bold">Total</span>
-        <span class="grandTotal font-display text-3xl font-bold">0</span>
-      </div>
-    </div>
-  </div>
-</template>
-
-<footer class="max-w-6xl mx-auto px-4 sm:px-6 mt-10 pb-6 text-center text-xs text-[var(--ink-soft)]">
-  Scores save automatically on this device. Use "Save file" to keep a copy or share it.
-</footer>
 
 <script>
-(function(){
-  const STORAGE_KEY = 'harmonies-scorepad-state-v1';
-  const FIELDS = ['trees','mountains','fields','buildings','water','animal1','animal2','animal3','animal4','nature','cubes'];
-  const LANDSCAPE_FIELDS = ['trees','mountains','fields','buildings','water'];
-  const ANIMAL_FIELDS = ['animal1','animal2','animal3','animal4','nature'];
-
-  const playerRow = document.getElementById('playerRow');
-  const template = document.getElementById('playerTemplate');
-  const leaderboardEl = document.getElementById('leaderboard');
-  const statusMsg = document.getElementById('statusMsg');
-
-  let state = null;
-  let history = [];
-  let historyIndex = -1;
-  let commitTimer = null;
-  let suppressCommit = false;
-
-  function defaultState(){
-    return {
-      players: [ newPlayer('Player 1'), newPlayer('Player 2') ]
+    // 1. State now tracks how many animal rows exist (defaults to 4)
+    let state = {
+        playerCount: 4,
+        animalCount: 4,
+        scores: {},
+        playerNames: ["", "", "", ""]
     };
-  }
 
-  function newPlayer(name){
-    const p = { id: cryptoId(), name };
-    FIELDS.forEach(f => p[f] = null);
-    return p;
-  }
-
-  function cryptoId(){
-    return 'p_' + Math.random().toString(36).slice(2,10);
-  }
-
-  function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
-
-  function num(v){ const n = parseInt(v,10); return isNaN(n) ? 0 : n; }
-
-  // ---------- Persistence ----------
-  function saveLocal(){
-    try{
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      flashStatus('Saved');
-    }catch(e){ /* storage unavailable - ignore */ }
-  }
-
-  function loadLocal(){
-    try{
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if(raw){
-        const parsed = JSON.parse(raw);
-        if(parsed && Array.isArray(parsed.players) && parsed.players.length){
-          return parsed;
+    // 2. Dynamically generate the rows so we can inject infinite animals
+    function getRowConfig() {
+        let config = [
+            { type: 'header', label: 'Landscape' },
+            { id: 'trees', label: 'Trees', color: '#6F8F4E' },
+            { id: 'mountains', label: 'Mountains', color: '#8B93A0' },
+            { id: 'fields', label: 'Fields', color: '#DFAE33' },
+            { id: 'buildings', label: 'Buildings', color: '#BC4C3B' },
+            { id: 'water', label: 'Water', color: '#3D8AA1' },
+            { type: 'subtotal', id: 'landscapeTotal', label: 'Landscape Total' },
+            { type: 'header', label: 'Animals', addBtn: true } // Flag to add the button
+        ];
+        
+        for(let i = 1; i <= state.animalCount; i++) {
+            config.push({ id: `animal${i}`, label: `Animal ${i}`, color: '#7a6a54' });
         }
-      }
-    }catch(e){ /* ignore corrupt data */ }
-    return null;
-  }
-
-  let statusTimer = null;
-  function flashStatus(msg){
-    statusMsg.textContent = msg;
-    clearTimeout(statusTimer);
-    statusTimer = setTimeout(()=> statusMsg.textContent = '', 1500);
-  }
-
-  // ---------- History (undo/redo) ----------
-  function pushHistory(){
-    history = history.slice(0, historyIndex+1);
-    history.push(deepClone(state));
-    historyIndex = history.length - 1;
-    if(history.length > 100){ history.shift(); historyIndex--; }
-    updateHistoryButtons();
-  }
-
-  function commitChange(immediate){
-    clearTimeout(commitTimer);
-    const doCommit = () => { pushHistory(); saveLocal(); };
-    if(immediate){ doCommit(); } else { commitTimer = setTimeout(doCommit, 500); }
-  }
-
-  function undo(){
-    if(historyIndex <= 0) return;
-    historyIndex--;
-    state = deepClone(history[historyIndex]);
-    suppressCommit = true;
-    render();
-    suppressCommit = false;
-    saveLocal();
-    updateHistoryButtons();
-  }
-
-  function redo(){
-    if(historyIndex >= history.length-1) return;
-    historyIndex++;
-    state = deepClone(history[historyIndex]);
-    suppressCommit = true;
-    render();
-    suppressCommit = false;
-    saveLocal();
-    updateHistoryButtons();
-  }
-
-  function updateHistoryButtons(){
-    document.getElementById('undoBtn').disabled = historyIndex <= 0;
-    document.getElementById('redoBtn').disabled = historyIndex >= history.length-1;
-  }
-
-  // ---------- Rendering ----------
-  function render(){
-    playerRow.innerHTML = '';
-    state.players.forEach((player, idx) => renderPlayerColumn(player, idx));
-    renderLeaderboard();
-    updateHistoryButtons();
-    document.getElementById('addPlayerBtn').disabled = state.players.length >= 6;
-  }
-
-  function renderPlayerColumn(player, idx){
-    const node = template.content.cloneNode(true);
-    const col = node.querySelector('.card-col');
-    col.dataset.playerId = player.id;
-
-    const nameInput = node.querySelector('.playerName');
-    nameInput.value = player.name;
-    nameInput.addEventListener('input', () => {
-      player.name = nameInput.value;
-      renderLeaderboard();
-      commitChange(false);
-    });
-
-    const removeBtn = node.querySelector('.removePlayerBtn');
-    if(state.players.length <= 1){
-      removeBtn.classList.add('opacity-0','pointer-events-none');
+        
+        config.push(
+            { id: 'nature', label: 'Nature Spirit', color: '#4a4038' },
+            { type: 'subtotal', id: 'animalTotal', label: 'Animal Total' },
+            { type: 'header', label: 'Tiebreaker' },
+            { id: 'cubes', label: 'Animal Cubes', color: '#3A2B1F' }
+        );
+        return config;
     }
-    removeBtn.addEventListener('click', () => {
-      if(!confirm(`Remove ${player.name || 'this player'}?`)) return;
-      state.players = state.players.filter(p => p.id !== player.id);
-      commitChange(true);
-      render();
-    });
 
-    FIELDS.forEach(field => {
-      const input = node.querySelector(`[data-field="${field}"]`);
-      input.value = player[field] === null || player[field] === undefined ? '' : player[field];
-      input.addEventListener('input', () => {
-        player[field] = input.value === '' ? null : num(input.value);
-        updateColumnTotals(col, player);
-        renderLeaderboard();
-        commitChange(false);
-      });
-      input.addEventListener('blur', () => commitChange(true));
-    });
-
-    playerRow.appendChild(node);
-    updateColumnTotals(playerRow.querySelector(`[data-player-id="${player.id}"]`), player);
-  }
-
-  function updateColumnTotals(col, player){
-    const landscapeTotal = LANDSCAPE_FIELDS.reduce((s,f)=> s + num(player[f]), 0);
-    const animalTotal = ANIMAL_FIELDS.reduce((s,f)=> s + num(player[f]), 0);
-    const grand = landscapeTotal + animalTotal;
-    col.querySelector('.landscapeTotal').textContent = landscapeTotal;
-    col.querySelector('.animalTotal').textContent = animalTotal;
-    col.querySelector('.grandTotal').textContent = grand;
-  }
-
-  function grandTotalFor(player){
-    return FIELDS.filter(f=>f!=='cubes').reduce((s,f)=> s + num(player[f]), 0);
-  }
-
-  function renderLeaderboard(){
-    const totals = state.players.map(p => ({ player: p, total: grandTotalFor(p), cubes: num(p.cubes) }));
-    const maxTotal = totals.length ? Math.max(...totals.map(t=>t.total)) : 0;
-    const winners = totals.filter(t => t.total === maxTotal && maxTotal > 0);
-
-    // highlight winning column(s)
-    document.querySelectorAll('.card-col').forEach(col => {
-      const box = col.querySelector('.totalBox');
-      const isWinner = winners.length === 1 && winners[0].player.id === col.dataset.playerId;
-      box.classList.toggle('winner-glow', isWinner);
-    });
-
-    const sorted = [...totals].sort((a,b)=> b.total - a.total);
-    let html = `<div class="flex items-center justify-between mb-2">
-        <h2 class="font-display text-lg font-bold">Standings</h2>
-      </div>`;
-    if(sorted.every(t=>t.total===0)){
-      html += `<p class="text-sm text-[var(--ink-soft)]">Enter scores above to see the standings.</p>`;
-    } else {
-      html += '<div class="flex flex-col gap-1.5">';
-      sorted.forEach((t, i) => {
-        const isTop = t.total === maxTotal && maxTotal > 0;
-        html += `<div class="flex items-center gap-3 text-sm ${isTop ? 'font-extrabold' : ''}">
-          <span class="w-5 text-[var(--ink-soft)]">${i+1}.</span>
-          <span class="flex-1 truncate">${escapeHtml(t.player.name || 'Player')}</span>
-          ${isTop ? '<span class="text-xs">👑</span>' : ''}
-          <span class="font-display">${t.total} pts</span>
-        </div>`;
-      });
-      html += '</div>';
-      if(winners.length > 1){
-        const byCubes = [...winners].sort((a,b)=> b.cubes - a.cubes);
-        const topCubes = byCubes[0].cubes;
-        const stillTied = byCubes.filter(t=>t.cubes===topCubes);
-        html += `<p class="text-xs text-[var(--ink-soft)] mt-2 pt-2 border-t border-black/10">
-          Tie at ${maxTotal} pts — ${stillTied.length > 1 ? 'still tied even counting animal cubes placed; victory is shared.' : `${escapeHtml(stillTied[0].player.name || 'Player')} wins the tiebreak with the most animal cubes placed.`}
-        </p>`;
-      }
+    function init() {
+        loadState();
+        renderUI();
     }
-    leaderboardEl.innerHTML = html;
-  }
 
-  function escapeHtml(str){
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
+    function saveState() {
+        localStorage.setItem('harmonies_app_state', JSON.stringify(state));
+    }
 
-  // ---------- Actions ----------
-  function addPlayer(){
-    if(state.players.length >= 6) return;
-    state.players.push(newPlayer(`Player ${state.players.length+1}`));
-    commitChange(true);
-    render();
-  }
-
-  function resetAll(){
-    if(!confirm('Reset the scorepad? This clears all players and scores on this device.')) return;
-    state = defaultState();
-    history = [deepClone(state)];
-    historyIndex = 0;
-    saveLocal();
-    render();
-    updateHistoryButtons();
-  }
-
-  function exportJson(){
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const stamp = new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
-    a.href = url;
-    a.download = `harmonies-scores-${stamp}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-    flashStatus('File saved');
-  }
-
-  function importJson(file){
-    const reader = new FileReader();
-    reader.onload = () => {
-      try{
-        const parsed = JSON.parse(reader.result);
-        if(!parsed || !Array.isArray(parsed.players) || !parsed.players.length){
-          throw new Error('bad shape');
+    function loadState() {
+        const saved = localStorage.getItem('harmonies_app_state');
+        if (saved) {
+            try {
+                state = { ...state, ...JSON.parse(saved) };
+                state.animalCount = state.animalCount || 4; // Ensure old saves don't break
+                while(state.playerNames.length < 4) state.playerNames.push("");
+            } catch (e) { console.error(e); }
         }
-        parsed.players.forEach(p => {
-          if(!p.id) p.id = cryptoId();
-          FIELDS.forEach(f => { if(!(f in p)) p[f] = null; });
+        document.getElementById('playerCount').value = state.playerCount;
+    }
+
+    function changePlayerCount() {
+        state.playerCount = parseInt(document.getElementById('playerCount').value);
+        saveState();
+        renderUI();
+    }
+
+    function updateName(idx, val) {
+        state.playerNames[idx] = val;
+        saveState();
+    }
+
+    function updateScore(rowId, playerIdx, val) {
+        const key = `${rowId}-${playerIdx}`;
+        if (val === "" || val === null) delete state.scores[key];
+        else state.scores[key] = parseInt(val);
+        
+        saveState();
+        renderSubtotals();
+        renderFooter(); 
+    }
+
+    // 3. Function to add an animal row
+    function addAnimalRow() {
+        state.animalCount++;
+        saveState();
+        renderUI();
+    }
+
+    function renderUI() {
+        renderHeader();
+        renderBody();
+        renderSubtotals();
+        renderFooter();
+    }
+
+    function renderHeader() {
+        let html = `
+            <tr class="h-10 border-b border-black/20">
+                <th class="p-2 text-left w-[28%] border-r border-black/10 bg-[#e8debe]">
+                    <span class="font-display italic text-[#6b5a48] text-xs pl-1">Category</span>
+                </th>`;
+        
+        for (let i = 0; i < state.playerCount; i++) {
+            html += `
+                <th class="p-1 border-l border-black/10 bg-[#E7D9B9] relative group focus-within:bg-white transition-colors">
+                    <input type="text" value="${state.playerNames[i]}" oninput="updateName(${i}, this.value)"
+                        class="w-full bg-transparent text-center font-display font-bold text-[#3A2B1F] placeholder-black/30 focus:outline-none text-xs md:text-sm truncate px-1"
+                        placeholder="Player ${i+1}">
+                </th>`;
+        }
+        html += `</tr>`;
+        document.getElementById('tableHead').innerHTML = html;
+    }
+
+    function renderBody() {
+        const rows = getRowConfig();
+        let html = '';
+        
+        rows.forEach(row => {
+            if (row.type === 'header') {
+                // The highly visible Add Animal button
+                const btnHtml = row.addBtn ? 
+                    `<button onclick="addAnimalRow()" class="bg-[#6F8F4E] text-white px-3 py-1 rounded shadow-md border border-black/20 hover:brightness-110 active:scale-95 transition-all text-[10px] tracking-widest font-extrabold flex items-center gap-1.5 cursor-pointer">
+                        <i class="fas fa-plus"></i> ADD ANIMAL
+                    </button>` : '';
+                    
+                html += `<tr>
+                    <td colspan="${state.playerCount + 1}" class="bg-[#D8C69C]/50 px-2 py-1.5 border-y border-black/10 shadow-inner align-middle">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] uppercase tracking-widest font-extrabold text-[#6b5a48]">${row.label}</span>
+                            ${btnHtml}
+                        </div>
+                    </td>
+                </tr>`;
+            } else if (row.type === 'subtotal') {
+                html += `<tr class="bg-black/5 h-8 border-b border-black/10">
+                    <td class="p-2 text-right border-r border-black/10"><span class="text-[9px] uppercase tracking-widest font-extrabold text-[#6b5a48]">${row.label}</span></td>`;
+                for (let p = 0; p < state.playerCount; p++) {
+                    html += `<td class="text-center font-display font-bold text-sm text-[#3A2B1F]/60" id="${row.id}-${p}">0</td>`;
+                }
+                html += `</tr>`;
+            } else {
+                html += `<tr class="bg-white/40 border-b border-black/5 h-12">
+                    <td class="p-1 text-left border-r border-black/10 relative overflow-hidden">
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5" style="background-color: ${row.color}"></div>
+                        <span class="font-display text-[#3A2B1F] text-[0.75rem] font-bold leading-tight pl-3">${row.label}</span>
+                    </td>`;
+                for (let p = 0; p < state.playerCount; p++) {
+                    const val = state.scores[`${row.id}-${p}`] ?? '';
+                    html += `<td class="p-0 border-l border-black/10 text-center align-middle bg-white/20">
+                        <input type="number" pattern="[0-9]*" inputmode="numeric" min="0" value="${val}" placeholder="-"
+                            onchange="updateScore('${row.id}', ${p}, this.value)" onfocus="this.select()"
+                            class="score-input w-full h-full text-center rounded-none p-0">
+                    </td>`;
+                }
+                html += `</tr>`;
+            }
         });
-        state = parsed;
-        commitChange(true);
-        render();
-        flashStatus('File loaded');
-      }catch(e){
-        alert('That file doesn\'t look like a valid Harmonies scorepad JSON file.');
-      }
-    };
-    reader.readAsText(file);
-  }
+        document.getElementById('tableBody').innerHTML = html;
+    }
 
-  // ---------- Wire up ----------
-  document.getElementById('addPlayerBtn').addEventListener('click', addPlayer);
-  document.getElementById('undoBtn').addEventListener('click', undo);
-  document.getElementById('redoBtn').addEventListener('click', redo);
-  document.getElementById('resetBtn').addEventListener('click', resetAll);
-  document.getElementById('saveJsonBtn').addEventListener('click', exportJson);
-  document.getElementById('loadJsonBtn').addEventListener('click', () => document.getElementById('fileInput').click());
-  document.getElementById('fileInput').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if(file) importJson(file);
-    e.target.value = '';
-  });
+    function renderSubtotals() {
+        const lands = ['trees','mountains','fields','buildings','water'];
 
-  document.addEventListener('keydown', (e) => {
-    const mod = e.ctrlKey || e.metaKey;
-    if(!mod) return;
-    if(e.key.toLowerCase() === 'z' && !e.shiftKey){ e.preventDefault(); undo(); }
-    else if((e.key.toLowerCase() === 'z' && e.shiftKey) || e.key.toLowerCase() === 'y'){ e.preventDefault(); redo(); }
-  });
+        for (let p = 0; p < state.playerCount; p++) {
+            let lSum = 0; let aSum = 0;
+            
+            // Tally landscapes
+            lands.forEach(id => lSum += (state.scores[`${id}-${p}`] || 0));
+            
+            // Tally dynamic animal rows + nature spirit
+            for (let i = 1; i <= state.animalCount; i++) {
+                aSum += (state.scores[`animal${i}-${p}`] || 0);
+            }
+            aSum += (state.scores[`nature-${p}`] || 0);
+            
+            document.getElementById(`landscapeTotal-${p}`).innerText = lSum;
+            document.getElementById(`animalTotal-${p}`).innerText = aSum;
+        }
+    }
 
-  // ---------- Init ----------
-  state = loadLocal() || defaultState();
-  state.players.forEach(p => FIELDS.forEach(f => { if(!(f in p)) p[f] = null; }));
-  history = [deepClone(state)];
-  historyIndex = 0;
-  render();
-})();
+    function renderFooter() {
+        const rows = getRowConfig();
+        const scoreIds = rows.filter(r => !r.type && r.id !== 'cubes').map(r => r.id);
+        let totals = []; let maxScore = -1;
+
+        for (let p = 0; p < state.playerCount; p++) {
+            let sum = 0;
+            scoreIds.forEach(id => sum += (state.scores[`${id}-${p}`] || 0));
+            totals.push(sum);
+            if (sum > maxScore && sum > 0) maxScore = sum;
+        }
+
+        let html = `<tr class="h-16">
+            <td class="bg-[#2A1F16] p-2 text-right border-r border-black/40">
+                <span class="text-[0.65rem] uppercase tracking-widest font-bold text-[#D8C69C] block">Grand</span>
+                <span class="text-[0.55rem] text-white/50">TOTAL</span>
+            </td>`;
+
+        for (let p = 0; p < state.playerCount; p++) {
+            const score = totals[p];
+            const isWinner = score === maxScore && score > 0;
+            const winnerClass = isWinner ? 'winner-text font-bold text-3xl' : 'text-[#E7D9B9]/70 text-xl';
+            const crown = isWinner ? '<div class="absolute top-1 left-1/2 transform -translate-x-1/2 text-[#DFAE33] text-[10px]"><i class="fas fa-crown"></i></div>' : '';
+
+            html += `<td class="p-1 text-center border-l border-black/40 font-display relative bg-[#3A2B1F]">
+                ${crown}
+                <span class="${winnerClass} transition-all duration-300 mt-2 block">${score}</span>
+            </td>`;
+        }
+        html += `</tr>`;
+        document.getElementById('tableFooter').innerHTML = html;
+    }
+
+    function resetGame() {
+        if(confirm("Clear all scores? (Names will be kept)")) {
+            state.scores = {};
+            state.animalCount = 4; // Resets back to 4 animals on a new game
+            saveState();
+            renderUI();
+        }
+    }
+
+    init();
 </script>
 </body>
 </html>
