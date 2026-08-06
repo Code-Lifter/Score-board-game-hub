@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-amber-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verses for Cave Men</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font for Stone Age Aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Fredoka', cursive, sans-serif; }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-full p-4 text-stone-800 select-none">
+
+    <!-- Container Wrap -->
+    <div class="w-full max-w-md mx-auto">
+        
+        <!-- Header Title -->
+        <header class="text-center mb-6">
+            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-wide text-amber-900 drop-shadow-sm uppercase">
+                🦴 Cave Words 🪵
+            </h1>
+            <p class="text-stone-600 text-sm">Speak simple. Score big points.</p>
+        </header>
+
+        <!-- Options Menu -->
+        <div id="options-menu" class="bg-amber-100/80 border-4 border-amber-800/20 rounded-3xl p-6 shadow-xl backdrop-blur-sm transition-all">
+            <h2 class="text-xl font-bold text-amber-950 mb-4 text-center border-b-2 border-amber-800/10 pb-2">
+                Game Setup
+            </h2>
+            
+            <div class="space-y-5">
+                <!-- Time Input -->
+                <div id="time-input-container">
+                    <label for="time-input" class="block font-bold text-stone-700 mb-1 text-sm">Timer (Seconds)</label>
+                    <input type="number" id="time-input" 
+                           class="w-full border-2 border-stone-300 rounded-xl p-3 font-bold text-lg text-center bg-white focus:ring-4 focus:ring-amber-400 focus:border-amber-600 outline-none transition" 
+                           value="60" min="10" max="300">
+                </div>
+
+                <!-- Card Packs -->
+                <div id="card-packs-container">
+                    <label class="block font-bold text-stone-700 mb-2 text-sm">Select Card Packs</label>
+                    <div class="space-y-2 bg-white/60 p-3 rounded-2xl border border-amber-900/10">
+                        <label class="flex items-center space-x-3 cursor-pointer p-1 rounded-lg hover:bg-white/80 transition">
+                            <input id="base-game-gray-checkbox" type="checkbox" class="w-5 h-5 accent-amber-600 rounded cursor-pointer" value="data/base_game_gray.json" checked>
+                            <span class="text-sm font-semibold text-stone-700">Base Game (Gray Side)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer p-1 rounded-lg hover:bg-white/80 transition">
+                            <input id="base-game-red-checkbox" type="checkbox" class="w-5 h-5 accent-amber-600 rounded cursor-pointer" value="data/base_game_red.json">
+                            <span class="text-sm font-semibold text-stone-700">Base Game (Red Side)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer p-1 rounded-lg hover:bg-white/80 transition">
+                            <input id="more-cards-box-1-expansion-gray-checkbox" type="checkbox" class="w-5 h-5 accent-amber-600 rounded cursor-pointer" value="data/more_cards_box_1_expansion_pack_gray.json">
+                            <span class="text-sm font-semibold text-stone-700">Expansion 1 (Gray Side)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer p-1 rounded-lg hover:bg-white/80 transition">
+                            <input id="more-cards-box-1-expansion-red-checkbox" type="checkbox" class="w-5 h-5 accent-amber-600 rounded cursor-pointer" value="data/more_cards_box_1_expansion_pack_red.json">
+                            <span class="text-sm font-semibold text-stone-700">Expansion 1 (Red Side)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <button id="start-game" 
+                        class="w-full bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-extrabold text-xl py-4 rounded-2xl shadow-lg shadow-amber-500/30 transition transform">
+                    LET'S PLAY! 🍖
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Game Screen (Hidden initially) -->
+        <div id="game-screen" class="bg-amber-100/80 border-4 border-amber-800/20 rounded-3xl p-4 sm:p-6 shadow-2xl hidden flex flex-col space-y-4">
+            
+            <!-- Top Dashboard Bar -->
+            <div class="flex items-center justify-between bg-white/80 p-3 rounded-2xl shadow-inner border border-amber-950/5">
+                <button id="reset-score" class="text-xs font-bold text-stone-400 hover:text-stone-700 uppercase tracking-wider bg-stone-100 hover:bg-stone-200 px-3 py-2 rounded-xl transition">
+                    Restart
+                </button>
+                <div class="text-center">
+                    <span class="block text-xs uppercase tracking-wider text-stone-400 font-bold">Total Score</span>
+                    <span id="score" class="text-2xl font-black text-amber-900">0</span>
+                </div>
+                <div class="text-right">
+                    <span class="block text-xs uppercase tracking-wider text-stone-400 font-bold">Time Left</span>
+                    <span id="timer-display" class="text-2xl font-black text-emerald-600">60s</span>
+                </div>
+            </div>
+
+            <!-- Word Card Display -->
+            <div class="bg-white rounded-2xl p-6 shadow-md border-2 border-stone-100 text-center space-y-4 min-h-[180px] flex flex-col justify-center">
+                <!-- 1 Point Word -->
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
+                    <span class="block text-xs font-bold text-amber-700 uppercase tracking-wider mb-1">1-Point Word</span>
+                    <span id="word1" class="text-2xl sm:text-3xl font-extrabold text-amber-900 break-words">???</span>
+                </div>
+
+                <!-- 3 Point Word -->
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+                    <span class="block text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">3-Point Word</span>
+                    <span id="word3" class="text-2xl sm:text-3xl font-extrabold text-emerald-900 break-words">???</span>
+                </div>
+            </div>
+
+            <!-- Big Mobile-Friendly Action Buttons -->
+            <div class="grid grid-cols-3 gap-2 pt-2">
+                <!-- NO/HIT (-1) -->
+                <button id="score-1" class="flex flex-col items-center justify-center bg-rose-500 hover:bg-rose-600 active:scale-95 text-white font-extrabold py-4 rounded-2xl shadow-md shadow-rose-500/20 transition transform">
+                    <span class="text-2xl sm:text-3xl">-1</span>
+                    <span class="text-[10px] uppercase tracking-wider opacity-90">NO! (Hit)</span>
+                </button>
+
+                <!-- 1 POINT (+1) -->
+                <button id="score+1" class="flex flex-col items-center justify-center bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-extrabold py-4 rounded-2xl shadow-md shadow-amber-500/20 transition transform">
+                    <span class="text-2xl sm:text-3xl">+1</span>
+                    <span class="text-[10px] uppercase tracking-wider opacity-90">Got Word 1</span>
+                </button>
+
+                <!-- 3 POINTS (+3) -->
+                <button id="score+3" class="flex flex-col items-center justify-center bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-extrabold py-4 rounded-2xl shadow-md shadow-emerald-500/20 transition transform">
+                    <span class="text-2xl sm:text-3xl">+3</span>
+                    <span class="text-[10px] uppercase tracking-wider opacity-90">Got Word 2</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div id="error-message" class="mt-4 bg-rose-100 border-2 border-rose-400 text-rose-800 text-sm font-bold p-4 rounded-2xl shadow-md text-center hidden"></div>
+        
+    </div>
+
+    <!-- Modernized JS Logic -->
+    <script>
+        let words = [];
+        let score = 0;
+        let current_word = 0;
+        let max_timer = 60;
+        let timer = 60;
+        let game_running = false;
+        let countdown_interval;
+
+        // Score Actions
+        document.getElementById('score-1').addEventListener('click', () => adjustScore(-1));
+        document.getElementById('score+1').addEventListener('click', () => adjustScore(1));
+        document.getElementById('score+3').addEventListener('click', () => adjustScore(3));
+
+        function adjustScore(points) {
+            if (game_running) {
+                score += points;
+                document.getElementById('score').textContent = score;
+                updateWords();
+            }
+        }
+
+        document.getElementById('reset-score').addEventListener('click', resetGame);
+
+        document.getElementById('start-game').addEventListener('click', async () => {
+            if (await loadAndValidateConfig()) {
+                startGame();
+            }
+        });
+
+        async function loadAndValidateConfig() {
+            let valid = loadAndValidateMaxTimer();
+            valid = (await loadAndValidateWords()) && valid;
+            return valid;
+        }
+
+        function loadAndValidateMaxTimer() {
+            const time_input_element = document.getElementById('time-input');
+            max_timer = parseInt(time_input_element.value, 10);
+            
+            if (max_timer < 1 || Number.isNaN(max_timer)) {
+                highlightErrorOnElement(time_input_element);
+                return false;
+            }
+            return true;
+        }
+
+        async function loadAndValidateWords() {
+            const selectedPackPaths = getSelectedPackPaths();
+            if (selectedPackPaths.length < 1) {
+                highlightErrorOnElement(document.getElementById('card-packs-container'));
+                displayErrorMessage('Select at least one card pack!');
+                return false;
+            }
+
+            try {
+                words = await loadWordsFromPaths(selectedPackPaths);
+                if (!words || words.length === 0) throw new Error("No words loaded");
+            } catch (error) {
+                console.error('Error loading JSON: ', error);
+                displayErrorMessage('Failed loading cards. Please check file paths.');
+                return false;
+            }
+            
+            shuffle(words);
+            return true;
+        }
+
+        function getSelectedPackPaths() {
+            const paths = [];
+            const checkboxes = document.getElementById('card-packs-container').querySelectorAll("input[type='checkbox']");
+            checkboxes.forEach(cb => {
+                if (cb.checked) paths.push(cb.value);
+            });
+            return paths;
+        }
+
+        function startGame() {
+            current_word = 0;
+            updateWords();
+            
+            game_running = true;
+            timer = max_timer;
+            score = 0;
+            
+            document.getElementById('score').textContent = score;
+            document.getElementById('options-menu').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            
+            startCountdown();
+        }
+
+        function resetGame() {
+            current_word = 0;
+            updateWords();
+            game_running = true;
+            timer = max_timer;
+            score = 0;
+            document.getElementById('score').textContent = score;
+            startCountdown();
+        }
+
+        function startCountdown() {
+            clearInterval(countdown_interval);
+            
+            const timerEl = document.getElementById('timer-display');
+            timerEl.textContent = `${timer}s`;
+            timerEl.className = "text-2xl font-black text-emerald-600"; // Reset style
+
+            countdown_interval = setInterval(() => {
+                timer--;
+                timerEl.textContent = `${timer}s`;
+
+                // UX: Dynamic timer alert colors
+                if (timer <= 10 && timer > 5) {
+                    timerEl.className = "text-2xl font-black text-amber-500 animate-pulse";
+                } else if (timer <= 5) {
+                    timerEl.className = "text-2xl font-black text-rose-600 animate-ping";
+                }
+
+                if (timer <= 0) {
+                    clearInterval(countdown_interval);
+                    game_running = false;
+                    timerEl.textContent = "TIME UP!";
+                    timerEl.className = "text-2xl font-black text-rose-600";
+                }
+            }, 1000);
+        }
+
+        function updateWords() {
+            if (!words.length) return;
+            const current = words[current_word % words.length];
+            document.getElementById('word1').textContent = current["1"] || "—";
+            document.getElementById('word3').textContent = current["3"] || "—";
+            current_word++;
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        async function loadWordsFromPaths(paths) {
+            const fetch_promises = paths.map(path => fetch(path));
+            const responses = await Promise.all(fetch_promises);
+            const combined_data = [];
+
+            for (let response of responses) {
+                if (response.ok) {
+                    const data = await response.json();
+                    combined_data.push(...data.game_data);
+                } else {
+                    throw new Error(`Failed loading: ${response.url}`);
+                }
+            }
+            return combined_data;
+        }
+
+        function highlightErrorOnElement(element) {
+            element.classList.add('ring-4', 'ring-rose-400');
+            setTimeout(() => {
+                element.classList.remove('ring-4', 'ring-rose-400');
+            }, 1500);
+        }
+
+        function displayErrorMessage(message) {
+            const error_message_element = document.getElementById('error-message');
+            error_message_element.innerText = message;
+            error_message_element.classList.remove('hidden');
+            setTimeout(() => {
+                error_message_element.classList.add('hidden');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
