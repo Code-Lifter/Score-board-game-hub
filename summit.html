@@ -3,248 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Summit Character Tracker - Wilma Hezemans</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Summit Character Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for crisp clean icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-stone-900 text-stone-100 min-h-screen flex items-center justify-center p-4 antialiased">
-
-    <div class="w-full max-w-6xl bg-stone-800 border border-amber-900/40 rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row relative">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Special+Elite&display=swap" rel="stylesheet">
+    <script src="characters.js"></script>
+    <style>
+        .font-handwriting { font-family: 'Caveat', cursive; }
+        .font-typewriter { font-family: 'Special Elite', monospace; }
         
-        <!-- STAMP OVERLAY -->
-        <div class="absolute right-12 top-6 border-4 border-dashed border-emerald-600/30 text-emerald-600/30 uppercase font-black tracking-widest text-2xl px-4 py-2 rotate-12 pointer-events-none rounded">
-            Approved
-        </div>
+        /* Hides scrollbar if tracks overflow on small screens */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        <!-- LEFT COLUMN: CHARACTER ID PASSPORT -->
-        <div class="w-full md:w-1/3 bg-stone-850 p-6 border-b md:border-b-0 md:border-r border-stone-700/50 flex flex-col space-y-6 overflow-y-auto">
-            <div>
-                <div class="border-b-2 border-amber-700 pb-4 mb-4 text-center">
-                    <h1 class="text-3xl font-serif font-black tracking-wider text-amber-500 uppercase">Summit</h1>
-                    <p class="text-xs tracking-widest text-stone-400 uppercase">The Board Game</p>
-                </div>
+/* PUZZLE PIECE CSS GEOMETRY */
+.track-btn {
+    width: 44px;
+    height: 36px;
+    /* True left notch (cuts IN to 12%) and right tab (pushes OUT to 100%) */
+    clip-path: polygon(0% 0%, 88% 0%, 88% 30%, 100% 30%, 100% 70%, 88% 70%, 88% 100%, 0% 100%, 0% 70%, 12% 70%, 12% 30%, 0% 30%);
+    margin-left: -5px; 
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 5px; /* Nudges text to the exact visual center of the 88% body */
+    flex-shrink: 0;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.2s;
+}
 
-                <div class="bg-amber-50 text-stone-950 p-4 rounded shadow-md border-l-4 border-amber-600 flex flex-col space-y-4">
-                    <div class="flex gap-4 items-center">
-                        <div class="w-24 h-28 bg-stone-800 border-2 border-stone-950 flex items-center justify-center text-amber-500 overflow-hidden shrink-0">
-                            <i class="fa-solid fa-user-ninja text-5xl"></i>
-                        </div>
-                        <div>
-                            <span class="text-xs uppercase font-bold text-stone-500 tracking-wider">Name</span>
-                            <div class="text-xl font-mono font-bold leading-tight border-b border-stone-400 pb-1">Wilma Hezemans</div>
-                            
-                            <div class="mt-2 grid grid-cols-2 gap-2">
-                                <div>
-                                    <span class="text-[10px] uppercase font-bold text-stone-500 block">Age</span>
-                                    <span class="font-mono text-sm font-semibold">58</span>
-                                </div>
-                                <div>
-                                    <span class="text-[10px] uppercase font-bold text-stone-500 block">Height</span>
-                                    <span class="font-mono text-sm font-semibold">181.6cm</span>
-                                </div>
-                            </div>
+/* Start piece: Flat left edge, right tab */
+.track-start {
+    clip-path: polygon(0% 0%, 88% 0%, 88% 30%, 100% 30%, 100% 70%, 88% 70%, 88% 100%, 0% 100%);
+    margin-left: 0;
+}
+
+/* End piece: Left notch, flat right edge (clipped at 88% so the block width perfectly matches the rest) */
+.track-end {
+    clip-path: polygon(0% 0%, 88% 0%, 88% 100%, 0% 100%, 0% 70%, 12% 70%, 12% 30%, 0% 30%);
+}
+
+/* Barrier Layout: Invisible puzzle piece footprint that maintains the exact grid spacing */
+.track-barrier {
+    width: 44px;
+    height: 36px;
+    clip-path: polygon(0% 0%, 88% 0%, 88% 30%, 100% 30%, 100% 70%, 88% 70%, 88% 100%, 0% 100%, 0% 70%, 12% 70%, 12% 30%, 0% 30%);
+    margin-left: -5px;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 5px; /* Centers the inner icon token */
+    flex-shrink: 0;
+    background-color: transparent;
+}
+    </style>
+</head>
+<body class="bg-[#d2b641] text-stone-900 min-h-screen flex items-center justify-center p-4 antialiased overflow-x-hidden">
+
+    <div class="w-full max-w-7xl flex flex-col md:flex-row gap-6 relative">
+
+        <!-- LEFT COLUMN: ID BADGE / CLIPBOARD -->
+        <div class="w-full md:w-1/4 flex flex-col space-y-4 relative z-10 shrink-0">
+            <select id="character-select" onchange="loadCharacter(this.value)" class="w-full bg-stone-800 border-2 border-stone-900 text-stone-100 font-bold p-2 rounded shadow-lg focus:outline-none focus:border-amber-500 uppercase tracking-widest text-sm">
+                <!-- Options injected via JS -->
+            </select>
+
+            <div class="bg-[#6c7d8a] p-4 rounded shadow-2xl border border-[#4a5863] relative">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-stone-400 rounded-t border-2 border-stone-600 shadow-md"></div>
+                <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-4 bg-stone-300 rounded border-2 border-stone-500 shadow-sm z-10"></div>
+                
+                <div class="text-center text-white font-black text-2xl tracking-widest mt-4 mb-2" style="-webkit-text-stroke: 1px black;">SUMMIT</div>
+                <div class="text-center text-stone-900 font-bold text-[8px] uppercase tracking-widest mb-4">The Board Game</div>
+
+                <div class="bg-[#d4cfc1] p-2 flex gap-3 border-2 border-stone-800 shadow-inner mb-4 transform -rotate-1">
+                    <div class="w-20 h-24 bg-stone-300 border border-stone-500 flex items-center justify-center text-stone-600 shadow-inner shrink-0">
+                        <i id="char-icon" class="fa-solid fa-user text-4xl"></i>
+                    </div>
+                    <div class="flex flex-col justify-between py-1 w-full">
+                        <p class="text-[9px] uppercase font-bold text-stone-600 leading-none">Equipped Gear</p>
+                        <div class="flex items-center justify-between space-x-1 bg-stone-400/20 p-1 rounded">
+                            <button onclick="adjustGear(-1)" class="w-6 h-6 flex items-center justify-center bg-stone-700 text-white rounded hover:bg-stone-900"><i class="fa-solid fa-minus text-[10px]"></i></button>
+                            <span id="gear-weight-display" class="font-bold text-lg text-center text-stone-900">0</span>
+                            <button onclick="adjustGear(1)" class="w-6 h-6 flex items-center justify-center bg-stone-700 text-white rounded hover:bg-stone-900"><i class="fa-solid fa-plus text-[10px]"></i></button>
                         </div>
                     </div>
-                    <div>
-                        <span class="text-xs uppercase font-bold text-stone-500 tracking-wider block">Base Weight</span>
-                        <div class="font-mono text-lg font-bold">79.4 kg</div>
+                </div>
+
+                <div class="bg-[#e4e1d5] p-3 border border-stone-400 shadow-inner font-typewriter transform rotate-1">
+                    <div id="char-name" class="text-xl font-bold border-b border-stone-400 pb-1 mb-2 text-stone-900 truncate">-</div>
+                    <div class="text-xs uppercase text-stone-600">Name</div>
+                    <div class="flex mt-2">
+                        <div class="w-14 text-xs uppercase text-stone-600">Age:</div>
+                        <div id="char-age" class="text-sm font-bold text-stone-900">-</div>
+                    </div>
+                    <div class="flex">
+                        <div class="w-14 text-xs uppercase text-stone-600">Height:</div>
+                        <div id="char-height" class="text-sm font-bold text-stone-900">-</div>
+                    </div>
+                    <div class="flex">
+                        <div class="w-14 text-xs uppercase text-stone-600">Weight:</div>
+                        <div id="char-weight" class="text-sm font-bold text-stone-900">-</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Gear Cards Counter -->
-            <div class="bg-stone-900 border border-stone-700/50 p-4 rounded-lg flex items-center justify-between">
-                <div>
-                    <h4 class="text-amber-400 uppercase font-bold tracking-wider text-xs mb-1">Equipped Gear</h4>
-                    <p class="text-[10px] text-stone-400 uppercase tracking-widest leading-none">Added Weight</p>
-                </div>
-                <div class="flex items-center space-x-2 bg-stone-950 p-1.5 rounded-lg border border-stone-800 shadow-inner">
-                    <button onclick="adjustGear(-1)" class="w-8 h-8 flex items-center justify-center rounded bg-stone-800 hover:bg-red-900/40 text-stone-400 hover:text-red-400 transition font-bold border border-stone-700"><i class="fa-solid fa-minus"></i></button>
-                    <span id="gear-weight-display" class="font-mono font-bold text-lg text-amber-500 w-6 text-center">0</span>
-                    <button onclick="adjustGear(1)" class="w-8 h-8 flex items-center justify-center rounded bg-stone-800 hover:bg-emerald-900/40 text-stone-400 hover:text-emerald-400 transition font-bold border border-stone-700"><i class="fa-solid fa-plus"></i></button>
-                </div>
-            </div>
-
-            <!-- Day / Night Cycle Switch -->
-            <div class="bg-stone-900 border border-stone-700/50 p-4 rounded-lg flex items-center justify-between">
-                <div>
-                    <h4 class="text-amber-400 uppercase font-bold tracking-wider text-xs mb-1">Time of Day</h4>
-                    <p class="text-[10px] text-stone-400 uppercase tracking-widest leading-none">Night halves speed</p>
-                </div>
-                <button id="day-night-toggle" onclick="toggleTime()" class="relative w-16 h-8 flex items-center rounded-full bg-cyan-700 border border-stone-700 transition-colors duration-300 focus:outline-none px-1 shadow-inner">
-                    <div id="toggle-knob" class="w-6 h-6 rounded-full bg-stone-100 shadow-md transform transition-transform duration-300 flex items-center justify-center text-cyan-700">
-                        <i id="toggle-icon" class="fa-solid fa-sun text-xs"></i>
+            <div class="bg-stone-900 p-3 rounded shadow-xl flex items-center justify-between border-2 border-stone-800">
+                <h4 class="text-stone-300 uppercase font-bold tracking-widest text-[10px]">Time of Day</h4>
+                <button id="day-night-toggle" onclick="toggleTime()" class="relative w-12 h-6 flex items-center rounded-full bg-cyan-700 transition-colors duration-300 focus:outline-none px-1 shadow-inner shrink-0">
+                    <div id="toggle-knob" class="w-4 h-4 rounded-full bg-stone-100 shadow-md transform transition-transform duration-300 flex items-center justify-center text-cyan-700">
+                        <i id="toggle-icon" class="fa-solid fa-sun text-[8px]"></i>
                     </div>
                 </button>
             </div>
-
-            <!-- Abilities Card -->
-            <div class="bg-amber-900/20 border border-amber-700/30 p-4 rounded-lg mt-auto">
-                <h4 class="text-amber-400 uppercase font-bold tracking-wider text-xs mb-2">Abilities</h4>
-                <p class="text-sm italic leading-relaxed text-stone-300">
-                    "On your turn you may look at the top 3 tiles and replace in any order. Your tile hand is permanently increased by 1."
-                </p>
-            </div>
         </div>
 
-        <!-- RIGHT COLUMN: DYNAMIC TRACKS -->
-        <div class="w-full md:w-2/3 p-6 flex flex-col justify-between space-y-6 bg-radial from-stone-800 to-stone-900">
+        <!-- RIGHT COLUMN: THE PAPER PLAYER MAT -->
+        <div class="w-full bg-[#e5e4de] shadow-2xl relative border-l-4 border-white/40 overflow-hidden" style="clip-path: polygon(0 0, 100% 2%, 99% 98%, 1% 100%); min-height: 500px;">
             
-            <!-- TRACK CONTROLS -->
-            <div class="space-y-6">
+            <div class="bg-[#f0f0eb] border-b-2 border-stone-300/50 p-4 pl-8 mb-6 shadow-sm">
+                <div class="flex items-start">
+                    <span class="text-[10px] uppercase font-bold text-stone-400 tracking-widest mr-4 mt-2 shrink-0">Abilities:</span>
+                    <p id="char-ability" class="font-handwriting text-2xl text-stone-800 leading-tight">-</p>
+                </div>
+            </div>
+
+            <!-- TRACKS AREA: Strictly horizontal using w-max -->
+            <div class="px-8 pb-8 space-y-5 overflow-x-auto no-scrollbar">
                 
-                <!-- 1. FOOD TRACK -->
-                <div>
-                    <div class="flex items-center space-x-2 mb-2">
-                        <div class="w-8 h-8 rounded bg-amber-700 flex items-center justify-center text-stone-900 font-bold"><i class="fa-solid fa-utensils"></i></div>
-                        <span class="text-sm font-bold uppercase tracking-wider text-stone-300">Food Track</span>
-                    </div>
-                    <div class="flex flex-wrap gap-1 bg-stone-950 p-2 rounded-lg border border-stone-800 shadow-inner">
-                        <button onclick="setTrack('food', 0)" id="food-0" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">S</button>
-                        <button onclick="setTrack('food', 1)" id="food-1" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">1</button>
-                        <button onclick="setTrack('food', 2)" id="food-2" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">2</button>
-                        <button onclick="setTrack('food', 3)" id="food-3" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">3</button>
-                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
-                        <button onclick="setTrack('food', 4)" id="food-4" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">4</button>
-                        <button onclick="setTrack('food', 5)" id="food-5" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">5</button>
-                        <button onclick="setTrack('food', 6)" id="food-6" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">6</button>
-                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
-                        <button onclick="setTrack('food', 7)" id="food-7" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">7</button>
-                        <button onclick="setTrack('food', 8)" id="food-8" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">8</button>
-                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
-                        <button onclick="setTrack('food', 9)" id="food-9" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">9</button>
-                        <button onclick="setTrack('food', 10)" id="food-10" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-amber-600 transition">10</button>
-                    </div>
+                <div class="flex items-center w-max">
+                    <div class="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-white font-bold shrink-0 shadow-md z-10 border-2 border-[#e5e4de] mr-2"><i class="fa-solid fa-bars text-xs"></i></div>
+                    <div id="food-track-container" class="flex items-center relative py-1"></div>
                 </div>
 
-                <!-- 2. OXYGEN TRACK -->
-                <div>
-                    <div class="flex items-center space-x-2 mb-2">
-                        <div class="w-8 h-8 rounded bg-cyan-700 flex items-center justify-center text-stone-900 font-bold"><i class="fa-solid fa-bottle-water"></i></div>
-                        <span class="text-sm font-bold uppercase tracking-wider text-stone-300">Oxygen Track</span>
-                    </div>
-                    <div class="flex flex-wrap gap-1 bg-stone-950 p-2 rounded-lg border border-stone-800 shadow-inner">
-                        <button onclick="setTrack('oxygen', 0)" id="oxygen-0" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">S</button>
-                        <button onclick="setTrack('oxygen', 1)" id="oxygen-1" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">1</button>
-                        <button onclick="setTrack('oxygen', 2)" id="oxygen-2" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">2</button>
-                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
-                        <button onclick="setTrack('oxygen', 3)" id="oxygen-3" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">3</button>
-                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
-                        <button onclick="setTrack('oxygen', 4)" id="oxygen-4" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">4</button>
-                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
-                        <button onclick="setTrack('oxygen', 5)" id="oxygen-5" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">5</button>
-                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
-                        <button onclick="setTrack('oxygen', 6)" id="oxygen-6" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">6</button>
-                        <div class="px-2 py-2 flex items-center text-stone-500 font-bold"><i class="fa-solid fa-dumbbell mx-1"></i></div>
-                        <button onclick="setTrack('oxygen', 7)" id="oxygen-7" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-cyan-600 transition">7</button>
-                    </div>
+                <div class="flex items-center w-max">
+                    <div class="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-white font-bold shrink-0 shadow-md z-10 border-2 border-[#e5e4de] mr-2"><i class="fa-solid fa-bottle-water text-xs"></i></div>
+                    <div id="oxygen-track-container" class="flex items-center relative py-1"></div>
                 </div>
 
-                <!-- 3. WEIGHT TRACK -->
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 rounded bg-red-700 flex items-center justify-center text-stone-900 font-bold"><i class="fa-solid fa-dumbbell"></i></div>
-                            <span class="text-sm font-bold uppercase tracking-wider text-stone-300">Weight Track</span>
-                        </div>
-                        <span class="text-xs text-red-400 font-mono">Auto-syncs across limits, tap to adjust</span>
-                    </div>
-                    <div class="flex flex-wrap gap-1 bg-stone-950 p-2 rounded-lg border border-stone-800 shadow-inner">
-                        <button onclick="setTrack('weight', 0)" id="weight-0" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">S</button>
-                        <button onclick="setTrack('weight', 1)" id="weight-1" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">1</button>
-                        <button onclick="setTrack('weight', 2)" id="weight-2" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">2</button>
-                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
-                        <button onclick="setTrack('weight', 3)" id="weight-3" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">3</button>
-                        <button onclick="setTrack('weight', 4)" id="weight-4" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">4</button>
-                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
-                        <button onclick="setTrack('weight', 5)" id="weight-5" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">5</button>
-                        <button onclick="setTrack('weight', 6)" id="weight-6" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">6</button>
-                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
-                        <button onclick="setTrack('weight', 7)" id="weight-7" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-red-600 transition">7</button>
-                    </div>
+                <div class="flex items-center w-max">
+                    <div class="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-white font-bold shrink-0 shadow-md z-10 border-2 border-[#e5e4de] mr-2"><i class="fa-solid fa-dumbbell text-xs"></i></div>
+                    <div id="weight-track-container" class="flex items-center relative py-1"></div>
                 </div>
 
-                <hr class="border-stone-700/60 my-2">
-
-                <!-- 4. HEALTH TRACK -->
-                <div>
-                    <div class="flex items-center space-x-2 mb-2">
-                        <div class="w-8 h-8 rounded bg-emerald-700 flex items-center justify-center text-stone-900 font-bold"><i class="fa-solid fa-heart"></i></div>
-                        <span class="text-sm font-bold uppercase tracking-wider text-stone-300">Health Track</span>
-                    </div>
-                    <div class="flex flex-wrap gap-1 bg-stone-950 p-2 rounded-lg border border-stone-800 shadow-inner">
-                        <button onclick="setTrack('health', 10)" id="health-10" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">S</button>
-                        <button onclick="setTrack('health', 9)" id="health-9" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">9</button>
-                        <button onclick="setTrack('health', 8)" id="health-8" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">8</button>
-                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
-                        <button onclick="setTrack('health', 7)" id="health-7" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">7</button>
-                        <button onclick="setTrack('health', 6)" id="health-6" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">6</button>
-                        <button onclick="setTrack('health', 5)" id="health-5" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">5</button>
-                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
-                        <button onclick="setTrack('health', 4)" id="health-4" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">4</button>
-                        <button onclick="setTrack('health', 3)" id="health-3" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">3</button>
-                        <button onclick="setTrack('health', 2)" id="health-2" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">2</button>
-                        <div class="px-2 py-2 flex items-center text-amber-500 font-bold"><i class="fa-solid fa-person-running mx-1"></i></div>
-                        <button onclick="setTrack('health', 1)" id="health-1" class="track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-emerald-600 transition">1</button>
-                    </div>
+                <div class="flex items-center w-max">
+                    <div class="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-white font-bold shrink-0 shadow-md z-10 border-2 border-[#e5e4de] mr-2"><i class="fa-solid fa-plus text-xs"></i></div>
+                    <div id="health-track-container" class="flex items-center relative py-1"></div>
                 </div>
 
-                <!-- 5. SPEED TRACK -->
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 rounded bg-amber-500 flex items-center justify-center text-stone-900 font-bold"><i class="fa-solid fa-person-running"></i></div>
-                            <span class="text-sm font-bold uppercase tracking-wider text-stone-300">Calculated Speed</span>
-                        </div>
-                        <span id="speed-modifier-badge" class="px-2 py-0.5 text-xs font-mono rounded bg-stone-900 border border-stone-700 text-stone-400">Modifier: 0</span>
-                    </div>
-                    <div class="flex gap-1 bg-stone-950 p-3 rounded-lg border-2 border-amber-500/30 justify-between items-center relative overflow-hidden">
-                        <div class="px-4 py-2 bg-stone-900 border border-stone-800 rounded text-amber-500 font-serif font-bold">S</div>
-                        
-                        <div class="flex space-x-2 grow justify-center">
-                            <div id="speed-block-6" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">6</div>
-                            <div id="speed-block-5" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">5</div>
-                            <div id="speed-block-4" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">4</div>
-                            <div id="speed-block-3" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">3</div>
-                            <div id="speed-block-2" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">2</div>
-                            <div id="speed-block-1" class="w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 transition-all duration-300">1</div>
-                        </div>
-
-                        <div class="ml-4 px-6 py-2 bg-amber-500 text-stone-950 rounded font-black text-2xl shadow-lg shadow-amber-500/20 font-mono" id="current-speed-value">
-                            6
-                        </div>
+                <div class="flex items-center w-max mt-8">
+                    <div class="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-white font-bold shrink-0 shadow-md z-10 border-2 border-[#e5e4de] mr-2"><i class="fa-solid fa-shoe-prints text-xs transform -rotate-90"></i></div>
+                    <div id="speed-blocks-container" class="flex items-center relative py-1"></div>
+                    
+                    <div class="ml-6 flex items-center gap-3 shrink-0">
+                        <span id="speed-modifier-badge" class="px-2 py-1 text-[10px] font-bold rounded bg-stone-300 text-stone-600 uppercase tracking-widest hidden border border-stone-400">Pen: 0</span>
+                        <div class="w-12 h-12 bg-stone-900 text-white rounded font-black text-2xl shadow-lg flex items-center justify-center border-2 border-stone-700" id="current-speed-value">6</div>
                     </div>
                 </div>
 
             </div>
 
-            <!-- RESET BUTTON -->
-            <div class="text-right pt-4">
-                <button onclick="resetBoard()" class="text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-red-400 border border-stone-700 hover:border-red-900/40 rounded px-4 py-2 bg-stone-900/50 transition">
-                    <i class="fa-solid fa-rotate-left mr-1"></i> Reset Board
+            <div class="absolute right-8 top-20 border-4 border-red-700 text-red-700 uppercase font-typewriter font-black tracking-widest text-3xl px-4 py-2 rotate-12 pointer-events-none rounded opacity-70" style="filter: contrast(1.5) grayscale(0.2);">
+                APPROVED
+            </div>
+
+            <div class="absolute bottom-4 right-6 text-right">
+                <button onclick="resetBoard()" class="text-[10px] font-bold uppercase tracking-widest text-stone-500 hover:text-red-700 transition">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Reset Mat
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- AUTOMATIC SYSTEM ENGINE -->
     <script>
-        let states = {
-            food: 0,
-            oxygen: 0,
-            weight: 0, 
-            health: 10,
-            gearCards: 0,
-            isNight: false
-        };
+        let currentChar = null;
+        let states = { food: 0, oxygen: 0, weight: 0, health: 10, gearCards: 0, isNight: false };
 
         document.addEventListener("DOMContentLoaded", () => {
-            resetBoard();
+            const select = document.getElementById('character-select');
+            Object.keys(characterData).forEach(key => {
+                let option = document.createElement('option');
+                option.value = key;
+                option.text = characterData[key].name;
+                select.appendChild(option);
+            });
+            loadCharacter(Object.keys(characterData)[0]);
         });
 
-        // Day/Night Toggle Engine
+        function loadCharacter(charId) {
+            currentChar = characterData[charId];
+            
+            document.getElementById('char-name').innerText = currentChar.name;
+            document.getElementById('char-age').innerText = currentChar.age;
+            document.getElementById('char-height').innerText = currentChar.height;
+            document.getElementById('char-weight').innerText = currentChar.baseWeight;
+            document.getElementById('char-ability').innerText = currentChar.ability;
+            document.getElementById('char-icon').className = `fa-solid ${currentChar.icon} text-6xl mt-2`;
+
+            generateTracks();
+            resetBoard();
+        }
+
+function generateTracks() {
+            const buildTrack = (trackName, containerId, barrierIcon) => {
+                const container = document.getElementById(containerId);
+                const max = currentChar.tracks[trackName].max;
+                const barriers = currentChar.tracks[trackName].barriers;
+                const reverse = trackName === 'health' || trackName === 'speed'; 
+                
+                let sequence = [];
+                for(let i = reverse ? max : 0; reverse ? i >= (trackName === 'speed' ? 1 : 0) : i <= max; reverse ? i-- : i++) {
+                    sequence.push(i);
+                }
+
+                let htmlString = '';
+                sequence.forEach((val, index) => {
+                    // Inject black circle barrier BEFORE the block if applicable
+                    if (barriers && barriers.includes(val)) {
+                        htmlString += `
+                        <div class="track-barrier">
+                            <div class="w-6 h-6 rounded-full bg-[#1c1917] text-white flex items-center justify-center border-2 border-[#e5e4de] shadow-sm">
+                                <i class="fa-solid ${barrierIcon} text-[10px]"></i>
+                            </div>
+                        </div>`;
+                    }
+
+                    // Determine puzzle piece shape
+                    let shapeClass = '';
+                    if (index === 0) shapeClass = 'track-start';
+                    else if (index === sequence.length - 1) shapeClass = 'track-end';
+
+                    // Labeling Logic
+                    const isStartBlock = trackName === 'speed' ? false : (val === 0 && !reverse) || (val === max && reverse);
+                    const label = isStartBlock && val === 0 ? '' : val; 
+                    
+                    htmlString += `<button onclick="setTrack('${trackName}', ${val})" id="${trackName}-${val}" class="track-btn ${shapeClass} bg-[#cfccc0] text-stone-700 hover:bg-[#c39b33] hover:text-white shadow-sm">${label}</button>`;
+                });
+                
+                container.innerHTML = htmlString;
+            };
+
+            buildTrack('food', 'food-track-container', 'fa-dumbbell');
+            buildTrack('oxygen', 'oxygen-track-container', 'fa-dumbbell');
+            buildTrack('weight', 'weight-track-container', 'fa-shoe-prints transform -rotate-90');
+            buildTrack('health', 'health-track-container', 'fa-shoe-prints transform -rotate-90');
+            buildTrack('speed', 'speed-blocks-container', ''); 
+        }
+
+        function updateTrackUI(track, activeVal) {
+            if (track === 'speed') return; 
+
+            // Scope to the track's own container and only match real buttons.
+            // (Using a page-wide `[id^="${track}-"]` selector here used to also match
+            // the container div itself, e.g. "food-track-container" starts with "food-",
+            // which corrupted the container's layout classes and collapsed the whole track.)
+            const container = document.getElementById(`${track}-track-container`);
+            const buttons = container.querySelectorAll('button');
+            const activeClass = 'bg-[#c39b33] text-stone-900 shadow-md transform scale-105 z-20';
+            const inactiveClass = 'bg-[#cfccc0] text-stone-700 hover:bg-[#b08c2d] hover:text-white';
+
+            buttons.forEach(btn => {
+                const btnVal = parseInt(btn.id.split('-')[1]);
+                
+                // We must carefully preserve the shape classes (track-start, track-end) during update
+                let currentClasses = btn.className;
+                let shapeClass = '';
+                if (currentClasses.includes('track-start')) shapeClass = 'track-start';
+                if (currentClasses.includes('track-end')) shapeClass = 'track-end';
+
+                if (btnVal === activeVal) {
+                    btn.className = `track-btn ${shapeClass} ${activeClass}`;
+                } else {
+                    btn.className = `track-btn ${shapeClass} ${inactiveClass}`;
+                }
+            });
+        }
+
         function toggleTime() {
             states.isNight = !states.isNight;
             const toggleBtn = document.getElementById('day-night-toggle');
@@ -252,29 +290,24 @@
             const icon = document.getElementById('toggle-icon');
 
             if (states.isNight) {
-                // Switch styling to night mode (dark blue, moon, slide right)
-                toggleBtn.className = "relative w-16 h-8 flex items-center rounded-full bg-indigo-950 border border-stone-700 transition-colors duration-300 focus:outline-none px-1 shadow-inner";
-                knob.className = "w-6 h-6 rounded-full bg-stone-300 shadow-md transform translate-x-8 transition-transform duration-300 flex items-center justify-center text-indigo-900";
-                icon.className = "fa-solid fa-moon text-xs";
+                toggleBtn.className = "relative w-12 h-6 flex items-center rounded-full bg-indigo-900 transition-colors duration-300 focus:outline-none px-1 shadow-inner shrink-0";
+                knob.className = "w-4 h-4 rounded-full bg-stone-300 shadow-md transform translate-x-6 transition-transform duration-300 flex items-center justify-center text-indigo-900";
+                icon.className = "fa-solid fa-moon text-[8px]";
             } else {
-                // Switch styling to day mode (cyan, sun, slide left)
-                toggleBtn.className = "relative w-16 h-8 flex items-center rounded-full bg-cyan-700 border border-stone-700 transition-colors duration-300 focus:outline-none px-1 shadow-inner";
-                knob.className = "w-6 h-6 rounded-full bg-stone-100 shadow-md transform translate-x-0 transition-transform duration-300 flex items-center justify-center text-cyan-700";
-                icon.className = "fa-solid fa-sun text-xs";
+                toggleBtn.className = "relative w-12 h-6 flex items-center rounded-full bg-cyan-700 transition-colors duration-300 focus:outline-none px-1 shadow-inner shrink-0";
+                knob.className = "w-4 h-4 rounded-full bg-stone-100 shadow-md transform translate-x-0 transition-transform duration-300 flex items-center justify-center text-cyan-700";
+                icon.className = "fa-solid fa-sun text-[8px]";
             }
-            
             calculateSpeed();
         }
 
-        // Gear Engine
         function adjustGear(delta) {
             if (states.gearCards + delta < 0) return;
-            
             states.gearCards += delta;
             document.getElementById('gear-weight-display').innerText = states.gearCards;
             
             states.weight += delta;
-            if (states.weight > 7) states.weight = 7;
+            if (states.weight > currentChar.tracks.weight.max) states.weight = currentChar.tracks.weight.max;
             if (states.weight < 0) states.weight = 0;
             
             updateTrackUI('weight', states.weight);
@@ -282,29 +315,23 @@
         }
 
         function setTrack(track, value) {
+            if (track === 'speed') return; 
+            
             if (track === 'food' || track === 'oxygen') {
                 const oldVal = states[track];
                 const newVal = value;
                 let weightDelta = 0;
                 
-                const barriers = track === 'food' 
-                    ? [3.5, 6.5, 8.5] 
-                    : [2.5, 3.5, 4.5, 5.5, 6.5];
-                
+                const barriers = currentChar.tracks[track].barriers;
                 barriers.forEach(barrier => {
-                    if (oldVal < barrier && newVal > barrier) {
-                        weightDelta += 1;
-                    } 
-                    else if (oldVal > barrier && newVal < barrier) {
-                        weightDelta -= 1;
-                    }
+                    if (oldVal < barrier && newVal >= barrier) weightDelta += 1;
+                    else if (oldVal >= barrier && newVal < barrier) weightDelta -= 1;
                 });
 
                 if (weightDelta !== 0) {
                     states.weight += weightDelta;
-                    if (states.weight > 7) states.weight = 7;
+                    if (states.weight > currentChar.tracks.weight.max) states.weight = currentChar.tracks.weight.max;
                     if (states.weight < 0) states.weight = 0;
-                    
                     updateTrackUI('weight', states.weight);
                 }
             }
@@ -314,95 +341,75 @@
             calculateSpeed();
         }
 
-        function updateTrackUI(track, activeVal) {
-            const buttons = document.querySelectorAll(`[id^="${track}-"]`);
-            buttons.forEach(btn => {
-                const btnVal = parseInt(btn.id.split('-')[1]);
-                
-                let activeClass = 'bg-amber-600 text-stone-950 shadow-md ring-2 ring-amber-400';
-                if(track === 'oxygen') activeClass = 'bg-cyan-500 text-stone-950 shadow-md ring-2 ring-cyan-400';
-                if(track === 'weight') activeClass = 'bg-red-600 text-stone-100 shadow-md ring-2 ring-red-400';
-                if(track === 'health') activeClass = 'bg-emerald-600 text-stone-950 shadow-md ring-2 ring-emerald-400';
-
-                const isStartBlock = (btnVal === 0 || btnVal === 10);
-
-                if (btnVal === activeVal) {
-                    btn.className = `track-btn px-4 py-2 rounded font-bold transition ${activeClass} ${isStartBlock ? 'font-serif' : ''}`;
-                } else {
-                    btn.className = `track-btn px-4 py-2 bg-stone-800 rounded font-bold hover:bg-stone-700 transition border border-stone-700/50 ${isStartBlock ? 'text-amber-500 font-serif' : 'text-stone-400'}`;
-                }
-            });
-        }
-
         function calculateSpeed() {
-            let baseMaxSpeed = 6;
+            let baseMaxSpeed = currentChar.tracks.speed.max;
             let totalPenalties = 0;
 
-            // 1. Accumulate Weight Penalties
-            if (states.weight >= 3 && states.weight < 5) totalPenalties += 1;
-            else if (states.weight >= 5 && states.weight < 7) totalPenalties += 2;
-            else if (states.weight >= 7) totalPenalties += 3;
+            let weightPenalties = currentChar.tracks.weight.barriers.filter(b => states.weight >= b).length;
+            let healthPenalties = currentChar.tracks.health.barriers.filter(b => states.health <= b).length;
+            
+            totalPenalties = weightPenalties + healthPenalties;
 
-            // 2. Accumulate Health Penalties
-            if (states.health <= 7 && states.health > 4) totalPenalties += 1;
-            else if (states.health <= 4 && states.health > 1) totalPenalties += 2;
-            else if (states.health <= 1) totalPenalties += 3;
-
-            // 3. Subtract Base Penalties First
             let finalSpeed = baseMaxSpeed - totalPenalties;
-            if (finalSpeed < 1) finalSpeed = 1; // Floor it before night calculation just in case
+            if (finalSpeed < 1) finalSpeed = 1;
 
-            // 4. Apply Night Time Modifier (Halved, rounded up)
             let nightStatusText = "";
             if (states.isNight) {
                 finalSpeed = Math.ceil(finalSpeed / 2);
-                nightStatusText = " | NIGHT PENALTY APPLIED";
+                nightStatusText = " | NIGHT";
             }
-            
-            // Hard floor limit
             if (finalSpeed < 1) finalSpeed = 1;
 
-            // 5. Visual Rendering Updates
             const badge = document.getElementById('speed-modifier-badge');
-            badge.innerText = `Base Pen: -${totalPenalties}${nightStatusText}`;
-            if(totalPenalties > 0 || states.isNight) {
-                badge.className = "px-2 py-0.5 text-xs font-mono rounded bg-red-950 border border-red-800 text-red-400";
+            if (totalPenalties > 0 || states.isNight) {
+                badge.innerText = `Pen: -${totalPenalties}${nightStatusText}`;
+                badge.classList.remove('hidden');
             } else {
-                badge.className = "px-2 py-0.5 text-xs font-mono rounded bg-stone-900 border border-stone-700 text-stone-400";
+                badge.classList.add('hidden');
             }
 
             document.getElementById('current-speed-value').innerText = finalSpeed;
 
-            for (let i = 1; i <= 6; i++) {
-                const block = document.getElementById(`speed-block-${i}`);
-                if (i === finalSpeed) {
-                    block.className = "w-12 py-3 rounded text-center font-bold border-2 border-amber-400 bg-amber-500 text-stone-950 transform scale-110 shadow-md shadow-amber-500/30 transition-all duration-300";
-                } else if (i > finalSpeed) {
-                    block.className = "w-12 py-3 rounded text-center font-bold border border-stone-800 bg-stone-900/40 text-stone-600 line-through opacity-40 transition-all duration-300";
-                } else {
-                    block.className = "w-12 py-3 rounded text-center font-bold border border-stone-700 bg-stone-800 text-stone-400 transition-all duration-300";
+            for (let i = 1; i <= baseMaxSpeed; i++) {
+                const block = document.getElementById(`speed-${i}`);
+                if (block) {
+                    
+                    let currentClasses = block.className;
+                    let shapeClass = '';
+                    if (currentClasses.includes('track-start')) shapeClass = 'track-start';
+                    if (currentClasses.includes('track-end')) shapeClass = 'track-end';
+
+                    if (i === finalSpeed) {
+                        block.className = `track-btn ${shapeClass} bg-[#c39b33] text-stone-900 shadow-md transform scale-110 z-20`;
+                    } else if (i > finalSpeed) {
+                        block.className = `track-btn ${shapeClass} bg-[#e0ded6] text-stone-400 opacity-60 shadow-sm`;
+                    } else {
+                        block.className = `track-btn ${shapeClass} bg-[#cfccc0] text-stone-700 shadow-sm`;
+                    }
                 }
             }
         }
 
         function resetBoard() {
-            // Reset track data
-            states = { food: 0, oxygen: 0, weight: 0, health: 10, gearCards: 0, isNight: false };
+            states = { 
+                food: 0, 
+                oxygen: 0, 
+                weight: 0, 
+                health: currentChar.tracks.health.max, 
+                gearCards: 0, 
+                isNight: false 
+            };
             
-            // Force night switch back to day visually
-            const toggleBtn = document.getElementById('day-night-toggle');
-            const knob = document.getElementById('toggle-knob');
-            const icon = document.getElementById('toggle-icon');
-            toggleBtn.className = "relative w-16 h-8 flex items-center rounded-full bg-cyan-700 border border-stone-700 transition-colors duration-300 focus:outline-none px-1 shadow-inner";
-            knob.className = "w-6 h-6 rounded-full bg-stone-100 shadow-md transform translate-x-0 transition-transform duration-300 flex items-center justify-center text-cyan-700";
-            icon.className = "fa-solid fa-sun text-xs";
+            document.getElementById('day-night-toggle').className = "relative w-12 h-6 flex items-center rounded-full bg-cyan-700 transition-colors duration-300 focus:outline-none px-1 shadow-inner shrink-0";
+            document.getElementById('toggle-knob').className = "w-4 h-4 rounded-full bg-stone-100 shadow-md transform translate-x-0 transition-transform duration-300 flex items-center justify-center text-cyan-700";
+            document.getElementById('toggle-icon').className = "fa-solid fa-sun text-[8px]";
             
             document.getElementById('gear-weight-display').innerText = '0';
             
             updateTrackUI('food', 0);
             updateTrackUI('oxygen', 0);
             updateTrackUI('weight', 0);
-            updateTrackUI('health', 10);
+            updateTrackUI('health', currentChar.tracks.health.max);
             
             calculateSpeed();
         }
