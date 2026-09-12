@@ -84,6 +84,7 @@
 
     <script>
         // Phase Data extracted directly from the reference
+// Phase Data extracted directly from the reference with official image assets
         const phaseData = [
             {
                 title: "Event Phase",
@@ -91,61 +92,61 @@
                 desc: `<p><strong>The first round of the game has no Event Phase.</strong></p>
                        <p>From round 2 onward:</p>
                        <ol class="list-decimal pl-5 space-y-1">
-                           <li>Draw the top card from the Event deck and resolve ❔.
-                               <ul class="list-disc pl-5 mt-1 text-sm text-stone-500">
-                                   <li>If it wasn't an Event card, draw another card.</li>
-                                   <li>If the card shows a 📖 book icon, resolve the effect on the scenario sheet.</li>
-                                   <li>If the card shows an adventure icon, place the matching Adventure token on the matching Adventure deck.</li>
-                               </ul>
-                           </li>
-                           <li>Resolve the event text.</li>
-                           <li>Place the card in the right-hand Threat space and move cards to the left. If a card is moved off the board, resolve its Threat Effect.</li>
+                            <li>Draw the top card from the Event deck and resolve <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/eb311e1b-4427-47e5-84c0-bd39f0bcf9ff-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle">.
+                                <ul class="list-disc pl-5 mt-1 text-sm text-stone-500">
+                                    <li>If it wasn't an Event card, draw another card.</li>
+                                    <li>If the card shows a <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/18a1ce44-39fd-4cc3-aaab-a17ed2294643-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> book icon, resolve the effect on the scenario sheet.</li>
+                                    <li>If the card shows an adventure icon, place the matching Adventure token on the matching Adventure deck.</li>
+                                </ul>
+                            </li>
+                            <li>Resolve the event text.</li>
+                            <li>Place the card in the right-hand Threat <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/e2f31638-2ce9-4c8b-ab3d-3107ca992edf-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> space and move cards to the left. If a card is moved off the board, resolve its Threat Effect.</li>
                        </ol>`
             },
             {
                 title: "Morale Phase",
                 color: "bg-amber-500",
-                desc: `<p>Check Morale. If you are the first player, gain or discard 🌟 Determination tokens (or heal 1 ❤️ Wound).</p>
-                       <p class="text-red-600 font-medium">If you can't discard enough tokens, take 1 💔 Wound per missing token.</p>`
+                desc: `<p>Check Morale. If you are the first player, gain or discard <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/890b32bd-3ffb-466f-b51f-bd9fd335423b-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> Determination tokens (or heal <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/18d18460-461f-431f-9123-9c68078a798d-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> 1 Wound).</p>
+                       <p class="text-red-600 font-medium">If you can't discard enough tokens, take 1 <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/21aa2e12-b089-4828-ab01-5deb674fd001-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> Wound per missing token.</p>`
             },
             {
                 title: "Production Phase",
                 color: "bg-orange-600",
-                desc: `<p>Take 🪵 wood and 🍌 food according to the sources on the Island tile with the 🏕️ camp.</p>`
+                desc: `<p>Take <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/c89cabf2-01c9-45e6-9ba9-2f9d23ed7121-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> wood and <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/88eccfd8-2216-4414-b3aa-6e10f8a1d609-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> food according to the sources on the Island tile with the <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/4572fbaa-eb05-4ff0-b021-f6e8001ec84e-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> camp.</p>`
             },
             {
                 title: "Action Phase",
                 color: "bg-red-700",
                 desc: `<ol class="list-decimal pl-5 space-y-2">
-                           <li>Assign 🟦 pawns and resources.</li>
-                           <li>Resolve Actions, removing 🟦 pawns as you do.</li>
-                           <li>Resolve newly acquired 🧰 Treasures.</li>
-                           <li>Resolve newly built Items and place on board.</li>
-                           <li>Move resources and tokens to Available Resources space.</li>
+                            <li>Assign <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/7d6014fa-b0a7-471c-b6ff-0a1b6e9f5c1f-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> pawns and resources.</li>
+                            <li>Resolve Actions, removing <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/7d6014fa-b0a7-471c-b6ff-0a1b6e9f5c1f-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> pawns as you do.</li>
+                            <li>Resolve newly acquired <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/c305aaa0-36d6-4232-b4a2-e9181263f2cb-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> Treasures.</li>
+                            <li>Resolve newly built Items and place on board.</li>
+                            <li>Move resources and tokens to Available Resources space.</li>
                        </ol>`
             },
             {
                 title: "Weather Phase",
                 color: "bg-blue-600",
                 desc: `<ol class="list-decimal pl-5 space-y-2">
-                           <li>Roll dice according to scenario sheet and add tokens in Weather space.</li>
-                           <li>Discard 1 🪵 wood per 🌨️ snow cloud.</li>
-                           <li>Discard 1 🪵 wood and 1 🍌 food per point of difference between ⛺ Roof level and sum of 🌨️ snow and 🌧️ rain clouds.</li>
-                           <li>Resolve 🐺 Hungry Animals die.</li>
-                           <li>Reduce 🛡️ Palisade level by 1 if 🌪️ storm is present.</li>
-                           <li>Discard all Weather tokens.</li>
+                            <li>Roll dice according to scenario sheet and add tokens in Weather space.</li>
+                            <li>Discard 1 <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/c89cabf2-01c9-45e6-9ba9-2f9d23ed7121-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> wood per <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/cfa6513c-f36c-4e67-b720-2c1240680ef9-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> snow cloud.</li>
+                            <li>Discard 1 <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/c89cabf2-01c9-45e6-9ba9-2f9d23ed7121-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> wood and 1 <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/88eccfd8-2216-4414-b3aa-6e10f8a1d609-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> food per point of difference between <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/e5fe461b-16b8-47e2-9b57-759ea368a9f3-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> Roof level and sum of <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/cfa6513c-f36c-4e67-b720-2c1240680ef9-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> snow and <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/f45a63a3-a4a2-466a-8ad2-7f518ca28959-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> rain clouds.</li>
+                            <li>Resolve Hungry Animals die.</li>
+                            <li>Reduce <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/76c0ecc4-3777-4f67-b1d1-919e466377cc-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> Palisade level by 1 if <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/dfb9216b-045c-4148-a911-65eee8049296-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> storm is present.</li>
+                            <li>Discard all Weather tokens.</li>
                        </ol>`
             },
             {
                 title: "Night Phase",
                 color: "bg-stone-800",
                 desc: `<ol class="list-decimal pl-5 space-y-2">
-                           <li>Each player discards 1 🍌 food or takes 2 💔 Wounds.</li>
-                           <li>Move camp if desired.</li>
-                           <li>Each character takes 1 💔 Wound if there is no ⛺ Shelter.</li>
-                           <li>Discard all food except 🍞 non-perishable.</li>
-                           <li>Remove ⬛ markers from characters' special ability spaces.</li>
-                           <li>Move round marker and pass 🧭 First Player token.</li>
+                            <li>Each player discards 1 <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/88eccfd8-2216-4414-b3aa-6e10f8a1d609-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> food or takes 2 <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/21aa2e12-b089-4828-ab01-5deb674fd001-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> Wounds.</li>
+                            <li>Move camp if desired.</li>
+                            <li>Each character takes 1 <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/21aa2e12-b089-4828-ab01-5deb674fd001-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> Wound if there is no <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/a7152d82-811d-4ed2-baa9-a2e84bce9d5b-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> Shelter.</li>
+                            <li>Discard all food except <img src="https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/2bfc8823-3b35-4c0b-aa88-635ed0efadf0-ee8cea4644162f0111f7a35e6a22a25f.png" class="inline w-5 h-5 align-middle"> non-perishable.</li>
+                            <li>Remove markers from characters' special ability spaces.</li>
+                            <li>Move round marker and pass First Player token.</li>
                        </ol>`
             }
         ];
