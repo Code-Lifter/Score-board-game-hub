@@ -192,7 +192,7 @@
                 const keep = data.cards[r-1][1];
                 return `
                     <div class="bg-red-50 border border-red-200 p-4 rounded-xl text-center mb-4">
-                        <p class="text-2xl font-black text-red-700 tracking-tight">Draw ${draw} cards, keep ${keep}</p>
+                        <p class="text-2xl font-black text-red-700 tracking-tight">Draw ${draw} numbered cards</p> <br> <p class="text-lg font-bold text-red-600">keep ${keep}</p>
                     </div>
                     <ul class="list-disc pl-5 space-y-1 text-sm font-medium">
                         <li>Deal the required number of building cards to each player.</li>
@@ -206,7 +206,7 @@
                 const draw = data.tiles[r-1];
                 return `
                     <div class="bg-orange-50 border border-orange-200 p-4 rounded-xl text-center mb-4">
-                        <p class="text-2xl font-black text-orange-700 tracking-tight">Draw ${draw} tiles</p>
+                        <p class="text-2xl font-black text-orange-700 tracking-tight">Draw ${draw} shop tiles</p>
                     </div>
                     <ul class="list-disc pl-5 space-y-1 text-sm font-medium">
                         <li>Each player draws the required number of shop tiles from the bag.</li>
