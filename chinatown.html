@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinatown: Phase & Income Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Smooth transitions for mobile tapping */
+        button { transition: all 0.15s ease-in-out; }
+        button:active { transform: scale(0.96); }
+        
+        /* Custom scrollbar for the table */
+        .table-scroll::-webkit-scrollbar { height: 6px; }
+        .table-scroll::-webkit-scrollbar-track { background: #f5f5f4; border-radius: 4px; }
+        .table-scroll::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-red-50 text-stone-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <nav class="w-full bg-red-900 text-stone-200 p-4 flex justify-between items-center shadow-md">
+        <a href="#" class="font-bold tracking-widest text-yellow-400 hover:text-yellow-300">🏠 CHINATOWN</a>
+        <button id="resetBtn" class="text-xs font-bold uppercase bg-red-950 hover:bg-stone-900 text-white px-3 py-2 rounded shadow border border-red-700">
+            Reset Game
+        </button>
+    </nav>
+
+    <main class="flex-grow w-full max-w-md mx-auto p-4 flex flex-col">
+        
+        <div id="setupScreen" class="flex flex-col flex-grow justify-center items-center space-y-6 hidden">
+            <div class="text-center">
+                <h1 class="text-4xl font-black text-red-700 mb-2 tracking-tight">Game Setup</h1>
+                <p class="text-stone-500 text-sm font-medium">Configure your players and rounds.</p>
+            </div>
+            
+            <div class="w-full bg-white p-6 rounded-2xl shadow-xl border border-red-100">
+                <label class="block text-sm font-bold text-red-900 mb-2">Number of Players</label>
+                <select id="playerInput" class="w-full p-3 border border-red-200 rounded-lg focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 text-lg mb-4 font-semibold text-stone-700 bg-stone-50">
+                    <option value="3">3 Players</option>
+                    <option value="4" selected>4 Players</option>
+                    <option value="5">5 Players</option>
+                </select>
+
+                <label class="block text-sm font-bold text-red-900 mb-2">Total Rounds</label>
+                <select id="roundLimitInput" class="w-full p-3 border border-red-200 rounded-lg focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 text-lg mb-8 font-semibold text-stone-700 bg-stone-50">
+                    <option value="4">4 Rounds</option>
+                    <option value="6" selected>6 Rounds</option>
+                </select>
+                
+                <button id="startBtn" class="w-full bg-red-700 hover:bg-red-800 text-yellow-400 font-bold py-4 rounded-xl shadow-lg text-lg tracking-wide border border-red-800">
+                    Start Trading
+                </button>
+            </div>
+        </div>
+
+        <div id="gameScreen" class="flex flex-col flex-grow hidden">
+            
+            <!-- Prominent Visual Round Track Header -->
+            <div class="bg-gradient-to-br from-red-900 via-red-800 to-red-900 text-white p-4 rounded-2xl shadow-lg mb-4 flex flex-col justify-between border border-yellow-500/30">
+                <div class="flex justify-between items-center">
+                    <div class="flex space-x-2">
+                        <button id="undoBtn" class="p-2 bg-red-950 hover:bg-stone-900 text-yellow-400 rounded-lg border border-red-700 disabled:opacity-30 disabled:cursor-not-allowed">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                        </button>
+                        <button id="redoBtn" class="p-2 bg-red-950 hover:bg-stone-900 text-yellow-400 rounded-lg border border-red-700 disabled:opacity-30 disabled:cursor-not-allowed">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Main Star Feature: Highlighted Round Badge -->
+                    <div class="flex items-center space-x-3 bg-red-950 px-4 py-2 rounded-xl border border-yellow-500/40 shadow-inner">
+                        <div class="flex flex-col items-end">
+                            <span class="text-[10px] uppercase font-black tracking-widest text-yellow-500">YEAR</span>
+                            <span class="text-xs text-red-300 font-medium"><span id="playerDisplay">4</span> PLAYERS</span>
+                        </div>
+                        <div class="flex items-center space-x-1 border-l border-red-700 pl-3">
+                            <span class="text-xs text-yellow-500 font-bold">RND</span>
+                            <span id="currentRoundDisplay" class="text-3xl font-black text-yellow-400 drop-shadow-[0_2px_4px_rgba(234,179,8,0.4)]">1</span>
+                            <span class="text-sm font-bold text-red-500 self-end mb-1">/<span id="maxRoundDisplay">6</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Round Progress Dots -->
+                <div id="roundProgressDots" class="flex space-x-1 mt-3 justify-center overflow-x-auto py-1">
+                    <!-- Dynamic dots render here -->
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-stone-200 flex-grow flex flex-col mb-4 overflow-hidden relative">
+                
+                <div id="phaseColorStrip" class="h-3 w-full bg-red-600"></div>
+                
+                <div class="p-4 sm:p-6 flex-grow flex flex-col">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div id="phaseNumber" class="text-4xl font-black text-stone-200">1</div>
+                        <h2 id="phaseTitle" class="text-2xl font-black text-stone-800 leading-tight tracking-tight uppercase">Phase</h2>
+                    </div>
+                    
+                    <div id="phaseDescription" class="prose prose-stone text-stone-600 space-y-3 leading-relaxed text-[15px]">
+                        <!-- Injected dynamically based on phase ID, round, and players -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-auto">
+                <button id="prevBtn" class="bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold py-4 px-2 rounded-xl flex justify-center items-center uppercase tracking-wide text-sm border border-stone-300">
+                    &larr; Prev
+                </button>
+                <button id="nextBtn" class="bg-red-700 hover:bg-red-800 text-yellow-400 font-bold py-4 px-2 rounded-xl shadow-md flex justify-center items-center uppercase tracking-wide text-sm border border-red-800">
+                    Next &rarr;
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Web Audio API Synthesizer for Sound Effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playPhaseSound(type = 'next') {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'next') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(320, now);
+                osc.frequency.exponentialRampToValueAtTime(540, now + 0.12);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } else if (type === 'prev') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(450, now);
+                osc.frequency.exponentialRampToValueAtTime(280, now + 0.12);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } else if (type === 'roundChange') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.setValueAtTime(660, now + 0.08);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        // Standard Chinatown Table Data
+        const dynamicGameData = {
+            3: {
+                cards: [[7,5], [6,4], [6,4], [6,4], [6,4], [6,4]],
+                tiles: [7, 4, 4, 4, 4, 4]
+            },
+            4: {
+                cards: [[6,4], [5,3], [5,3], [5,3], [5,3], [5,3]],
+                tiles: [6, 3, 3, 3, 3, 3]
+            },
+            5: {
+                cards: [[5,3], [5,3], [5,3], [4,2], [4,2], [4,2]],
+                tiles: [5, 3, 3, 2, 2, 1]
+            }
+        };
+
+        // Phase Data Registry
+        const phaseData = [
+            { id: "cards", title: "Building Cards", color: "bg-red-600" },
+            { id: "tiles", title: "Shop Tiles", color: "bg-orange-500" },
+            { id: "trading", title: "Trading", color: "bg-yellow-500" },
+            { id: "placement", title: "Placement", color: "bg-emerald-600" },
+            { id: "income", title: "Earn Income", color: "bg-blue-600" }
+        ];
+
+        // Dynamic HTML Generator based on state
+        function getPhaseDescription(phaseId, round, players) {
+            let r = round > 6 ? 6 : round; 
+            const data = dynamicGameData[players] || dynamicGameData[4];
+
+            if (phaseId === 'cards') {
+                const draw = data.cards[r-1][0];
+                const keep = data.cards[r-1][1];
+                return `
+                    <div class="bg-red-50 border border-red-200 p-4 rounded-xl text-center mb-4">
+                        <p class="text-2xl font-black text-red-700 tracking-tight">Draw ${draw} cards, keep ${keep}</p>
+                    </div>
+                    <ul class="list-disc pl-5 space-y-1 text-sm font-medium">
+                        <li>Deal the required number of building cards to each player.</li>
+                        <li>Players secretly choose which cards to keep and place them face down.</li>
+                        <li>Discard the remaining cards face down to the discard pile.</li>
+                        <li>Reveal kept cards simultaneously and place ownership markers on the board.</li>
+                    </ul>`;
+            }
+
+            if (phaseId === 'tiles') {
+                const draw = data.tiles[r-1];
+                return `
+                    <div class="bg-orange-50 border border-orange-200 p-4 rounded-xl text-center mb-4">
+                        <p class="text-2xl font-black text-orange-700 tracking-tight">Draw ${draw} tiles</p>
+                    </div>
+                    <ul class="list-disc pl-5 space-y-1 text-sm font-medium">
+                        <li>Each player draws the required number of shop tiles from the bag.</li>
+                        <li>Place them face up in front of you so all players can see them.</li>
+                    </ul>`;
+            }
+
+            if (phaseId === 'trading') {
+                return `
+                    <p class="font-bold text-stone-800 text-lg border-l-4 border-yellow-500 pl-3">Everything is negotiable!</p>
+                    <p class="text-sm">Players may trade simultaneously in any combination of:</p>
+                    <ul class="list-disc pl-5 space-y-1 text-sm font-medium">
+                        <li><strong>Building Cards</strong> (Ownership of spaces)</li>
+                        <li><strong>Shop Tiles</strong> (Both placed and unplaced)</li>
+                        <li><strong>Cash</strong></li>
+                    </ul>
+                    <p class="text-sm italic text-stone-500 mt-2">Trading ends when all players agree to stop.</p>`;
+            }
+
+            if (phaseId === 'placement') {
+                return `
+                    <p class="text-sm font-medium">In any order, players may place their unplaced shop tiles onto building spaces they own on the board.</p>
+                    <ul class="list-disc pl-5 space-y-1 text-sm mt-2">
+                        <li>A tile placed on the board <strong>cannot be moved</strong> to a different space later.</li>
+                        <li>You may choose to keep shop tiles unplaced in front of you for future rounds.</li>
+                    </ul>`;
+            }
+
+            if (phaseId === 'income') {
+                return `
+                    <p class="text-sm font-medium mb-3">Earn income based on connected shop tiles of the same business type.</p>
+                    <div class="overflow-x-auto table-scroll rounded-xl border border-stone-200 shadow-sm mb-3 pb-1">
+                        <table class="w-full text-center text-xs bg-white min-w-max border-collapse">
+                            <thead>
+                                <tr class="bg-stone-100 text-stone-600 font-bold border-b border-stone-300">
+                                    <th class="p-2 border-r border-stone-200 whitespace-nowrap">Tile number</th>
+                                    <th class="p-2 text-left border-r border-stone-200">Businesses</th>
+                                    <th class="p-2 border-r border-stone-200">1-tile</th>
+                                    <th class="p-2 border-r border-stone-200">2-tile</th>
+                                    <th class="p-2 border-r border-stone-200">3-tile</th>
+                                    <th class="p-2 border-r border-stone-200">4-tile</th>
+                                    <th class="p-2 border-r border-stone-200">5-tile</th>
+                                    <th class="p-2">6-tile</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-stone-700 font-medium">
+                                <tr class="border-b border-stone-200 hover:bg-stone-50">
+                                    <td class="p-2 font-black text-stone-900 border-r border-stone-200 text-base">3</td>
+                                    <td class="p-2 text-left border-r border-stone-200 whitespace-nowrap">photo, sea food, tea house</td>
+                                    <td class="p-2 border-r border-stone-200">$10,000</td>
+                                    <td class="p-2 border-r border-stone-200">$20,000</td>
+                                    <td class="p-2 border-r border-stone-200 font-bold">$50,000</td>
+                                    <td class="p-2 border-r border-stone-200 text-stone-300">-</td>
+                                    <td class="p-2 border-r border-stone-200 text-stone-300">-</td>
+                                    <td class="p-2 text-stone-300">-</td>
+                                </tr>
+                                <tr class="border-b border-stone-200 hover:bg-stone-50">
+                                    <td class="p-2 font-black text-stone-900 border-r border-stone-200 text-base">4</td>
+                                    <td class="p-2 text-left border-r border-stone-200 whitespace-nowrap">florist, jewelry, tropical fish</td>
+                                    <td class="p-2 border-r border-stone-200">$10,000</td>
+                                    <td class="p-2 border-r border-stone-200">$20,000</td>
+                                    <td class="p-2 border-r border-stone-200">$40,000</td>
+                                    <td class="p-2 border-r border-stone-200 font-bold">$80,000</td>
+                                    <td class="p-2 border-r border-stone-200 text-stone-300">-</td>
+                                    <td class="p-2 text-stone-300">-</td>
+                                </tr>
+                                <tr class="border-b border-stone-200 hover:bg-stone-50">
+                                    <td class="p-2 font-black text-stone-900 border-r border-stone-200 text-base">5</td>
+                                    <td class="p-2 text-left border-r border-stone-200 whitespace-nowrap">dim sum, laundry, take-out</td>
+                                    <td class="p-2 border-r border-stone-200">$10,000</td>
+                                    <td class="p-2 border-r border-stone-200">$20,000</td>
+                                    <td class="p-2 border-r border-stone-200">$40,000</td>
+                                    <td class="p-2 border-r border-stone-200">$60,000</td>
+                                    <td class="p-2 border-r border-stone-200 font-bold">$110,000</td>
+                                    <td class="p-2 text-stone-300">-</td>
+                                </tr>
+                                <tr class="hover:bg-stone-50">
+                                    <td class="p-2 font-black text-stone-900 border-r border-stone-200 text-base">6</td>
+                                    <td class="p-2 text-left border-r border-stone-200 whitespace-nowrap">antiques, factory, restaurant</td>
+                                    <td class="p-2 border-r border-stone-200">$10,000</td>
+                                    <td class="p-2 border-r border-stone-200">$20,000</td>
+                                    <td class="p-2 border-r border-stone-200">$40,000</td>
+                                    <td class="p-2 border-r border-stone-200">$60,000</td>
+                                    <td class="p-2 border-r border-stone-200">$80,000</td>
+                                    <td class="p-2 font-bold">$140,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-stone-500">Note: Income is paid out for <em>each</em> separate business you own.</p>`;
+            }
+            return "";
+        }
+
+        // State variables
+        let state = {
+            isActive: false,
+            roundLimit: 6,
+            currentRound: 1,
+            phaseIndex: 0,
+            players: 4
+        };
+
+        let historyStack = [];
+        let redoStack = [];
+
+        // DOM Elements
+        const setupScreen = document.getElementById('setupScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const playerInput = document.getElementById('playerInput');
+        const roundLimitInput = document.getElementById('roundLimitInput');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        const playerDisplay = document.getElementById('playerDisplay');
+        const currentRoundDisplay = document.getElementById('currentRoundDisplay');
+        const maxRoundDisplay = document.getElementById('maxRoundDisplay');
+        const roundProgressDots = document.getElementById('roundProgressDots');
+        
+        const phaseColorStrip = document.getElementById('phaseColorStrip');
+        const phaseNumber = document.getElementById('phaseNumber');
+        const phaseTitle = document.getElementById('phaseTitle');
+        const phaseDescription = document.getElementById('phaseDescription');
+        
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const undoBtn = document.getElementById('undoBtn');
+        const redoBtn = document.getElementById('redoBtn');
+
+        // Initialization
+        function init() {
+            loadFromStorage();
+            render();
+        }
+
+        // Core Render Loop
+        function render() {
+            if (!state.isActive) {
+                setupScreen.classList.remove('hidden');
+                gameScreen.classList.add('hidden');
+                resetBtn.classList.add('hidden');
+            } else {
+                setupScreen.classList.add('hidden');
+                gameScreen.classList.remove('hidden');
+                resetBtn.classList.remove('hidden');
+
+                // Update Header
+                playerDisplay.innerText = state.players;
+                currentRoundDisplay.innerText = state.currentRound;
+                maxRoundDisplay.innerText = state.roundLimit;
+
+                // Render Round Dot Progress Bar
+                roundProgressDots.innerHTML = '';
+                for (let i = 1; i <= state.roundLimit; i++) {
+                    const dot = document.createElement('div');
+                    if (i < state.currentRound) {
+                        dot.className = 'w-2 h-2 rounded-full bg-red-800 opacity-60 flex-shrink-0';
+                    } else if (i === state.currentRound) {
+                        dot.className = 'w-3 h-3 rounded-full bg-yellow-400 ring-2 ring-yellow-500/50 flex-shrink-0';
+                    } else {
+                        dot.className = 'w-2 h-2 rounded-full bg-red-950 flex-shrink-0';
+                    }
+                    roundProgressDots.appendChild(dot);
+                }
+
+                // Update Phase UI
+                const currentPhase = phaseData[state.phaseIndex];
+                phaseColorStrip.className = `h-3 w-full ${currentPhase.color}`;
+                phaseNumber.innerText = state.phaseIndex + 1;
+                phaseTitle.innerText = currentPhase.title;
+                phaseDescription.innerHTML = getPhaseDescription(currentPhase.id, state.currentRound, state.players);
+
+                // Button States
+                undoBtn.disabled = historyStack.length === 0;
+                redoBtn.disabled = redoStack.length === 0;
+
+                // Handle End Game limits
+                if (state.currentRound >= state.roundLimit && state.phaseIndex === phaseData.length - 1) {
+                    nextBtn.innerHTML = "Game Over 🏙️";
+                    nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    nextBtn.innerHTML = "Next &rarr;";
+                    nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+            saveToStorage();
+        }
+
+        // Logic Mechanics
+        function pushStateToHistory() {
+            historyStack.push(JSON.parse(JSON.stringify(state)));
+            redoStack = []; 
+        }
+
+        function goNext() {
+            if (state.currentRound >= state.roundLimit && state.phaseIndex === phaseData.length - 1) return;
+            pushStateToHistory();
+            
+            if (state.phaseIndex < phaseData.length - 1) {
+                state.phaseIndex++;
+                playPhaseSound('next');
+            } else {
+                state.phaseIndex = 0;
+                state.currentRound++;
+                playPhaseSound('roundChange');
+            }
+            render();
+        }
+
+        function goPrev() {
+            if (state.currentRound === 1 && state.phaseIndex === 0) return;
+            pushStateToHistory();
+            
+            if (state.phaseIndex > 0) {
+                state.phaseIndex--;
+                playPhaseSound('prev');
+            } else {
+                state.phaseIndex = phaseData.length - 1;
+                state.currentRound--;
+                playPhaseSound('roundChange');
+            }
+            render();
+        }
+
+        function undo() {
+            if (historyStack.length === 0) return;
+            redoStack.push(JSON.parse(JSON.stringify(state)));
+            state = historyStack.pop();
+            playPhaseSound('prev');
+            render();
+        }
+
+        function redo() {
+            if (redoStack.length === 0) return;
+            historyStack.push(JSON.parse(JSON.stringify(state)));
+            state = redoStack.pop();
+            playPhaseSound('next');
+            render();
+        }
+
+        // Local Storage Handlers
+        function saveToStorage() {
+            try {
+                localStorage.setItem('chinatownState', JSON.stringify({
+                    state, historyStack, redoStack
+                }));
+            } catch (e) { console.warn("Local storage blocked or unavailable."); }
+        }
+
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem('chinatownState');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    state = parsed.state;
+                    historyStack = parsed.historyStack || [];
+                    redoStack = parsed.redoStack || [];
+                }
+            } catch (e) { console.warn("Failed to read local storage."); }
+        }
+
+        function resetGame() {
+            if (confirm("End the current game and return to setup?")) {
+                state = { isActive: false, roundLimit: 6, currentRound: 1, phaseIndex: 0, players: 4 };
+                historyStack = [];
+                redoStack = [];
+                localStorage.removeItem('chinatownState');
+                render();
+            }
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', () => {
+            const players = parseInt(playerInput.value) || 4;
+            const limit = parseInt(roundLimitInput.value) || 6;
+            state = { isActive: true, roundLimit: limit, currentRound: 1, phaseIndex: 0, players: players };
+            historyStack = [];
+            redoStack = [];
+            playPhaseSound('roundChange');
+            render();
+        });
+
+        nextBtn.addEventListener('click', goNext);
+        prevBtn.addEventListener('click', goPrev);
+        undoBtn.addEventListener('click', undo);
+        redoBtn.addEventListener('click', redo);
+        resetBtn.addEventListener('click', resetGame);
+
+        // Start the engine
+        init();
+    </script>
+</body>
+</html>
