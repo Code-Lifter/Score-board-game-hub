@@ -366,8 +366,8 @@
 
     </div>
 
-    <div id="game-over-modal" class="fixed inset-0 z-[100] bg-black/95 hidden flex flex-col items-center justify-center">
-        <h1 class="text-6xl md:text-8xl font-bold text-red-600 tracking-tighter neon-red mb-4">TERMINATED</h1>
+<div id="game-over-modal" class="fixed inset-0 z-[100] bg-black/95 hidden flex-col items-center justify-center">
+    <h1 class="text-6xl md:text-8xl font-bold text-red-600 tracking-tighter neon-red mb-4">TERMINATED</h1>
         <div class="border-t-2 border-b-2 border-red-600 py-4 px-12 mb-8 bg-red-900/20">
             <p class="text-xl md:text-2xl text-red-300 font-mono text-center">STRESS LIMIT EXCEEDED</p>
         </div>
@@ -715,12 +715,47 @@
             else document.getElementById('time-display').classList.replace('text-red-500', 'text-cyan-300');
         }
 
-        function checkGameOver() {
-            if (countTokens('stress') >= STATE.stressLimit) {
-                document.getElementById('game-over-modal').classList.remove('hidden');
-            } else {
-                document.getElementById('game-over-modal').classList.add('hidden');
-            }
+// --- UPDATED FUNCTIONS ---
+
+function checkGameOver() {
+    const modal = document.getElementById('game-over-modal');
+    if (countTokens('stress') >= STATE.stressLimit) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex'); // Add flex only when game is over
+    } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function wipeMemory() {
+    if(confirm("WARNING: This will permanently erase current case data. Proceed?")) {
+        localStorage.removeItem('antaresCase');
+        localStorage.removeItem('antaresHistory');
+        
+        // 1. Hard reset the game state locally without relying on page reloads
+        STATE = {
+            day: 1, maxDays: 3, time: 480, location: 'Headquarters', stressLimit: 5,
+            reportWrittenToday: false, tokens: [] 
+        };
+        HISTORY = [];
+        HISTORY_INDEX = -1;
+        
+        // 2. Clear the desk surface 
+        document.getElementById('desk-surface').innerHTML = '';
+        
+        // 3. Reset the UI Modals
+        const gameOverModal = document.getElementById('game-over-modal');
+        gameOverModal.classList.add('hidden');
+        gameOverModal.classList.remove('flex');
+        
+        document.getElementById('setup-modal').style.display = 'flex';
+        document.getElementById('game-board').classList.add('opacity-0');
+        
+        // 4. Re-render default text displays
+        renderStats();
+    }
+}
         }
 
         function addTime(hours) {
