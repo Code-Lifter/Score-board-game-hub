@@ -17,9 +17,9 @@
     </style>
 </head>
 <body class="bg-red-50 text-stone-800 font-sans antialiased min-h-screen flex flex-col">
-
+<!-- Navbar -->
+<div id="nav-placeholder"></div>
     <nav class="w-full bg-red-900 text-stone-200 p-4 flex justify-between items-center shadow-md">
-        <a href="#" class="font-bold tracking-widest text-yellow-400 hover:text-yellow-300">🏠 CHINATOWN</a>
         <button id="resetBtn" class="text-xs font-bold uppercase bg-red-950 hover:bg-stone-900 text-white px-3 py-2 rounded shadow border border-red-700">
             Reset Game
         </button>
@@ -116,6 +116,13 @@
     </main>
 
     <script>
+
+        // --- Navbar ---
+  fetch('nav.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('nav-placeholder').innerHTML = data;
+    });
         // Web Audio API Synthesizer for Sound Effects
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
