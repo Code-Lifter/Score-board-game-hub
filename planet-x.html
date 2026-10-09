@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Survey Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#edf2f8; --panel:#f8fafd; --ink:#16386b; --muted:#4a6491; --faint:#8fa4c4;
+  --line:#cbd8ea; --line-strong:#8ca5c9; --grid-line:rgba(22,56,107,.055);
+  --no:#c4432f; --maybe:#9a6200; --on-ink:#f8fafd;
+  --tint:rgba(22,56,107,.085); --tint-2:rgba(22,56,107,.04);
+  --f:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#153867; --panel:#1a4177; --ink:#eef4ff; --muted:#b1c4e4; --faint:#7d99c4;
+    --line:#38609a; --line-strong:#7896c5; --grid-line:rgba(238,244,255,.05);
+    --no:#ff8e7c; --maybe:#ffd06a; --on-ink:#153867;
+    --tint:rgba(238,244,255,.12); --tint-2:rgba(238,244,255,.055);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#153867; --panel:#1a4177; --ink:#eef4ff; --muted:#b1c4e4; --faint:#7d99c4;
+  --line:#38609a; --line-strong:#7896c5; --grid-line:rgba(238,244,255,.05);
+  --no:#ff8e7c; --maybe:#ffd06a; --on-ink:#153867;
+  --tint:rgba(238,244,255,.12); --tint-2:rgba(238,244,255,.055);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:24px 24px;
+  font:400 15px/1.45 var(--f); -webkit-font-smoothing:antialiased;
+}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1320px;margin:0 auto;padding:28px 16px 64px}
+
+/* ---------- header ---------- */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 32px;margin-bottom:30px}
+.brand{display:flex;align-items:center;gap:14px}
+.mark{width:48px;height:48px;flex:none}
+.brand h1{margin:0;font-weight:800;font-stretch:125%;font-size:clamp(28px,4vw,38px);line-height:1;letter-spacing:-.015em}
+.brand p{margin:7px 0 0;color:var(--muted);font-size:14px}
+.meta{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 20px}
+.fld{display:flex;flex-direction:column;gap:2px;min-width:0}
+.fld label{font-size:12.5px;color:var(--muted)}
+.fld input,.fld select{height:32px;border:0;border-bottom:1.5px solid var(--line-strong);border-radius:0;background:transparent;padding:0 2px;font-size:15px;font-weight:500;outline:none}
+.fld input:focus,.fld select:focus{border-bottom-color:var(--maybe)}
+.fld-name input{width:170px}
+.fld-code input{width:120px;letter-spacing:.04em}
+.fld select{width:110px;cursor:pointer}
+.fld select option,.pick option{background:var(--panel);color:var(--ink)}
+.btns{display:flex;gap:8px}
+.btn{height:34px;padding:0 12px;border:1.5px solid var(--line-strong);border-radius:3px;background:transparent;font-weight:600;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--tint)}
+.btn:focus-visible{outline:2px solid var(--maybe);outline-offset:2px}
+.btn.armed{background:var(--no);border-color:var(--no);color:#fff}
+.btn-icon{width:34px;padding:0}
+.btn svg{width:18px;height:18px}
+
+/* ---------- layout ---------- */
+.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:1060px){.layout{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex;flex-direction:column;gap:34px;min-width:0}
+
+/* ---------- the plate (sector wheel) ---------- */
+.plate{margin:6px;background:var(--panel);border:1.5px solid var(--line-strong);outline:1px solid var(--line);outline-offset:5px}
+.plate-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px;padding:14px 16px 12px;border-bottom:1.5px solid var(--line-strong)}
+.plate-h h2{margin:0;font-size:18px;font-weight:700;font-stretch:115%}
+.plate-h span{font-size:13px;color:var(--muted)}
+
+.wheel-wrap{display:flex;justify-content:center;padding:22px 16px 16px}
+.wheel{display:block;width:100%;max-width:680px;height:auto;overflow:visible;font-family:var(--f);user-select:none;-webkit-user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.wheel [role=button]{cursor:pointer;outline:none}
+.wheel .base{fill:var(--panel)}
+.wheel .wedge,.wheel .hit,.mres .hb{fill:transparent;transition:fill .12s}
+.wedge.coln,.pslot.coln .hit,.mres.coln .hb{fill:var(--tint-2)}
+.wedge.colf,.pslot.colf .hit,.mres.colf .hb{fill:var(--tint)}
+@media (hover:hover){
+  .cell:hover .hit{fill:var(--tint-2)}
+  .pslot:hover .hit{fill:var(--tint)}
+  .rim:hover path{fill:var(--muted);stroke:var(--muted)}
+}
+.wheel .lines{fill:none;pointer-events:none;stroke-linecap:round}
+.wheel .rl{stroke:var(--line);stroke-width:1.5}
+.wheel .sp{stroke:var(--line-strong);stroke-width:1.5;stroke-opacity:.8}
+.wheel .rs{stroke:var(--line-strong);stroke-width:2.5}
+
+/* marks (also used by the legend) */
+.x1{fill:none;stroke:var(--no);stroke-width:3.5;stroke-linecap:round}
+.ring2{fill:none;stroke:var(--maybe);stroke-width:2.5}
+.disc3{fill:var(--ink)}
+.cell .mk{color:var(--faint)}
+.cell.s1 .mk use{opacity:.3}
+.cell.s2 .mk{color:var(--maybe)}
+.cell.s3 .mk{color:var(--on-ink);--icon-bg:var(--ink)}
+.wheel .fring{fill:none;stroke:none}
+.cell:focus-visible .fring,.pslot:focus-visible .hit{stroke:var(--maybe);stroke-width:3.5}
+
+/* numbered rim */
+.rim path{fill:var(--ink);stroke:var(--ink);stroke-width:1;transition:fill .12s,stroke .12s}
+.rim text{fill:var(--on-ink);font-size:26px;font-weight:700;font-stretch:112%;font-variant-numeric:tabular-nums;pointer-events:none}
+.rim.near path{fill:var(--muted);stroke:var(--muted)}
+.rim.focus path{fill:var(--maybe);stroke:var(--maybe)}
+.rim.conflict path{fill:var(--no);stroke:var(--no)}
+.rim.focus.conflict path{stroke:var(--maybe);stroke-width:7}
+.rim:focus-visible path{stroke:var(--maybe);stroke-width:5}
+
+/* pawns on the track */
+.pawn{pointer-events:none}
+.pawn .h1{fill:rgba(0,0,0,.28)}
+.pawn .h2{fill:var(--panel)}
+.pawn .pc{fill:var(--pc)}
+
+/* centre result ring */
+.mres .mk{color:var(--ink)}
+.mres.forced use{opacity:.5}
+.mres .fd{fill:none;stroke:var(--line-strong);stroke-width:1.5;stroke-dasharray:4 3}
+.mres text{fill:var(--faint);font-size:21px;font-weight:600;font-variant-numeric:tabular-nums}
+.mres.bad text{fill:var(--no);font-size:28px;font-weight:800}
+.wheel .hubc{fill:var(--panel);stroke:var(--line-strong);stroke-width:2.5}
+.wheel .hubdot{fill:var(--line-strong)}
+.wheel.has-focus .hubdot{display:none}
+.wheel .hubtxt{fill:var(--ink);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ring key */
+.key{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;padding:0 16px 14px;font-size:13px;color:var(--muted)}
+.key-h{flex-basis:100%;text-align:center;font-size:12.5px;color:var(--faint)}
+.ki{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.ki svg{width:18px;height:18px;flex:none;color:var(--ink)}
+.ki .ct{font-weight:500;font-variant-numeric:tabular-nums;color:var(--faint)}
+.ki .ct.done{color:var(--ink);font-weight:700}
+.ki .ct.over{color:var(--no);font-weight:700}
+
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;padding:12px 16px;border-top:1.5px solid var(--line-strong);font-size:13px;color:var(--muted)}
+.lg{display:inline-flex;align-items:center;gap:7px}
+.lg svg{width:22px;height:22px;flex:none}
+.tip{flex-basis:100%;color:var(--faint);font-size:12.5px}
+
+.rules-h{margin:0;padding:14px 16px 2px;border-top:1px solid var(--line);font-size:14.5px;font-weight:700;font-stretch:110%}
+.rules{list-style:none;margin:0;padding:4px 8px 12px;display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
+.rules li{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:8px}
+.rules svg{width:20px;height:20px;margin-top:1px}
+.rules b{font-weight:600}
+.rules .q{color:var(--muted);font-weight:400}
+.rules p{margin:1px 0 0;color:var(--muted);font-size:13.5px;line-height:1.4}
+
+/* ---------- sections on the right ---------- */
+.sec h2{margin:0 0 12px;padding-bottom:8px;border-bottom:1.5px solid var(--line-strong);display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:18px;font-weight:700;font-stretch:115%}
+.sec h2 span{font-size:13px;font-weight:400;font-stretch:100%;color:var(--muted)}
+.tbl{background:var(--panel);border:1px solid var(--line)}
+.thead,.trow{display:grid}
+.log .thead,.log .trow{grid-template-columns:30px minmax(0,1.25fr) minmax(0,1.6fr) repeat(3,minmax(0,.62fr))}
+.notes .thead,.notes .trow{grid-template-columns:40px minmax(0,1fr) minmax(0,1fr)}
+.thead{border-bottom:1.5px solid var(--line-strong);font-size:12.5px;color:var(--muted)}
+.thead>*{height:34px;display:flex;align-items:center;min-width:0;padding:0 9px;border-left:1px solid var(--line)}
+.thead>:first-child{border-left:0}
+.thead input{width:100%;height:100%;padding:0;border:0;background:transparent;text-align:center;font-size:12.5px;font-weight:600;color:var(--ink);outline:none}
+.thead input::placeholder{color:var(--muted);font-weight:500}
+.thead input:focus{box-shadow:inset 0 -2px 0 var(--maybe)}
+.trow{border-bottom:1px solid var(--line)}
+.trow:last-child{border-bottom:0}
+.idx{display:grid;place-items:center;font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
+.lbl{display:grid;place-items:center;font-weight:700;font-stretch:110%}
+.ti{display:block;width:100%;min-width:0;height:36px;padding:0 9px;border:0;border-left:1px solid var(--line);border-radius:0;background:transparent;font-size:14.5px;outline:none}
+.ti.c{text-align:center;padding:0 4px}
+.ti:focus{background:var(--tint-2);box-shadow:inset 0 -2px 0 var(--maybe)}
+.add{margin-top:10px}
+
+.score{background:var(--panel);border:1.5px solid var(--line-strong)}
+.srow{display:grid;grid-template-columns:24px minmax(0,1fr) auto 40px;align-items:center;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line)}
+#score-rows .srow:last-child{border-bottom:0}
+.sic{display:grid;place-items:center}
+.sic svg{width:20px;height:20px}
+.badge{font-size:10px;font-weight:800;font-stretch:90%;line-height:1.1;padding:1px 3px;border:1.5px solid currentColor;border-radius:2px}
+.slab{display:flex;flex-direction:column;min-width:0;line-height:1.25;font-weight:500}
+.slab small{font-size:12.5px;font-weight:400;color:var(--muted)}
+.stepper{display:inline-flex;height:32px;border:1px solid var(--line-strong);border-radius:3px;overflow:hidden}
+.stepper button{width:30px;border:0;background:transparent;font-size:17px;line-height:1;color:var(--muted);cursor:pointer}
+.stepper button:hover{background:var(--tint);color:var(--ink)}
+.stepper button:focus-visible{outline:2px solid var(--maybe);outline-offset:-2px}
+.stepper input{width:36px;border:0;border-left:1px solid var(--line);border-right:1px solid var(--line);background:transparent;text-align:center;font-weight:700;font-variant-numeric:tabular-nums;outline:none;-moz-appearance:textfield;appearance:textfield}
+.stepper input:focus{box-shadow:inset 0 -2px 0 var(--maybe)}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.pick{width:98px;height:32px;padding:0 8px;border:1px solid var(--line-strong);border-radius:3px;background:transparent;font-weight:700;cursor:pointer;outline:none}
+.pick:focus{border-color:var(--maybe)}
+.ssub{text-align:right;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+.ssub.zero{color:var(--faint);font-weight:500}
+.total{display:flex;justify-content:space-between;align-items:center;padding:12px 12px 14px;border-top:1.5px solid var(--line-strong)}
+.total span{font-size:16px;font-weight:700;font-stretch:115%}
+.total output{font-size:44px;font-weight:800;font-stretch:125%;line-height:1;font-variant-numeric:tabular-nums}
+
+/* ---------- phone ---------- */
+@media (max-width:640px){
+  .wrap{padding:18px 16px 44px}
+  .top{gap:18px;margin-bottom:22px}
+  .meta{width:100%;gap:12px 14px}
+  .fld-name{flex:1 1 150px}
+  .fld-code{flex:1 1 100px}
+  .fld-season{flex:1 1 90px}
+  .fld-name input,.fld-code input,.fld select{width:100%}
+  .btns{margin-left:auto}
+  .layout,.col{gap:30px}
+  .plate{margin:4px;outline-offset:3px}
+  .plate-h{padding:12px}
+  .wheel-wrap{padding:12px 4px 10px}
+  .key{padding:0 12px 12px;gap:6px 12px}
+  .legend{padding:12px}
+  .rules{grid-template-columns:1fr;padding:4px 4px 10px}
+}
+/* ---------- players & pawns ---------- */
+:root{--p-yellow:#f2c230;--p-blue:#3f80e8;--p-red:#e3473b;--p-purple:#9d5ce0}
+.players{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.pcount{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600}
+.pcount select{height:30px;padding:0 6px;border:1px solid var(--line-strong);border-radius:3px;background:transparent;font-weight:700;cursor:pointer}
+.pcount select option,.pcol option{background:var(--panel);color:var(--ink)}
+.pchips{display:flex;flex-wrap:wrap;gap:8px}
+.pchip{display:inline-flex;align-items:center;gap:2px;padding:2px 2px 2px 3px;border:1.5px solid var(--line);border-radius:999px}
+.pchip.active{border-color:var(--pc);box-shadow:0 0 0 1.5px var(--pc)}
+.pchip button{display:inline-flex;align-items:center;gap:7px;padding:3px 6px;border:0;border-radius:999px;background:transparent;font-size:13px;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums}
+.pchip button:focus-visible{outline:2px solid var(--maybe);outline-offset:-2px}
+.pcol{height:24px;padding:0 2px;border:0;background:transparent;font-size:12.5px;color:var(--muted);cursor:pointer}
+.disc{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--pc);box-shadow:0 0 0 1.5px var(--panel),0 0 0 2.5px rgba(0,0,0,.28)}
+.ptip{flex-basis:100%;font-size:12.5px;color:var(--faint)}
+.sec h2 #target-count.full{color:var(--ink);font-weight:600}
+.sec h2 #target-count.warn{color:var(--no);font-weight:700}
+.ti.bad{color:var(--no);box-shadow:inset 3px 0 0 var(--no)}
+.btns{flex-wrap:wrap}
+.btn:disabled{opacity:.4;cursor:default;background:transparent}
+@media (max-width:640px){
+  .players{padding:12px}
+}
+@media (prefers-reduced-motion:reduce){.wheel *{transition:none}}
+</style>
+</head>
+<body>
+
+<!-- Icon set (original line art) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-comet" viewBox="-12 -12 24 24">
+    <path d="M-7.2 1.4 L10 -10 L-1.2 7.4 Z" fill="currentColor" fill-opacity=".3"/>
+    <circle cx="-4.2" cy="4.4" r="4" fill="currentColor"/>
+  </symbol>
+  <symbol id="i-asteroid" viewBox="-12 -12 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M-8 -2.5 L-3.5 -8 L4 -7.5 L8.5 -2 L6.5 6 L-1 8.5 L-7.5 4.5 Z"/>
+      <path d="M-3.5 -8 L-1 -1.5 L8.5 -2 M-1 -1.5 L-1 8.5 M-1 -1.5 L-8 -2.5" stroke-opacity=".5"/>
+    </g>
+  </symbol>
+  <symbol id="i-dwarf" viewBox="-12 -12 24 24">
+    <circle r="7.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M0 -7.5 A7.5 7.5 0 0 1 0 7.5 A3.6 7.5 0 0 0 0 -7.5 Z" fill="currentColor"/>
+  </symbol>
+  <symbol id="i-cloud" viewBox="-12 -12 24 24">
+    <path d="M-6.5 5.5 H6.5 A3.8 3.8 0 0 0 6 -2 A5.2 5.2 0 1 0 -4 -2.6 A4.2 4.2 0 0 0 -6.5 5.5 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-planetx" viewBox="-12 -12 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" transform="rotate(-20)">
+      <path d="M-10.5 0 A10.5 3.4 0 0 1 10.5 0" stroke-opacity=".55"/>
+      <circle r="5.4" style="fill:var(--icon-bg,var(--panel))"/>
+      <path d="M-10.5 0 A10.5 3.4 0 0 0 10.5 0"/>
+    </g>
+  </symbol>
+  <symbol id="i-empty" viewBox="-12 -12 24 24">
+    <circle r="7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.9 2.336"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg class="mark" viewBox="-16 -16 32 32" aria-hidden="true">
+        <path d="M0 0 L0 -14 A14 14 0 0 1 12.12 -7 Z" fill="var(--maybe)" fill-opacity=".35"/>
+        <circle r="14" fill="none" stroke="currentColor" stroke-opacity=".4" stroke-width="1.5"/>
+        <circle r="8.5" fill="none" stroke="currentColor" stroke-opacity=".7" stroke-width="1.5"/>
+        <circle r="2.6" fill="currentColor"/>
+        <circle cx="6" cy="-10.4" r="2" fill="var(--maybe)"/>
+      </svg>
+      <div>
+        <h1>Survey Log</h1>
+        <p>Standard mode, 12 sectors</p>
+      </div>
+    </div>
+    <div class="meta">
+      <div class="fld fld-name"><label for="f-name">Name</label><input id="f-name" data-field="name" autocomplete="off"></div>
+      <div class="fld fld-code"><label for="f-code">Game code</label><input id="f-code" data-field="code" autocomplete="off" spellcheck="false"></div>
+      <div class="fld fld-season"><label for="f-season">Season</label>
+        <select id="f-season" data-field="season">
+          <option value="">Choose</option><option>Spring</option><option>Summer</option><option>Autumn</option><option>Winter</option>
+        </select>
+      </div>
+      <div class="btns">
+        <button class="btn" id="undo" type="button" title="Undo (Ctrl+Z)" disabled>Undo</button>
+        <button class="btn" id="redo" type="button" title="Redo (Ctrl+Shift+Z)" disabled>Redo</button>
+        <button class="btn" id="save-json" type="button" title="Download this game as a JSON file">Save</button>
+        <button class="btn" id="load-json" type="button" title="Open a game saved as a JSON file">Load</button>
+        <input type="file" id="file" accept=".json,application/json" hidden>
+        <button class="btn btn-icon" id="theme" type="button" aria-label="Switch light or dark theme" title="Switch light or dark theme">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+        </button>
+        <button class="btn" id="reset" type="button">Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <div class="col">
+      <section class="plate" aria-labelledby="h-grid">
+        <div class="plate-h">
+          <h2 id="h-grid">Sector wheel</h2>
+          <span>Each sector holds exactly one object</span>
+        </div>
+        <div class="players">
+          <label class="pcount">Players
+            <select id="pcount"><option value="2">2</option><option value="3">3</option><option value="4">4</option></select>
+          </label>
+          <div class="pchips" id="pchips"></div>
+          <span class="ptip">Pick a pawn, then tap a sector on the pawn track (the light ring just inside the numbers) to move it there. When pawns share a sector, the latest arrival is drawn on top.</span>
+        </div>
+        <div class="wheel-wrap">
+          <svg class="wheel" id="wheel" viewBox="-504 -504 1008 1008" role="group" aria-label="Sector wheel"></svg>
+        </div>
+        <div class="key" id="key"></div>
+        <div class="legend">
+          <span class="lg"><svg viewBox="-16 -16 32 32" aria-hidden="true"><path class="x1" d="M-9 -9L9 9M9 -9L-9 9"/></svg>Ruled out</span>
+          <span class="lg"><svg viewBox="-16 -16 32 32" aria-hidden="true"><circle class="ring2" r="12"/></svg>Possible</span>
+          <span class="lg"><svg viewBox="-16 -16 32 32" aria-hidden="true"><circle class="disc3" r="13"/></svg>Confirmed</span>
+          <span class="tip">Tap an icon to cycle through the marks. Shift-click or right-click steps back. Tap a number on the rim to light up that sector and the 5 after it, wrapping from 12 back to 1; tap it again to clear.</span>
+        </div>
+        <h3 class="rules-h">Placement rules</h3>
+        <ul class="rules" id="rules"></ul>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="sec log" aria-labelledby="h-log">
+        <h2 id="h-log">Action log <span id="target-count">Target used 0 of 2</span></h2>
+        <div class="tbl">
+          <div class="thead">
+            <span>#</span><span>Action</span><span>Result</span>
+            <span><input data-field="pname-1" placeholder="P1" aria-label="Player column 1 name" autocomplete="off"></span>
+            <span><input data-field="pname-2" placeholder="P2" aria-label="Player column 2 name" autocomplete="off"></span>
+            <span><input data-field="pname-3" placeholder="P3" aria-label="Player column 3 name" autocomplete="off"></span>
+          </div>
+          <div id="log-rows"></div>
+        </div>
+        <button class="btn add" id="add-row" type="button">Add a row</button>
+      </section>
+
+      <section class="sec notes" aria-labelledby="h-notes">
+        <h2 id="h-notes">Notes</h2>
+        <div class="tbl">
+          <div class="thead"><span></span><span>Research and conference</span><span>Other</span></div>
+          <div id="notes-rows"></div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-score">
+        <h2 id="h-score">Final score</h2>
+        <div class="score">
+          <div id="score-rows"></div>
+          <div class="total"><span>Total</span><output id="total">0</output></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<datalist id="actions">
+  <option value="Survey"></option>
+  <option value="Target"></option>
+  <option value="Research"></option>
+  <option value="Locate Planet X"></option>
+</datalist>
+
+<script>
+(() => {
+  'use strict';
+
+  const N = 12;
+  const SKY = 6;            // sectors lit when a sector number is tapped
+  const TARGET_LIMIT = 2;   // Target action: twice per game
+  const OBJECTS = [
+    { key:'C', name:'Comets',       n:2, icon:'comet',    only:[2,3,5,7,11], rule:'Only ever in sectors 2, 3, 5, 7 or 11.' },
+    { key:'A', name:'Asteroids',    n:4, icon:'asteroid', rule:'Every asteroid has at least one other asteroid beside it.' },
+    { key:'D', name:'Dwarf planet', n:1, icon:'dwarf',    rule:'Never beside Planet X.' },
+    { key:'G', name:'Gas clouds',   n:2, icon:'cloud',    rule:'Each has at least one truly empty sector beside it.' },
+    { key:'X', name:'Planet X',     n:1, icon:'planetx',  rule:'Never beside the dwarf planet. Shows up as empty when surveyed.' },
+    { key:'E', name:'Truly empty',  n:2, icon:'empty',    rule:'A survey for empty sectors also counts Planet X.' },
+  ];
+  const SCORE = [
+    { id:'first', label:'First to publish', note:'1 point each', pts:1, max:12 },
+    { id:'A', pts:2 }, { id:'C', pts:3 }, { id:'G', pts:4 }, { id:'D', pts:4 },
+    { id:'X', options:[10,8,6,4,2] },
+  ];
+  const NOTE_ROWS = [['A','A'],['B','B'],['C','C'],['D','D'],['E','E'],['F','F'],['X1','X₁']];
+  const MARKS = ['unmarked','ruled out','possible','confirmed'];
+  const COLOURS = ['yellow','blue','red','purple'];
+  const CNAME = { yellow:'Yellow', blue:'Blue', red:'Red', purple:'Purple' };
+  const KEY = 'survey-log:v1';
+
+  /* ---------- helpers ---------- */
+  const $ = id => document.getElementById(id);
+  const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+  const icon = name => `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-${name}" width="24" height="24"/></svg>`;
+  const allowed = (o, s) => !o.only || o.only.includes(s);
+  const wrapS = s => ((s - 1) % N + N) % N + 1;
+
+  /* ---------- state ---------- */
+  const blankPlayers = () => ({ count:4, colors:COLOURS.slice(), pos:[1,1,1,1], t:[1,2,3,4], clock:4, active:0 });
+  const blank = () => ({ grid: OBJECTS.map(() => Array(N).fill(0)), f:{}, rows:11, players:blankPlayers(), focus:null, theme:null });
+
+  function normalize(d) {
+    if (!d || typeof d !== 'object') return null;
+    if (!Array.isArray(d.grid) || d.grid.length !== OBJECTS.length ||
+        !d.grid.every(r => Array.isArray(r) && r.length === N)) return null;
+    const b = blank();
+    b.grid = d.grid.map(r => r.map(v => [0,1,2,3].includes(v) ? v : 0));
+    if (d.f && typeof d.f === 'object') for (const [k, v] of Object.entries(d.f)) if (typeof v === 'string') b.f[k] = v;
+    if (Number.isInteger(d.rows)) b.rows = Math.min(40, Math.max(11, d.rows));
+    const p = d.players;
+    if (p && typeof p === 'object') {
+      const P = b.players;
+      if ([2,3,4].includes(p.count)) P.count = p.count;
+      if (Array.isArray(p.colors) && p.colors.length === 4 && p.colors.every(c => COLOURS.includes(c)) && new Set(p.colors).size === 4) P.colors = p.colors.slice();
+      if (Array.isArray(p.pos) && p.pos.length === 4) P.pos = p.pos.map(v => Number.isInteger(v) && v >= 1 && v <= N ? v : 1);
+      if (Array.isArray(p.t) && p.t.length === 4) P.t = p.t.map((v, i) => Number.isFinite(v) ? v : i + 1);
+      P.clock = Math.max(...P.t, Number.isFinite(p.clock) ? p.clock : 0);
+      if (Number.isInteger(p.active) && p.active >= 0 && p.active < P.count) P.active = p.active;
+    }
+    if (Number.isInteger(d.focus) && d.focus >= 1 && d.focus <= N) b.focus = d.focus;
+    if (d.theme === 'light' || d.theme === 'dark') b.theme = d.theme;
+    return b;
+  }
+  function load() { try { return normalize(JSON.parse(localStorage.getItem(KEY))) || blank(); } catch (e) { return blank(); } }
+  let S = load();
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+  /* ---------- undo / redo ---------- */
+  const past = [], future = [];
+  let pending = null; // snapshot taken when a text field gains focus
+  const snap = () => JSON.stringify({ grid:S.grid, f:S.f, rows:S.rows, players:S.players });
+  function push(s) { past.push(s); if (past.length > 300) past.shift(); future.length = 0; histUI(); }
+  // Wrap every non-typing change so it can be undone
+  function change(fn) {
+    push(snap());
+    fn();
+    if (pending !== null) pending = snap();
+    save();
+  }
+  function restore(str) {
+    const d = normalize(Object.assign(JSON.parse(str), { focus:S.focus, theme:S.theme }));
+    if (!d) return;
+    S = d; save(); refreshAll();
+    if (pending !== null) pending = snap();
+  }
+  function undo() { if (!past.length) return; future.push(snap()); restore(past.pop()); histUI(); }
+  function redo() { if (!future.length) return; past.push(snap()); restore(future.pop()); histUI(); }
+  function histUI() { $('undo').disabled = !past.length; $('redo').disabled = !future.length; }
+  $('undo').addEventListener('click', undo);
+  $('redo').addEventListener('click', redo);
+  document.addEventListener('keydown', e => {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return; // let fields use their own undo
+    const k = e.key.toLowerCase();
+    if (k === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
+    else if ((k === 'z' && e.shiftKey) || k === 'y') { e.preventDefault(); redo(); }
+  });
+
+  /* ---------- theme ---------- */
+  const root = document.documentElement;
+  const applyTheme = () => S.theme ? root.setAttribute('data-theme', S.theme) : root.removeAttribute('data-theme');
+  applyTheme();
+  $('theme').addEventListener('click', () => {
+    const dark = S.theme ? S.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    S.theme = dark ? 'light' : 'dark';
+    applyTheme(); save();
+  });
+
+  /* ---------- sector wheel ---------- */
+  const wheel = $('wheel');
+  const TAU = Math.PI * 2;
+  // Radii in SVG units, from the outside in: number rim, pawn track, six object rings, result ring, hub
+  const G = { out:500, rimIn:456, trackIn:416, row:52, faceIn:104, hubIn:44, res:74, num:478, pawn:436, ico:30 };
+  // Object rings from the rim inward, like the paper sheet: Planet X outermost, comets innermost
+  const RINGS = ['X','E','G','D','A','C'].map(k => OBJECTS.findIndex(o => o.key === k));
+  const mid = s => (s - .5) / N * TAU;  // centre angle of sector s, clockwise from 12 o'clock
+  const pt = (r, a) => [+(r * Math.sin(a)).toFixed(2), +(-r * Math.cos(a)).toFixed(2)];
+  const xy = (r, a) => pt(r, a).join(' ');
+  const seg = (r0, r1, s) => {  // ring slice between radii r0 and r1 for sector s
+    const a0 = (s - 1) / N * TAU, a1 = s / N * TAU;
+    return `M${xy(r1, a0)}A${r1} ${r1} 0 0 1 ${xy(r1, a1)}L${xy(r0, a1)}A${r0} ${r0} 0 0 0 ${xy(r0, a0)}Z`;
+  };
+  const use = (name, z) => `<use href="#i-${name}" x="${-z / 2}" y="${-z / 2}" width="${z}" height="${z}"/>`;
+  const XMARK = '<path class="x1" d="M-14 -14L14 14M14 -14L-14 14"/>';
+  function mark(o, v) {
+    if (v === 3) return `<circle class="disc3" r="21"/>${use(o.icon, G.ico)}`;
+    if (v === 2) return `<circle class="ring2" r="21"/>${use(o.icon, G.ico)}`;
+    if (v === 1) return use(o.icon, G.ico) + XMARK;
+    return use(o.icon, G.ico);
+  }
+
+  {
+    let h = `<circle class="base" r="${G.rimIn}"/>`;
+    for (let s = 1; s <= N; s++) h += `<path class="wedge" d="${seg(G.faceIn, G.trackIn, s)}"/>`;
+    for (let s = 1; s <= N; s++)
+      h += `<g class="mres"><path class="hb" d="${seg(G.hubIn, G.faceIn, s)}"/><g class="mk" transform="translate(${xy(G.res, mid(s))})"></g><title></title></g>`;
+    for (let s = 1; s <= N; s++) RINGS.forEach((r, k) => {
+      if (!allowed(OBJECTS[r], s)) return;
+      const r1 = G.trackIn - k * G.row, [cx, cy] = pt(r1 - G.row / 2, mid(s));
+      h += `<g class="cell s0" role="button" tabindex="0" data-r="${r}" data-s="${s}">` +
+           `<path class="hit" d="${seg(r1 - G.row, r1, s)}"/><circle class="fring" cx="${cx}" cy="${cy}" r="25"/>` +
+           `<g class="mk" transform="translate(${cx} ${cy})"></g><title></title></g>`;
+    });
+    for (let s = 1; s <= N; s++)
+      h += `<g class="pslot" role="button" tabindex="0" data-s="${s}" aria-label="Move the selected pawn to sector ${s}">` +
+           `<path class="hit" d="${seg(G.trackIn, G.rimIn, s)}"/><g class="pawns"></g><title></title></g>`;
+    h += '<g class="lines">';
+    for (let k = 1; k < RINGS.length; k++) h += `<circle class="rl" r="${G.trackIn - k * G.row}"/>`;
+    for (let s = 0; s < N; s++) h += `<path class="sp" d="M${xy(G.hubIn, s / N * TAU)}L${xy(G.rimIn, s / N * TAU)}"/>`;
+    h += `<circle class="rs" r="${G.faceIn}"/><circle class="rs" r="${G.trackIn}"/></g>`;
+    h += `<circle class="hubc" r="${G.hubIn}"/><circle class="hubdot" r="6"/><text class="hubtxt" id="hubtxt" dy=".35em" text-anchor="middle"></text>`;
+    for (let s = 1; s <= N; s++) {
+      const [x, y] = pt(G.num, mid(s));
+      h += `<g class="rim" role="button" tabindex="0" data-s="${s}" aria-label="Sector ${s}: highlight it and the next ${SKY - 1} sectors">` +
+           `<path d="${seg(G.rimIn, G.out, s)}"/><text x="${x}" y="${y}" dy=".35em" text-anchor="middle">${s}</text><title>Sector ${s}</title></g>`;
+    }
+    wheel.innerHTML = h;
+  }
+  const q = sel => [...wheel.querySelectorAll(sel)];
+  const wedges = q('.wedge'), mres = q('.mres'), pslots = q('.pslot'), rims = q('.rim'), cellEls = q('.cell');
+  const hubtxt = $('hubtxt');
+
+  const keyEl = $('key');
+  keyEl.innerHTML = '<span class="key-h">Rings, from the rim inward</span>' +
+    RINGS.map(r => `<span class="ki">${icon(OBJECTS[r].icon)}${OBJECTS[r].name}<b class="ct" data-r="${r}"></b></span>`).join('') +
+    '<span class="ki" title="The object each sector must hold, or how many objects it could still hold">Centre ring: result</span>';
+  const counts = OBJECTS.map((o, r) => keyEl.querySelector(`.ct[data-r="${r}"]`));
+
+  function render() {
+    const f = S.focus;
+    const sky = f ? Array.from({ length:SKY }, (_, k) => wrapS(f + k)) : [];
+    wheel.classList.toggle('has-focus', !!f);
+    hubtxt.textContent = f ? `${f}–${wrapS(f + SKY - 1)}` : '';
+
+    for (let i = 0; i < N; i++) {
+      const s = i + 1, isF = f === s, isN = !isF && sky.includes(s);
+      const conf = [], cand = [];
+      OBJECTS.forEach((o, r) => {
+        if (!allowed(o, s)) return;
+        const v = S.grid[r][i];
+        if (v === 3) conf.push(r);
+        if (v !== 1) cand.push(r);
+      });
+      const bad = conf.length > 1 || cand.length === 0;
+
+      const rim = rims[i];
+      rim.classList.toggle('focus', isF);
+      rim.classList.toggle('near', isN);
+      rim.classList.toggle('conflict', bad);
+      rim.setAttribute('aria-pressed', String(isF));
+      for (const e of [wedges[i], pslots[i], mres[i]]) { e.classList.toggle('colf', isF); e.classList.toggle('coln', isN); }
+
+      const m = mres[i], mk = m.querySelector('.mk');
+      m.classList.remove('known', 'forced', 'bad');
+      let tip;
+      if (conf.length === 1 || (conf.length === 0 && cand.length === 1)) {
+        const o = OBJECTS[conf.length ? conf[0] : cand[0]];
+        m.classList.add(conf.length ? 'known' : 'forced');
+        mk.innerHTML = (conf.length ? '' : '<circle class="fd" r="18"/>') + use(o.icon, 26);
+        tip = conf.length ? `Sector ${s}: ${o.name}` : `Sector ${s}: only ${o.name} is left`;
+      } else if (bad) {
+        m.classList.add('bad');
+        mk.innerHTML = '<text dy=".35em" text-anchor="middle">!</text>';
+        tip = conf.length > 1 ? `Sector ${s}: more than one object confirmed` : `Sector ${s}: every object is ruled out`;
+      } else {
+        mk.innerHTML = `<text dy=".35em" text-anchor="middle">${cand.length}</text>`;
+        tip = `Sector ${s}: ${cand.length} objects still possible`;
+      }
+      m.querySelector('title').textContent = tip;
+    }
+
+    for (const c of cellEls) {
+      const r = +c.dataset.r, s = +c.dataset.s, o = OBJECTS[r], v = S.grid[r][s - 1];
+      const txt = `${o.name} in sector ${s}: ${MARKS[v]}`;
+      c.setAttribute('class', `cell s${v}`);
+      c.setAttribute('aria-label', txt);
+      c.querySelector('.mk').innerHTML = mark(o, v);
+      c.querySelector('title').textContent = txt;
+    }
+
+    OBJECTS.forEach((o, r) => {
+      const n = S.grid[r].filter((v, i) => v === 3 && allowed(o, i + 1)).length;
+      const ct = counts[r];
+      ct.textContent = `${n}/${o.n}`;
+      ct.classList.toggle('done', n === o.n);
+      ct.classList.toggle('over', n > o.n);
+    });
+  }
+
+  function activate(t, back) {
+    const p = t.closest('.pslot');
+    if (p) {
+      const s = +p.dataset.s, P = S.players, a = P.active;
+      if (P.pos[a] === s) return;
+      change(() => { P.pos[a] = s; P.t[a] = ++P.clock; });
+      renderPlayers(); return;
+    }
+    const h = t.closest('.rim');
+    if (h) { const s = +h.dataset.s; S.focus = S.focus === s ? null : s; save(); render(); return; }
+    const c = t.closest('.cell');
+    if (c) step(c, back ? -1 : 1);
+  }
+  wheel.addEventListener('click', e => activate(e.target, e.shiftKey));
+  wheel.addEventListener('contextmenu', e => {
+    const c = e.target.closest('.cell');
+    if (!c) return;
+    e.preventDefault(); step(c, -1);
+  });
+  wheel.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const t = e.target.closest('[role="button"]');
+    if (!t) return;
+    e.preventDefault(); activate(t, e.shiftKey);
+  });
+  function step(c, d) {
+    const r = +c.dataset.r, i = +c.dataset.s - 1;
+    change(() => { S.grid[r][i] = (S.grid[r][i] + d + 4) % 4; });
+    render();
+  }
+
+  /* ---------- players & pawns ---------- */
+  const pchips = $('pchips');
+  function renderPlayers() {
+    const P = S.players;
+    $('pcount').value = String(P.count);
+    pchips.innerHTML = '';
+    for (let i = 0; i < P.count; i++) {
+      const c = P.colors[i];
+      const chip = el('div', 'pchip' + (i === P.active ? ' active' : ''));
+      chip.style.setProperty('--pc', `var(--p-${c})`);
+      chip.innerHTML =
+        `<button type="button" data-i="${i}" aria-pressed="${i === P.active}" aria-label="Select the ${CNAME[c]} pawn, now in sector ${P.pos[i]}"><span class="disc"></span>Sector ${P.pos[i]}</button>` +
+        `<select class="pcol" data-i="${i}" aria-label="Colour for player ${i + 1}">${COLOURS.map(k => `<option value="${k}"${k === c ? ' selected' : ''}>${CNAME[k]}</option>`).join('')}</select>`;
+      pchips.appendChild(chip);
+    }
+    pslots.forEach((b, idx) => {
+      const s = idx + 1, a = mid(s), [cx, cy] = pt(G.pawn, a), here = [];
+      for (let i = 0; i < P.count; i++) if (P.pos[i] === s) here.push(i);
+      here.sort((x, y) => P.t[x] - P.t[y]); // most recent arrival drawn last (on top)
+      b.querySelector('.pawns').innerHTML = here.map((i, k) => {
+        const off = (k - (here.length - 1) / 2) * 17; // spread along the track
+        const x = (cx + off * Math.cos(a)).toFixed(1), y = (cy + off * Math.sin(a)).toFixed(1);
+        return `<g class="pawn" style="--pc:var(--p-${P.colors[i]})" transform="translate(${x} ${y})"><circle class="h1" r="14"/><circle class="h2" r="12.5"/><circle class="pc" r="10.5"/></g>`;
+      }).join('');
+      b.querySelector('title').textContent = here.length
+        ? `Sector ${s}: ${here.map(i => CNAME[P.colors[i]]).join(', ')}${here.length > 1 ? ' (latest arrival on top)' : ''}`
+        : `Sector ${s}`;
+    });
+  }
+  pchips.addEventListener('click', e => {
+    const b = e.target.closest('button[data-i]');
+    if (!b) return;
+    S.players.active = +b.dataset.i; save(); renderPlayers();
+  });
+  pchips.addEventListener('change', e => {
+    const sel = e.target.closest('select.pcol');
+    if (!sel) return;
+    const i = +sel.dataset.i, c = sel.value;
+    change(() => {
+      const P = S.players, j = P.colors.indexOf(c);
+      if (j !== -1 && j !== i) P.colors[j] = P.colors[i]; // swap so colours stay unique
+      P.colors[i] = c;
+    });
+    renderPlayers();
+  });
+  $('pcount').addEventListener('change', e => {
+    const n = +e.target.value;
+    change(() => { S.players.count = n; if (S.players.active >= n) S.players.active = 0; });
+    renderPlayers();
+  });
+
+  /* ---------- placement rules ---------- */
+  const rules = $('rules');
+  OBJECTS.forEach(o => {
+    rules.appendChild(el('li', null, `${icon(o.icon)}<div><b>${o.name}</b> <span class="q">(${o.n})</span><p>${o.rule}</p></div>`));
+  });
+
+  /* ---------- action log ---------- */
+  const logRows = $('log-rows');
+  function buildLog() {
+    logRows.innerHTML = '';
+    for (let i = 0; i < S.rows; i++) {
+      const n = i + 1;
+      logRows.appendChild(el('div', 'trow',
+        `<span class="idx">${n}</span>` +
+        `<input class="ti" data-field="log-${i}-a" list="actions" aria-label="Action, row ${n}" autocomplete="off">` +
+        `<input class="ti" data-field="log-${i}-r" aria-label="Result, row ${n}" autocomplete="off">` +
+        [1, 2, 3].map(p => `<input class="ti c" data-field="log-${i}-p${p}" aria-label="Player column ${p}, row ${n}" autocomplete="off">`).join('')
+      ));
+    }
+  }
+  $('add-row').addEventListener('click', () => {
+    if (S.rows >= 40) return;
+    change(() => { S.rows++; });
+    buildLog(); hydrate(); updateTarget();
+    logRows.lastElementChild.querySelector('input').focus();
+  });
+  function updateTarget() {
+    let used = 0;
+    logRows.querySelectorAll('input[data-field$="-a"]').forEach(inp => {
+      const isT = /^\s*target\b/i.test(inp.value);
+      if (isT) used++;
+      inp.classList.toggle('bad', isT && used > TARGET_LIMIT);
+      inp.title = isT && used > TARGET_LIMIT ? `Target can only be used ${TARGET_LIMIT} times per game` : '';
+    });
+    const t = $('target-count');
+    t.textContent = used > TARGET_LIMIT
+      ? `Target used ${used} times, only ${TARGET_LIMIT} allowed`
+      : `Target used ${used} of ${TARGET_LIMIT}`;
+    t.classList.toggle('warn', used > TARGET_LIMIT);
+    t.classList.toggle('full', used === TARGET_LIMIT);
+  }
+
+  /* ---------- notes ---------- */
+  const notes = $('notes-rows');
+  NOTE_ROWS.forEach(([k, label]) => {
+    notes.appendChild(el('div', 'trow',
+      `<span class="lbl">${label}</span>` +
+      `<input class="ti" data-field="note-${k}" aria-label="Research and conference note ${label}" autocomplete="off">` +
+      `<input class="ti" data-field="other-${k}" aria-label="Other note ${label}" autocomplete="off">`
+    ));
+  });
+
+  /* ---------- score ---------- */
+  const scoreEl = $('score-rows');
+  SCORE.forEach(sc => {
+    const o = OBJECTS.find(x => x.key === sc.id);
+    const label = o ? o.name : sc.label;
+    const note = sc.options ? '10, 8, 6, 4 or 2 points' : (sc.note || `${sc.pts} points each`);
+    const ic = o ? icon(o.icon) : '<span class="badge">1st</span>';
+    const ctl = sc.options
+      ? `<select class="pick" data-field="sc-${sc.id}" aria-label="${label} points"><option value="0">None</option>${sc.options.map(v => `<option value="${v}">${v}</option>`).join('')}</select>`
+      : `<span class="stepper"><button type="button" data-d="-1" aria-label="One fewer ${label}">−</button><input type="number" inputmode="numeric" min="0" max="${sc.max ?? o.n}" value="0" data-field="sc-${sc.id}" aria-label="${label} scored"><button type="button" data-d="1" aria-label="One more ${label}">+</button></span>`;
+    scoreEl.appendChild(el('div', 'srow',
+      `<span class="sic">${ic}</span><span class="slab">${label}<small>${note}</small></span>${ctl}<span class="ssub" data-sub="${sc.id}">0</span>`
+    ));
+  });
+  scoreEl.addEventListener('click', e => {
+    const b = e.target.closest('button[data-d]');
+    if (!b) return;
+    const inp = b.parentElement.querySelector('input');
+    const v = Math.min(+inp.max, Math.max(0, (parseInt(inp.value, 10) || 0) + +b.dataset.d));
+    if (String(v) === inp.value) return;
+    change(() => { inp.value = v; S.f[inp.dataset.field] = String(v); });
+    updateScore();
+  });
+  function updateScore() {
+    let total = 0;
+    SCORE.forEach(sc => {
+      const v = Math.max(0, parseInt(S.f['sc-' + sc.id] || '0', 10) || 0);
+      const pts = sc.options ? v : v * sc.pts;
+      total += pts;
+      const out = scoreEl.querySelector(`[data-sub="${sc.id}"]`);
+      out.textContent = pts;
+      out.classList.toggle('zero', pts === 0);
+    });
+    $('total').textContent = total;
+  }
+
+  /* ---------- text fields: save, restore, undo ---------- */
+  function hydrate() {
+    document.querySelectorAll('[data-field]').forEach(inp => {
+      const k = inp.dataset.field;
+      inp.value = k in S.f ? S.f[k] : (inp.tagName === 'SELECT' ? inp.options[0].value : inp.defaultValue);
+    });
+  }
+  document.addEventListener('focusin', e => { if (e.target.dataset && e.target.dataset.field) pending = snap(); });
+  document.addEventListener('focusout', e => { if (e.target.dataset && e.target.dataset.field) pending = null; });
+  document.addEventListener('input', e => {
+    const t = e.target;
+    if (!t.dataset || !t.dataset.field) return;
+    S.f[t.dataset.field] = t.value;
+    save();
+    const k = t.dataset.field;
+    if (k.startsWith('sc-')) updateScore();
+    if (/^log-\d+-a$/.test(k)) updateTarget();
+  });
+  // A finished edit (field left, or select changed) becomes one undo step
+  document.addEventListener('change', e => {
+    const t = e.target;
+    if (!t.dataset || !t.dataset.field || pending === null) return;
+    const now = snap();
+    if (pending !== now) push(pending);
+    pending = now;
+  });
+
+  /* ---------- JSON save / load ---------- */
+  function flash(btn, text, bad) {
+    if (!btn.dataset.label) btn.dataset.label = btn.textContent;
+    btn.textContent = text;
+    btn.classList.toggle('armed', !!bad);
+    clearTimeout(btn._t);
+    btn._t = setTimeout(() => { btn.textContent = btn.dataset.label; btn.classList.remove('armed'); }, 1800);
+  }
+  $('save-json').addEventListener('click', () => {
+    const data = { app:'survey-log', version:1, savedAt:new Date().toISOString(), state:JSON.parse(snap()) };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+    const d = new Date();
+    const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const code = (S.f.code || '').trim().replace(/[^\w-]+/g, '-');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `survey-log-${code ? code + '-' : ''}${stamp}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    flash($('save-json'), 'Saved');
+  });
+  $('load-json').addEventListener('click', () => $('file').click());
+  $('file').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const raw = JSON.parse(await file.text());
+      const st = raw && raw.state ? raw.state : raw;
+      const d = normalize(Object.assign({}, st, { theme:S.theme, focus:null }));
+      if (!d) throw new Error('bad file');
+      change(() => { S = d; });
+      refreshAll();
+      flash($('load-json'), 'Loaded');
+    } catch (err) {
+      flash($('load-json'), 'Not a save file', true);
+    }
+  });
+
+  /* ---------- reset (tap twice, can be undone) ---------- */
+  const resetBtn = $('reset');
+  let armed = null;
+  const disarm = () => { clearTimeout(armed); armed = null; resetBtn.textContent = 'Reset'; resetBtn.classList.remove('armed'); };
+  resetBtn.addEventListener('click', () => {
+    if (!armed) {
+      resetBtn.textContent = 'Tap again to reset';
+      resetBtn.classList.add('armed');
+      armed = setTimeout(disarm, 3000);
+      return;
+    }
+    disarm();
+    change(() => {
+      const nb = blank(), P = S.players;
+      nb.theme = S.theme;
+      if (S.f.name) nb.f.name = S.f.name;
+      nb.players.count = P.count;
+      nb.players.colors = P.colors.slice();
+      S = nb;
+    });
+    refreshAll();
+  });
+
+  /* ---------- go ---------- */
+  function refreshAll() { buildLog(); hydrate(); renderPlayers(); render(); updateScore(); updateTarget(); }
+  refreshAll();
+  histUI();
+})();
+</script>
+</body>
+</html>
