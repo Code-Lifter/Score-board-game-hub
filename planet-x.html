@@ -8,44 +8,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
 <style>
-:root{
-  color-scheme:light;
-  --bg:#edf2f8; --panel:#f8fafd; --ink:#16386b; --muted:#4a6491; --faint:#8fa4c4;
-  --line:#cbd8ea; --line-strong:#8ca5c9; --grid-line:rgba(22,56,107,.055);
-  --no:#c4432f; --maybe:#9a6200; --on-ink:#f8fafd;
-  --tint:rgba(22,56,107,.085); --tint-2:rgba(22,56,107,.04);
-  --f:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    color-scheme:dark;
-    --bg:#153867; --panel:#1a4177; --ink:#eef4ff; --muted:#b1c4e4; --faint:#7d99c4;
-    --line:#38609a; --line-strong:#7896c5; --grid-line:rgba(238,244,255,.05);
-    --no:#ff8e7c; --maybe:#ffd06a; --on-ink:#153867;
-    --tint:rgba(238,244,255,.12); --tint-2:rgba(238,244,255,.055);
-  }
-}
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --bg:#153867; --panel:#1a4177; --ink:#eef4ff; --muted:#b1c4e4; --faint:#7d99c4;
-  --line:#38609a; --line-strong:#7896c5; --grid-line:rgba(238,244,255,.05);
-  --no:#ff8e7c; --maybe:#ffd06a; --on-ink:#153867;
-  --tint:rgba(238,244,255,.12); --tint-2:rgba(238,244,255,.055);
-}
-
+:root{color-scheme:light;--bg:#edf2f8;--panel:#f8fafd;--ink:#16386b;--muted:#4a6491;--faint:#8fa4c4;--line:#cbd8ea;--line-strong:#8ca5c9;--grid-line:rgba(22,56,107,.055);--no:#c4432f;--maybe:#9a6200;--on-ink:#f8fafd;--tint:rgba(22,56,107,.085);--tint-2:rgba(22,56,107,.04);--earth:#16305d;--sky-ico:#dfe8fa;--p-yellow:#f2c230;--p-blue:#3f80e8;--p-red:#e3473b;--p-purple:#9d5ce0;--f:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#153867;--panel:#1a4177;--ink:#eef4ff;--muted:#b1c4e4;--faint:#7d99c4;--line:#38609a;--line-strong:#7896c5;--grid-line:rgba(238,244,255,.05);--no:#ff8e7c;--maybe:#ffd06a;--on-ink:#153867;--tint:rgba(238,244,255,.12);--tint-2:rgba(238,244,255,.055);--earth:#0b1d3b}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#153867;--panel:#1a4177;--ink:#eef4ff;--muted:#b1c4e4;--faint:#7d99c4;--line:#38609a;--line-strong:#7896c5;--grid-line:rgba(238,244,255,.05);--no:#ff8e7c;--maybe:#ffd06a;--on-ink:#153867;--tint:rgba(238,244,255,.12);--tint-2:rgba(238,244,255,.055);--earth:#0b1d3b}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{
-  margin:0; min-height:100vh; color:var(--ink);
-  background-color:var(--bg);
-  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
-  background-size:24px 24px;
-  font:400 15px/1.45 var(--f); -webkit-font-smoothing:antialiased;
-}
+body{margin:0;min-height:100vh;color:var(--ink);background-color:var(--bg);background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:24px 24px;font:400 15px/1.45 var(--f);-webkit-font-smoothing:antialiased}
 button,input,select{font:inherit;color:inherit}
+option{background:var(--panel);color:var(--ink)}
 .wrap{max-width:1320px;margin:0 auto;padding:28px 16px 64px}
-
-/* ---------- header ---------- */
 .top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 32px;margin-bottom:30px}
 .brand{display:flex;align-items:center;gap:14px}
 .mark{width:48px;height:48px;flex:none}
@@ -56,47 +27,41 @@ button,input,select{font:inherit;color:inherit}
 .fld label{font-size:12.5px;color:var(--muted)}
 .fld input,.fld select{height:32px;border:0;border-bottom:1.5px solid var(--line-strong);border-radius:0;background:transparent;padding:0 2px;font-size:15px;font-weight:500;outline:none}
 .fld input:focus,.fld select:focus{border-bottom-color:var(--maybe)}
-.fld-name input{width:170px}
-.fld-code input{width:120px;letter-spacing:.04em}
-.fld select{width:110px;cursor:pointer}
-.fld select option,.pick option{background:var(--panel);color:var(--ink)}
-.btns{display:flex;gap:8px}
+.fld-name input{width:170px}.fld-code input{width:120px;letter-spacing:.04em}.fld select{width:110px;cursor:pointer}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
 .btn{height:34px;padding:0 12px;border:1.5px solid var(--line-strong);border-radius:3px;background:transparent;font-weight:600;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .btn:hover{background:var(--tint)}
 .btn:focus-visible{outline:2px solid var(--maybe);outline-offset:2px}
+.btn:disabled{opacity:.4;cursor:default;background:transparent}
 .btn.armed{background:var(--no);border-color:var(--no);color:#fff}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
+.btn.primary:hover{background:var(--muted);border-color:var(--muted)}
+.btn.primary:disabled{background:var(--ink);color:var(--on-ink);opacity:.35}
+.btn.good{border-color:var(--ink)}.btn.bad{border-color:var(--no);color:var(--no)}
+.btn.mini{height:28px;padding:0 10px;font-size:12.5px}
 .btn-icon{width:34px;padding:0}
-.btn svg{width:18px;height:18px}
-
-/* ---------- layout ---------- */
+.btn svg{width:18px;height:18px;flex:none}
 .layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px;align-items:start}
 @media (max-width:1060px){.layout{grid-template-columns:minmax(0,1fr)}}
 .col{display:flex;flex-direction:column;gap:34px;min-width:0}
-
-/* ---------- the plate (sector wheel) ---------- */
 .plate{margin:6px;background:var(--panel);border:1.5px solid var(--line-strong);outline:1px solid var(--line);outline-offset:5px}
 .plate-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px;padding:14px 16px 12px;border-bottom:1.5px solid var(--line-strong)}
 .plate-h h2{margin:0;font-size:18px;font-weight:700;font-stretch:115%}
 .plate-h span{font-size:13px;color:var(--muted)}
-
+.plate-h b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
 .wheel-wrap{display:flex;justify-content:center;padding:22px 16px 16px}
 .wheel{display:block;width:100%;max-width:680px;height:auto;overflow:visible;font-family:var(--f);user-select:none;-webkit-user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .wheel [role=button]{cursor:pointer;outline:none}
 .wheel .base{fill:var(--panel)}
-.wheel .wedge,.wheel .hit,.mres .hb{fill:transparent;transition:fill .12s}
-.wedge.coln,.pslot.coln .hit,.mres.coln .hb{fill:var(--tint-2)}
-.wedge.colf,.pslot.colf .hit,.mres.colf .hb{fill:var(--tint)}
-@media (hover:hover){
-  .cell:hover .hit{fill:var(--tint-2)}
-  .pslot:hover .hit{fill:var(--tint)}
-  .rim:hover path{fill:var(--muted);stroke:var(--muted)}
-}
+.wheel .wedge,.wheel .ewedge,.wheel .hit,.mres .hb{fill:transparent;transition:fill .12s}
+.wedge.coln,.ewedge.coln,.pslot.coln .hit,.mres.coln .hb{fill:var(--tint-2)}
+.wedge.colf,.ewedge.colf,.pslot.colf .hit,.mres.colf .hb{fill:var(--tint)}
+@media (hover:hover){.cell:hover .hit{fill:var(--tint-2)}.pslot:hover .hit{fill:var(--tint)}.rim:hover path{fill:var(--muted);stroke:var(--muted)}}
 .wheel .lines{fill:none;pointer-events:none;stroke-linecap:round}
 .wheel .rl{stroke:var(--line);stroke-width:1.5}
 .wheel .sp{stroke:var(--line-strong);stroke-width:1.5;stroke-opacity:.8}
+.wheel .esp{stroke:var(--line);stroke-width:1}
 .wheel .rs{stroke:var(--line-strong);stroke-width:2.5}
-
-/* marks (also used by the legend) */
 .x1{fill:none;stroke:var(--no);stroke-width:3.5;stroke-linecap:round}
 .ring2{fill:none;stroke:var(--maybe);stroke-width:2.5}
 .disc3{fill:var(--ink)}
@@ -106,8 +71,6 @@ button,input,select{font:inherit;color:inherit}
 .cell.s3 .mk{color:var(--on-ink);--icon-bg:var(--ink)}
 .wheel .fring{fill:none;stroke:none}
 .cell:focus-visible .fring,.pslot:focus-visible .hit{stroke:var(--maybe);stroke-width:3.5}
-
-/* numbered rim */
 .rim path{fill:var(--ink);stroke:var(--ink);stroke-width:1;transition:fill .12s,stroke .12s}
 .rim text{fill:var(--on-ink);font-size:26px;font-weight:700;font-stretch:112%;font-variant-numeric:tabular-nums;pointer-events:none}
 .rim.near path{fill:var(--muted);stroke:var(--muted)}
@@ -115,49 +78,58 @@ button,input,select{font:inherit;color:inherit}
 .rim.conflict path{fill:var(--no);stroke:var(--no)}
 .rim.focus.conflict path{stroke:var(--maybe);stroke-width:7}
 .rim:focus-visible path{stroke:var(--maybe);stroke-width:5}
-
-/* pawns on the track */
-.pawn{pointer-events:none}
-.pawn .h1{fill:rgba(0,0,0,.28)}
-.pawn .h2{fill:var(--panel)}
-.pawn .pc{fill:var(--pc)}
-
-/* centre result ring */
+.pawn{pointer-events:none}.pawn .h1{fill:rgba(0,0,0,.28)}.pawn .h2{fill:var(--panel)}.pawn .pc{fill:var(--pc)}
 .mres .mk{color:var(--ink)}
 .mres.forced use{opacity:.5}
 .mres .fd{fill:none;stroke:var(--line-strong);stroke-width:1.5;stroke-dasharray:4 3}
 .mres text{fill:var(--faint);font-size:21px;font-weight:600;font-variant-numeric:tabular-nums}
 .mres.bad text{fill:var(--no);font-size:28px;font-weight:800}
-.wheel .hubc{fill:var(--panel);stroke:var(--line-strong);stroke-width:2.5}
-.wheel .hubdot{fill:var(--line-strong)}
-.wheel.has-focus .hubdot{display:none}
-.wheel .hubtxt{fill:var(--ink);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
-
-/* ring key */
+.earth .dark{fill:var(--earth)}
+.earth .star{fill:#fff;opacity:.8}
+.earth .arrow{fill:#f2c230;stroke:var(--earth);stroke-width:1.5;stroke-linejoin:round}
+.wheel .sun-glow{fill:url(#g-glow);pointer-events:none}
+.wheel .rays{fill:#ffb02e;opacity:.9;pointer-events:none}
+.wheel .sun{fill:url(#g-sun)}
+.wheel .sun-ring{fill:none;stroke:#fff4c9;stroke-opacity:.5;stroke-width:1.5;stroke-dasharray:2 6;pointer-events:none}
+.eico{color:var(--ink)}.eico.hid{color:var(--sky-ico)}
+.eico .halo{fill:none;stroke:none}
+.eico.next .halo{fill:var(--maybe);fill-opacity:.18;stroke:var(--maybe);stroke-width:2}
+.eico.conf.done{opacity:.4}
 .key{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;padding:0 16px 14px;font-size:13px;color:var(--muted)}
 .key-h{flex-basis:100%;text-align:center;font-size:12.5px;color:var(--faint)}
 .ki{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .ki svg{width:18px;height:18px;flex:none;color:var(--ink)}
 .ki .ct{font-weight:500;font-variant-numeric:tabular-nums;color:var(--faint)}
-.ki .ct.done{color:var(--ink);font-weight:700}
-.ki .ct.over{color:var(--no);font-weight:700}
-
+.ki .ct.done{color:var(--ink);font-weight:700}.ki .ct.over{color:var(--no);font-weight:700}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;padding:12px 16px;border-top:1.5px solid var(--line-strong);font-size:13px;color:var(--muted)}
 .lg{display:inline-flex;align-items:center;gap:7px}
 .lg svg{width:22px;height:22px;flex:none}
 .tip{flex-basis:100%;color:var(--faint);font-size:12.5px}
-
 .rules-h{margin:0;padding:14px 16px 2px;border-top:1px solid var(--line);font-size:14.5px;font-weight:700;font-stretch:110%}
 .rules{list-style:none;margin:0;padding:4px 8px 12px;display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
 .rules li{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:8px}
 .rules svg{width:20px;height:20px;margin-top:1px}
-.rules b{font-weight:600}
-.rules .q{color:var(--muted);font-weight:400}
+.rules b{font-weight:600}.rules .q{color:var(--muted);font-weight:400}
 .rules p{margin:1px 0 0;color:var(--muted);font-size:13.5px;line-height:1.4}
-
-/* ---------- sections on the right ---------- */
+.players{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.pcount{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600}
+.pcount select{height:30px;padding:0 6px;border:1px solid var(--line-strong);border-radius:3px;background:transparent;font-weight:700;cursor:pointer}
+.pchips{display:flex;flex-wrap:wrap;gap:8px}
+.pchip{display:inline-flex;align-items:center;gap:2px;padding:2px 2px 2px 3px;border:1.5px solid var(--line);border-radius:999px}
+.pchip.active{border-color:var(--pc);box-shadow:0 0 0 1.5px var(--pc)}
+.pchip button{display:inline-flex;align-items:center;gap:7px;padding:3px 6px;border:0;border-radius:999px;background:transparent;font-size:13px;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums}
+.pchip button:focus-visible{outline:2px solid var(--maybe);outline-offset:-2px}
+.pchip .nx{padding:0 6px;border-radius:999px;background:var(--ink);color:var(--on-ink);font-size:10.5px;font-weight:800;line-height:16px;text-transform:uppercase;letter-spacing:.04em}
+.pcol{height:24px;padding:0 2px;border:0;background:transparent;font-size:12.5px;color:var(--muted);cursor:pointer}
+.disc{display:inline-block;flex:none;width:14px;height:14px;border-radius:50%;background:var(--pc);box-shadow:0 0 0 1.5px var(--panel),0 0 0 2.5px rgba(0,0,0,.28)}
+.pmoves{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;flex-basis:100%}
+.pmoves .lab{font-size:13px;font-weight:600;color:var(--muted);margin-right:2px}
+.pmoves .btn{height:30px;padding:0 9px;font-size:12.5px}
+.pmoves .btn b{font-weight:800;font-variant-numeric:tabular-nums}
+.ptip{flex-basis:100%;font-size:12.5px;color:var(--faint)}
 .sec h2{margin:0 0 12px;padding-bottom:8px;border-bottom:1.5px solid var(--line-strong);display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:18px;font-weight:700;font-stretch:115%}
-.sec h2 span{font-size:13px;font-weight:400;font-stretch:100%;color:var(--muted)}
+.sec h2 span{font-size:13px;font-weight:400;font-stretch:100%;color:var(--muted);text-align:right}
+.sec h2 .btn{align-self:center}
 .tbl{background:var(--panel);border:1px solid var(--line)}
 .thead,.trow{display:grid}
 .log .thead,.log .trow{grid-template-columns:30px minmax(0,1.25fr) minmax(0,1.6fr) repeat(3,minmax(0,.62fr))}
@@ -168,20 +140,66 @@ button,input,select{font:inherit;color:inherit}
 .thead input{width:100%;height:100%;padding:0;border:0;background:transparent;text-align:center;font-size:12.5px;font-weight:600;color:var(--ink);outline:none}
 .thead input::placeholder{color:var(--muted);font-weight:500}
 .thead input:focus{box-shadow:inset 0 -2px 0 var(--maybe)}
-.trow{border-bottom:1px solid var(--line)}
-.trow:last-child{border-bottom:0}
+.trow{border-bottom:1px solid var(--line)}.trow:last-child{border-bottom:0}
 .idx{display:grid;place-items:center;font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
 .lbl{display:grid;place-items:center;font-weight:700;font-stretch:110%}
 .ti{display:block;width:100%;min-width:0;height:36px;padding:0 9px;border:0;border-left:1px solid var(--line);border-radius:0;background:transparent;font-size:14.5px;outline:none}
 .ti.c{text-align:center;padding:0 4px}
 .ti:focus{background:var(--tint-2);box-shadow:inset 0 -2px 0 var(--maybe)}
+.ti.bad{color:var(--no);box-shadow:inset 3px 0 0 var(--no)}
 .add{margin-top:10px}
-
+.sec h2 #target-count.full{color:var(--ink);font-weight:600}
+.sec h2 #target-count.warn{color:var(--no);font-weight:700}
+.hyp-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;margin-bottom:10px}
+.you{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600}
+.you select{height:30px;padding:0 6px;border:1px solid var(--line-strong);border-radius:3px;background:transparent;font-weight:700;cursor:pointer}
+.supply{display:flex;flex-wrap:wrap;gap:6px 14px}
+.sup{display:inline-flex;align-items:center;gap:3px}
+.sup svg{width:18px;height:18px;margin-right:2px}
+.sup i{width:11px;height:11px;border:1.5px solid var(--line-strong);border-radius:2px}
+.sup i.u{background:var(--ink);border-color:var(--ink)}
+.sup i.st{border-style:dashed;border-color:var(--maybe)}
+.hgrid{display:grid;grid-template-columns:40px repeat(12,minmax(0,1fr));background:var(--panel);border:1px solid var(--line)}
+.hgrid>*{min-width:0;min-height:40px;border-left:1px solid var(--line);border-top:1px solid var(--line);display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:3px;padding:3px 1px}
+.hgrid .corner{border:0;min-height:28px}
+.hgrid .hh{min-height:28px;border-top:0;font-size:12px;font-weight:600;color:var(--muted)}
+.hgrid .rlab{border-left:0;flex-direction:column;flex-wrap:nowrap;align-items:center;gap:0;font-size:13px;font-weight:700;color:var(--muted);line-height:1.1}
+.hgrid .rlab svg{width:16px;height:16px}
+.hgrid .rlab small{font-size:9.5px;font-weight:500}
+.hgrid .r3{background:var(--tint-2)}
+.hgrid button{border:0;border-left:1px solid var(--line);border-top:1px solid var(--line);border-radius:0;background:transparent;cursor:pointer}
+.hgrid button:hover{background:var(--tint)}
+.hgrid button:disabled{cursor:default;background:repeating-linear-gradient(45deg,transparent 0 4px,var(--tint-2) 4px 8px)}
+.hgrid button:focus-visible{outline:2px solid var(--maybe);outline-offset:-2px}
+.plan{width:22px;height:22px;border:1.5px dashed var(--maybe);border-radius:50%;display:grid;place-items:center;color:var(--maybe)}
+.plan svg{width:15px;height:15px}
+.tk{position:relative;width:18px;height:18px;flex:none;border-radius:50%;border:2px solid var(--pc);background:var(--panel);display:inline-grid;place-items:center}
+.tk svg{width:12px;height:12px}
+.tk.fd{background:var(--pc)}
+.tk .ck{position:absolute;right:-6px;bottom:-5px;width:12px;height:12px;border-radius:50%;background:var(--ink);color:var(--on-ink);display:grid;place-items:center;box-shadow:0 0 0 1.5px var(--panel)}
+.tk .ck svg{width:9px;height:9px}
+.res{width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--on-ink);--icon-bg:var(--ink);display:grid;place-items:center}
+.res svg{width:15px;height:15px}
+.nope{position:relative;width:15px;height:15px;color:var(--faint)}
+.nope svg{width:15px;height:15px;display:block}
+.nope::after{content:'';position:absolute;left:-1px;right:-1px;top:50%;height:2px;margin-top:-1px;background:var(--no);transform:rotate(-45deg)}
+.htip{margin:8px 0 0;font-size:12.5px;color:var(--faint)}
+.hact{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tlog{margin-top:14px}
+.tlog summary{cursor:pointer;font-weight:600;font-size:14px;padding:4px 0;color:var(--muted)}
+.tlog .tbl{margin-top:6px;overflow-x:auto}
+.tlog .thead,.tlog .trow{grid-template-columns:46px minmax(0,1.35fr) 56px minmax(0,1.3fr) 50px minmax(0,1.1fr) 32px;min-width:430px}
+.tcell{display:flex;align-items:center;padding:0 8px;border-left:1px solid var(--line);font-size:13.5px;min-width:0;white-space:nowrap;overflow:hidden}
+.tsel{width:100%;min-width:0;height:36px;border:0;border-left:1px solid var(--line);border-radius:0;background:transparent;padding:0 4px;font-size:13.5px;outline:none;cursor:pointer}
+.tsel:focus{background:var(--tint-2);box-shadow:inset 0 -2px 0 var(--maybe)}
+.tdel{border:0;border-left:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;font-size:17px;line-height:1}
+.tdel:hover{color:var(--no)}
+.tempty{padding:12px;color:var(--faint);font-size:13.5px}
+.wh{display:inline-flex;align-items:center;gap:6px;font-weight:600;min-width:0}
 .score{background:var(--panel);border:1.5px solid var(--line-strong)}
 .srow{display:grid;grid-template-columns:24px minmax(0,1fr) auto 40px;align-items:center;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line)}
 #score-rows .srow:last-child{border-bottom:0}
-.sic{display:grid;place-items:center}
-.sic svg{width:20px;height:20px}
+.sic{display:grid;place-items:center}.sic svg{width:20px;height:20px}
 .badge{font-size:10px;font-weight:800;font-stretch:90%;line-height:1.1;padding:1px 3px;border:1.5px solid currentColor;border-radius:2px}
 .slab{display:flex;flex-direction:column;min-width:0;line-height:1.25;font-weight:500}
 .slab small{font-size:12.5px;font-weight:400;color:var(--muted)}
@@ -199,81 +217,90 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 .total{display:flex;justify-content:space-between;align-items:center;padding:12px 12px 14px;border-top:1.5px solid var(--line-strong)}
 .total span{font-size:16px;font-weight:700;font-stretch:115%}
 .total output{font-size:44px;font-weight:800;font-stretch:125%;line-height:1;font-variant-numeric:tabular-nums}
-
-/* ---------- phone ---------- */
+.dlg{width:min(580px,calc(100vw - 20px));max-height:calc(100vh - 24px);padding:0;border:1.5px solid var(--line-strong);border-radius:4px;background:var(--panel);color:var(--ink);box-shadow:0 24px 60px rgba(8,20,45,.35);overflow:auto}
+.dlg::backdrop{background:rgba(8,22,48,.5)}
+.dh{display:flex;align-items:center;gap:12px;padding:16px 18px 12px;border-bottom:1.5px solid var(--line-strong)}
+.dh>svg{width:30px;height:30px;flex:none}
+.dh h3{margin:0;font-size:19px;font-weight:700;font-stretch:115%;line-height:1.15}
+.dh p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.steps{display:flex;flex-wrap:wrap;gap:6px 8px;margin:0;padding:12px 18px 0;list-style:none;font-size:12.5px;color:var(--faint);counter-reset:st}
+.steps li{display:flex;align-items:center;gap:6px}
+.steps li::before{counter-increment:st;content:counter(st);width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;font-size:11px;font-weight:700}
+.steps li:not(:last-child)::after{content:'';width:14px;height:1.5px;background:currentColor;margin-left:2px}
+.steps li.on{color:var(--ink);font-weight:700}.steps li.done{color:var(--muted)}
+.db{padding:14px 18px 8px}
+.db>p{margin:0 0 12px;color:var(--muted);font-size:14px}
+.db strong{color:var(--ink);font-weight:600}
+.df{position:sticky;bottom:0;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;padding:12px 18px 16px;background:var(--panel);border-top:1px solid var(--line)}
+.slot{display:grid;grid-template-columns:minmax(0,1fr) 132px 168px;align-items:center;gap:6px 10px;padding:9px 0;border-top:1px solid var(--line)}
+.slot:first-child{border-top:0}
+.slot select,.dsel{height:36px;width:100%;padding:0 8px;border:1px solid var(--line-strong);border-radius:3px;background:var(--panel);font-weight:600;cursor:pointer;outline:none}
+.slot select:focus,.dsel:focus{border-color:var(--maybe)}
+input.dsel{cursor:text;font-weight:500}
+.fdn{font-size:13px;color:var(--faint)}
+.msg{grid-column:1/-1;margin:0;font-size:13px;line-height:1.35}
+.msg:empty{display:none}.msg.err{color:var(--no);font-weight:600}.msg.warn{color:var(--maybe);font-weight:600}
+.dl{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:13px;font-weight:600;color:var(--muted)}
+.dl .dsel{color:var(--ink);font-size:15px}
+.qcard{border:1.5px solid var(--line-strong);border-radius:3px;padding:14px;margin:0 0 14px}
+.qcard h4{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 6px;font-size:15.5px;font-weight:700}
+.qcard h4>svg{width:20px;height:20px}
+.qcard p{margin:0 0 12px;font-size:14px;color:var(--muted)}
+.qbtns{display:flex;flex-wrap:wrap;gap:8px}
+.qbtns .btn{height:40px;padding:0 14px;font-size:14px}
+.sofar{margin:4px 0;font-size:12.5px;font-weight:600;color:var(--faint)}
+.logl{list-style:none;margin:0 0 8px;padding:0}
+.logl li{padding:7px 0;border-top:1px solid var(--line);font-size:14px}
+.logl li:first-child{border-top:0}
+.logl .wh{display:inline-flex;vertical-align:-2px}
+.note{margin:8px 0 6px;font-size:13px;color:var(--faint)}
+.rv{display:grid;grid-template-columns:78px 170px minmax(0,1fr);align-items:center;gap:6px 10px;padding:9px 0;border-top:1px solid var(--line)}
+.rv .toks{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px}
+.rv label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.stab{width:100%;border-collapse:collapse;font-size:14px;margin:4px 0 6px}
+.stab td{padding:7px 4px;border-top:1px solid var(--line)}
+.stab td:last-child{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.stab small{color:var(--muted)}
+.stab .tot td{border-top:1.5px solid var(--line-strong);font-weight:800;font-size:16px}
 @media (max-width:640px){
-  .wrap{padding:18px 16px 44px}
-  .top{gap:18px;margin-bottom:22px}
-  .meta{width:100%;gap:12px 14px}
-  .fld-name{flex:1 1 150px}
-  .fld-code{flex:1 1 100px}
-  .fld-season{flex:1 1 90px}
+  .wrap{padding:18px 16px 44px}.top{gap:18px;margin-bottom:22px}.meta{width:100%;gap:12px 14px}
+  .fld-name{flex:1 1 150px}.fld-code{flex:1 1 100px}.fld-season{flex:1 1 90px}
   .fld-name input,.fld-code input,.fld select{width:100%}
-  .btns{margin-left:auto}
-  .layout,.col{gap:30px}
-  .plate{margin:4px;outline-offset:3px}
-  .plate-h{padding:12px}
-  .wheel-wrap{padding:12px 4px 10px}
-  .key{padding:0 12px 12px;gap:6px 12px}
-  .legend{padding:12px}
+  .btns{margin-left:auto}.layout,.col{gap:30px}
+  .plate{margin:4px;outline-offset:3px}.plate-h{padding:12px}.players{padding:12px}
+  .wheel-wrap{padding:12px 4px 10px}.key{padding:0 12px 12px;gap:6px 12px}.legend{padding:12px}
   .rules{grid-template-columns:1fr;padding:4px 4px 10px}
-}
-/* ---------- players & pawns ---------- */
-:root{--p-yellow:#f2c230;--p-blue:#3f80e8;--p-red:#e3473b;--p-purple:#9d5ce0}
-.players{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px 16px;border-bottom:1px solid var(--line)}
-.pcount{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600}
-.pcount select{height:30px;padding:0 6px;border:1px solid var(--line-strong);border-radius:3px;background:transparent;font-weight:700;cursor:pointer}
-.pcount select option,.pcol option{background:var(--panel);color:var(--ink)}
-.pchips{display:flex;flex-wrap:wrap;gap:8px}
-.pchip{display:inline-flex;align-items:center;gap:2px;padding:2px 2px 2px 3px;border:1.5px solid var(--line);border-radius:999px}
-.pchip.active{border-color:var(--pc);box-shadow:0 0 0 1.5px var(--pc)}
-.pchip button{display:inline-flex;align-items:center;gap:7px;padding:3px 6px;border:0;border-radius:999px;background:transparent;font-size:13px;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums}
-.pchip button:focus-visible{outline:2px solid var(--maybe);outline-offset:-2px}
-.pcol{height:24px;padding:0 2px;border:0;background:transparent;font-size:12.5px;color:var(--muted);cursor:pointer}
-.disc{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--pc);box-shadow:0 0 0 1.5px var(--panel),0 0 0 2.5px rgba(0,0,0,.28)}
-.ptip{flex-basis:100%;font-size:12.5px;color:var(--faint)}
-.sec h2 #target-count.full{color:var(--ink);font-weight:600}
-.sec h2 #target-count.warn{color:var(--no);font-weight:700}
-.ti.bad{color:var(--no);box-shadow:inset 3px 0 0 var(--no)}
-.btns{flex-wrap:wrap}
-.btn:disabled{opacity:.4;cursor:default;background:transparent}
-@media (max-width:640px){
-  .players{padding:12px}
+  .hgrid{grid-template-columns:32px repeat(12,minmax(0,1fr))}.hgrid .hh{font-size:10.5px}
+  .slot{grid-template-columns:1fr 1fr}.slot>.wh{grid-column:1/-1}
+  .rv{grid-template-columns:70px minmax(0,1fr)}.rv .toks{grid-column:1/-1}
 }
 @media (prefers-reduced-motion:reduce){.wheel *{transition:none}}
 </style>
+<script>
+  // Shows a red bar if anything goes wrong, instead of failing silently
+  window.addEventListener('error', e => {
+    const d = document.createElement('div');
+    d.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;padding:10px 14px;background:#c4432f;color:#fff;font:14px/1.4 system-ui,sans-serif';
+    d.textContent = 'Survey Log error: ' + (e.message || 'unknown') + (e.lineno ? ' (line ' + e.lineno + ')' : '');
+    (document.body || document.documentElement).appendChild(d);
+  });
+</script>
 </head>
 <body>
 
-<!-- Icon set (original line art) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <symbol id="i-comet" viewBox="-12 -12 24 24">
-    <path d="M-7.2 1.4 L10 -10 L-1.2 7.4 Z" fill="currentColor" fill-opacity=".3"/>
-    <circle cx="-4.2" cy="4.4" r="4" fill="currentColor"/>
-  </symbol>
-  <symbol id="i-asteroid" viewBox="-12 -12 24 24">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
-      <path d="M-8 -2.5 L-3.5 -8 L4 -7.5 L8.5 -2 L6.5 6 L-1 8.5 L-7.5 4.5 Z"/>
-      <path d="M-3.5 -8 L-1 -1.5 L8.5 -2 M-1 -1.5 L-1 8.5 M-1 -1.5 L-8 -2.5" stroke-opacity=".5"/>
-    </g>
-  </symbol>
-  <symbol id="i-dwarf" viewBox="-12 -12 24 24">
-    <circle r="7.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
-    <path d="M0 -7.5 A7.5 7.5 0 0 1 0 7.5 A3.6 7.5 0 0 0 0 -7.5 Z" fill="currentColor"/>
-  </symbol>
-  <symbol id="i-cloud" viewBox="-12 -12 24 24">
-    <path d="M-6.5 5.5 H6.5 A3.8 3.8 0 0 0 6 -2 A5.2 5.2 0 1 0 -4 -2.6 A4.2 4.2 0 0 0 -6.5 5.5 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-  </symbol>
-  <symbol id="i-planetx" viewBox="-12 -12 24 24">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" transform="rotate(-20)">
-      <path d="M-10.5 0 A10.5 3.4 0 0 1 10.5 0" stroke-opacity=".55"/>
-      <circle r="5.4" style="fill:var(--icon-bg,var(--panel))"/>
-      <path d="M-10.5 0 A10.5 3.4 0 0 0 10.5 0"/>
-    </g>
-  </symbol>
-  <symbol id="i-empty" viewBox="-12 -12 24 24">
-    <circle r="7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.9 2.336"/>
-  </symbol>
+  <symbol id="i-comet" viewBox="-12 -12 24 24"><path d="M-7.2 1.4 L10 -10 L-1.2 7.4 Z" fill="currentColor" fill-opacity=".3"/><circle cx="-4.2" cy="4.4" r="4" fill="currentColor"/></symbol>
+  <symbol id="i-asteroid" viewBox="-12 -12 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M-8 -2.5 L-3.5 -8 L4 -7.5 L8.5 -2 L6.5 6 L-1 8.5 L-7.5 4.5 Z"/><path d="M-3.5 -8 L-1 -1.5 L8.5 -2 M-1 -1.5 L-1 8.5 M-1 -1.5 L-8 -2.5" stroke-opacity=".5"/></g></symbol>
+  <symbol id="i-dwarf" viewBox="-12 -12 24 24"><circle r="7.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M0 -7.5 A7.5 7.5 0 0 1 0 7.5 A3.6 7.5 0 0 0 0 -7.5 Z" fill="currentColor"/></symbol>
+  <symbol id="i-cloud" viewBox="-12 -12 24 24"><path d="M-6.5 5.5 H6.5 A3.8 3.8 0 0 0 6 -2 A5.2 5.2 0 1 0 -4 -2.6 A4.2 4.2 0 0 0 -6.5 5.5 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-planetx" viewBox="-12 -12 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" transform="rotate(-20)"><path d="M-10.5 0 A10.5 3.4 0 0 1 10.5 0" stroke-opacity=".55"/><circle r="5.4" style="fill:var(--icon-bg,var(--panel))"/><path d="M-10.5 0 A10.5 3.4 0 0 0 10.5 0"/></g></symbol>
+  <symbol id="i-empty" viewBox="-12 -12 24 24"><circle r="7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.9 2.336"/></symbol>
+  <symbol id="i-theory" viewBox="-12 -12 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M-6.5 -9.5H2.5L6.5 -5.5V9.5H-6.5Z"/><path d="M2.5 -9.5V-5.5H6.5"/><path d="M-3.5 -1.5H3.5M-3.5 2H3.5M-3.5 5.5H1"/></g></symbol>
+  <symbol id="i-conf" viewBox="-12 -12 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="-2" cy="-1" r="7.5"/><path d="M-5.2 -4.2L1.2 2.2M1.2 -4.2L-5.2 2.2"/><path d="M7.6 2.5V10" stroke-width="2.2"/></g></symbol>
+  <symbol id="i-review" viewBox="-12 -12 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M-7.5 -1A7.5 7.5 0 0 1 6 -4.5"/><path d="M6.6 -9.2L6 -4.5L1.4 -5.4"/><path d="M7.5 1A7.5 7.5 0 0 1 -6 4.5"/><path d="M-6.6 9.2L-6 4.5L-1.4 5.4"/></g></symbol>
+  <symbol id="i-check" viewBox="-12 -12 24 24"><path d="M-7 0.5L-2 5.5L7.5 -5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cross" viewBox="-12 -12 24 24"><path d="M-6 -6L6 6M6 -6L-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-plus" viewBox="-12 -12 24 24"><path d="M0 -7V7M-7 0H7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
 </svg>
 
 <div class="wrap">
@@ -283,21 +310,15 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
         <path d="M0 0 L0 -14 A14 14 0 0 1 12.12 -7 Z" fill="var(--maybe)" fill-opacity=".35"/>
         <circle r="14" fill="none" stroke="currentColor" stroke-opacity=".4" stroke-width="1.5"/>
         <circle r="8.5" fill="none" stroke="currentColor" stroke-opacity=".7" stroke-width="1.5"/>
-        <circle r="2.6" fill="currentColor"/>
-        <circle cx="6" cy="-10.4" r="2" fill="var(--maybe)"/>
+        <circle r="2.6" fill="currentColor"/><circle cx="6" cy="-10.4" r="2" fill="var(--maybe)"/>
       </svg>
-      <div>
-        <h1>Survey Log</h1>
-        <p>Standard mode, 12 sectors</p>
-      </div>
+      <div><h1>Survey Log</h1><p>Standard mode, 12 sectors</p></div>
     </div>
     <div class="meta">
       <div class="fld fld-name"><label for="f-name">Name</label><input id="f-name" data-field="name" autocomplete="off"></div>
       <div class="fld fld-code"><label for="f-code">Game code</label><input id="f-code" data-field="code" autocomplete="off" spellcheck="false"></div>
       <div class="fld fld-season"><label for="f-season">Season</label>
-        <select id="f-season" data-field="season">
-          <option value="">Choose</option><option>Spring</option><option>Summer</option><option>Autumn</option><option>Winter</option>
-        </select>
+        <select id="f-season" data-field="season"><option value="">Choose</option><option>Spring</option><option>Summer</option><option>Autumn</option><option>Winter</option></select>
       </div>
       <div class="btns">
         <button class="btn" id="undo" type="button" title="Undo (Ctrl+Z)" disabled>Undo</button>
@@ -305,9 +326,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
         <button class="btn" id="save-json" type="button" title="Download this game as a JSON file">Save</button>
         <button class="btn" id="load-json" type="button" title="Open a game saved as a JSON file">Load</button>
         <input type="file" id="file" accept=".json,application/json" hidden>
-        <button class="btn btn-icon" id="theme" type="button" aria-label="Switch light or dark theme" title="Switch light or dark theme">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
-        </button>
+        <button class="btn btn-icon" id="theme" type="button" aria-label="Switch light or dark theme" title="Switch light or dark theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button>
         <button class="btn" id="reset" type="button">Reset</button>
       </div>
     </div>
@@ -318,24 +337,27 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
       <section class="plate" aria-labelledby="h-grid">
         <div class="plate-h">
           <h2 id="h-grid">Sector wheel</h2>
-          <span>Each sector holds exactly one object</span>
+          <span>Each sector holds exactly one object · Visible sky <b id="sky-txt">1–6</b></span>
         </div>
         <div class="players">
-          <label class="pcount">Players
-            <select id="pcount"><option value="2">2</option><option value="3">3</option><option value="4">4</option></select>
-          </label>
+          <label class="pcount">Players <select id="pcount"><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
           <div class="pchips" id="pchips"></div>
-          <span class="ptip">Pick a pawn, then tap a sector on the pawn track (the light ring just inside the numbers) to move it there. When pawns share a sector, the latest arrival is drawn on top.</span>
+          <div class="pmoves" id="pmoves">
+            <span class="lab" id="pm-lab">Move</span>
+            <button class="btn" type="button" data-n="1">Research <b>+1</b></button>
+            <button class="btn" type="button" data-n="3">Survey 4–6 <b>+3</b></button>
+            <button class="btn" type="button" data-n="4">Target or survey 1–3 <b>+4</b></button>
+            <button class="btn" type="button" data-n="5">Locate Planet X <b>+5</b></button>
+          </div>
+          <span class="ptip">Pick a pawn, then use an action button or tap a sector on the pawn track (the light ring just inside the numbers). Tapping a sector a little behind a pawn moves it back to fix a slip. The pawn farthest back plays next, and the earth board turns to follow it, stopping for theory phases and the Planet X conference.</span>
         </div>
-        <div class="wheel-wrap">
-          <svg class="wheel" id="wheel" viewBox="-504 -504 1008 1008" role="group" aria-label="Sector wheel"></svg>
-        </div>
+        <div class="wheel-wrap"><svg class="wheel" id="wheel" viewBox="-504 -504 1008 1008" role="group" aria-label="Sector wheel"></svg></div>
         <div class="key" id="key"></div>
         <div class="legend">
           <span class="lg"><svg viewBox="-16 -16 32 32" aria-hidden="true"><path class="x1" d="M-9 -9L9 9M9 -9L-9 9"/></svg>Ruled out</span>
           <span class="lg"><svg viewBox="-16 -16 32 32" aria-hidden="true"><circle class="ring2" r="12"/></svg>Possible</span>
           <span class="lg"><svg viewBox="-16 -16 32 32" aria-hidden="true"><circle class="disc3" r="13"/></svg>Confirmed</span>
-          <span class="tip">Tap an icon to cycle through the marks. Shift-click or right-click steps back. Tap a number on the rim to light up that sector and the 5 after it, wrapping from 12 back to 1; tap it again to clear.</span>
+          <span class="tip">Tap an icon to cycle through the marks. Shift-click or right-click steps back. Tap a number on the rim to turn the earth board there by hand; tapping a number behind the arrow turns it back without running any phases.</span>
         </div>
         <h3 class="rules-h">Placement rules</h3>
         <ul class="rules" id="rules"></ul>
@@ -365,8 +387,30 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
         </div>
       </section>
 
+      <section class="sec hyp" aria-labelledby="h-hyp">
+        <h2 id="h-hyp">Hypotheses <span id="hyp-status"></span></h2>
+        <div class="hyp-top">
+          <label class="you">You are <select id="me" aria-label="Your player colour"></select></label>
+          <div class="supply" id="supply" aria-label="Your theory tokens"></div>
+        </div>
+        <div class="hgrid" id="hgrid"></div>
+        <p class="htip">Tap a square in the + row to plan your next theory (one at a time); tap again to change the object. The next theory phase starts with it filled in.</p>
+        <div class="hact">
+          <button class="btn" id="h-phase" type="button">Theory phase</button>
+          <button class="btn" id="h-review" type="button">Peer review</button>
+          <button class="btn" id="h-end" type="button">Planet X found</button>
+        </div>
+        <details class="tlog">
+          <summary>Theory log <span id="tlog-n"></span></summary>
+          <div class="tbl">
+            <div class="thead"><span>Phase</span><span>Player</span><span>Sector</span><span>Object</span><span>Space</span><span>Status</span><span></span></div>
+            <div id="tlog-rows"></div>
+          </div>
+        </details>
+      </section>
+
       <section class="sec" aria-labelledby="h-score">
-        <h2 id="h-score">Final score</h2>
+        <h2 id="h-score">Final score <button class="btn mini" id="fill-score" type="button" title="Count your correct theories and leader bonuses">Fill from theories</button></h2>
         <div class="score">
           <div id="score-rows"></div>
           <div class="total"><span>Total</span><output id="total">0</output></div>
@@ -376,37 +420,34 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
   </main>
 </div>
 
-<datalist id="actions">
-  <option value="Survey"></option>
-  <option value="Target"></option>
-  <option value="Research"></option>
-  <option value="Locate Planet X"></option>
-</datalist>
+<dialog class="dlg" id="dlg" aria-labelledby="dlg-h"><div id="dlg-in"></div></dialog>
+
+<datalist id="actions"><option value="Survey"></option><option value="Target"></option><option value="Research"></option><option value="Locate Planet X"></option></datalist>
 
 <script>
 (() => {
   'use strict';
 
-  const N = 12;
-  const SKY = 6;            // sectors lit when a sector number is tapped
-  const TARGET_LIMIT = 2;   // Target action: twice per game
+  const N = 12, SKY = 6, TARGET_LIMIT = 2;
+  const THEORY_AT = [3, 6, 9, 12], CONF_AT = 10, COMET_S = [2, 3, 5, 7, 11];
   const OBJECTS = [
-    { key:'C', name:'Comets',       n:2, icon:'comet',    only:[2,3,5,7,11], rule:'Only ever in sectors 2, 3, 5, 7 or 11.' },
-    { key:'A', name:'Asteroids',    n:4, icon:'asteroid', rule:'Every asteroid has at least one other asteroid beside it.' },
-    { key:'D', name:'Dwarf planet', n:1, icon:'dwarf',    rule:'Never beside Planet X.' },
-    { key:'G', name:'Gas clouds',   n:2, icon:'cloud',    rule:'Each has at least one truly empty sector beside it.' },
-    { key:'X', name:'Planet X',     n:1, icon:'planetx',  rule:'Never beside the dwarf planet. Shows up as empty when surveyed.' },
-    { key:'E', name:'Truly empty',  n:2, icon:'empty',    rule:'A survey for empty sectors also counts Planet X.' },
+    { key:'C', name:'Comets',       one:'comet',        a:'a comet',          n:2, icon:'comet',    only:COMET_S, rule:'Only ever in sectors 2, 3, 5, 7 or 11.' },
+    { key:'A', name:'Asteroids',    one:'asteroid',     a:'an asteroid',      n:4, icon:'asteroid', rule:'Every asteroid has at least one other asteroid beside it.' },
+    { key:'D', name:'Dwarf planet', one:'dwarf planet', a:'the dwarf planet', n:1, icon:'dwarf',    rule:'Never beside Planet X.' },
+    { key:'G', name:'Gas clouds',   one:'gas cloud',    a:'a gas cloud',      n:2, icon:'cloud',    rule:'Each has at least one truly empty sector beside it.' },
+    { key:'X', name:'Planet X',     one:'Planet X',     a:'Planet X',         n:1, icon:'planetx',  rule:'Never beside the dwarf planet. Shows up as empty when surveyed.' },
+    { key:'E', name:'Truly empty',  one:'truly empty',  a:'nothing',          n:2, icon:'empty',    rule:'A survey for empty sectors also counts Planet X.' },
   ];
+  const TH_TYPES = ['A', 'C', 'G', 'D'], TOKENS = { A:4, C:2, G:2, D:1 }, TOKEN_TOTAL = 9, FINAL_PH = 10000;
   const SCORE = [
     { id:'first', label:'First to publish', note:'1 point each', pts:1, max:12 },
-    { id:'A', pts:2 }, { id:'C', pts:3 }, { id:'G', pts:4 }, { id:'D', pts:4 },
-    { id:'X', options:[10,8,6,4,2] },
+    { id:'A', pts:2 }, { id:'C', pts:3 }, { id:'G', pts:4 }, { id:'D', pts:4 }, { id:'X', options:[10,8,6,4,2] },
   ];
   const NOTE_ROWS = [['A','A'],['B','B'],['C','C'],['D','D'],['E','E'],['F','F'],['X1','X₁']];
   const MARKS = ['unmarked','ruled out','possible','confirmed'];
   const COLOURS = ['yellow','blue','red','purple'];
   const CNAME = { yellow:'Yellow', blue:'Blue', red:'Red', purple:'Purple' };
+  const TH_STEPS = ['Submit', 'Advance', 'Peer review'], END_STEPS = ['Finder', 'Final theories', 'Reveal', 'Score'];
   const KEY = 'survey-log:v1';
 
   /* ---------- helpers ---------- */
@@ -415,30 +456,46 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
   const icon = name => `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-${name}" width="24" height="24"/></svg>`;
   const allowed = (o, s) => !o.only || o.only.includes(s);
   const wrapS = s => ((s - 1) % N + N) % N + 1;
+  const range = n => Array.from({ length:n }, (_, i) => i + 1);
+  const isInt = Number.isInteger;
+  const OI = Object.fromEntries(OBJECTS.map((o, i) => [o.key, i]));
+  const obj = k => OBJECTS[OI[k]];
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const holds = k => k === 'E' ? 'is truly empty' : 'holds ' + obj(k).a;
 
   /* ---------- state ---------- */
-  const blankPlayers = () => ({ count:4, colors:COLOURS.slice(), pos:[1,1,1,1], t:[1,2,3,4], clock:4, active:0 });
-  const blank = () => ({ grid: OBJECTS.map(() => Array(N).fill(0)), f:{}, rows:11, players:blankPlayers(), focus:null, theme:null });
+  const blankPlayers = () => ({ count:4, colors:COLOURS.slice(), abs:[1,1,1,1], t:[1,2,3,4], clock:4, active:0, me:0 });
+  const blank = () => ({ grid:OBJECTS.map(() => Array(N).fill(0)), f:{}, rows:11, players:blankPlayers(),
+    earth:{ abs:1, conf:false }, th:[], phaseNo:0, stage:null, theme:null });
 
   function normalize(d) {
     if (!d || typeof d !== 'object') return null;
-    if (!Array.isArray(d.grid) || d.grid.length !== OBJECTS.length ||
-        !d.grid.every(r => Array.isArray(r) && r.length === N)) return null;
+    if (!Array.isArray(d.grid) || d.grid.length !== OBJECTS.length || !d.grid.every(r => Array.isArray(r) && r.length === N)) return null;
     const b = blank();
     b.grid = d.grid.map(r => r.map(v => [0,1,2,3].includes(v) ? v : 0));
     if (d.f && typeof d.f === 'object') for (const [k, v] of Object.entries(d.f)) if (typeof v === 'string') b.f[k] = v;
-    if (Number.isInteger(d.rows)) b.rows = Math.min(40, Math.max(11, d.rows));
-    const p = d.players;
+    if (isInt(d.rows)) b.rows = Math.min(40, Math.max(11, d.rows));
+    const p = d.players, P = b.players;
     if (p && typeof p === 'object') {
-      const P = b.players;
       if ([2,3,4].includes(p.count)) P.count = p.count;
       if (Array.isArray(p.colors) && p.colors.length === 4 && p.colors.every(c => COLOURS.includes(c)) && new Set(p.colors).size === 4) P.colors = p.colors.slice();
-      if (Array.isArray(p.pos) && p.pos.length === 4) P.pos = p.pos.map(v => Number.isInteger(v) && v >= 1 && v <= N ? v : 1);
+      const ab = Array.isArray(p.abs) ? p.abs : p.pos;   // older saves only kept the sector
+      if (Array.isArray(ab) && ab.length === 4 && ab.every(v => isInt(v) && Math.abs(v) < 1e6)) P.abs = ab.slice();
       if (Array.isArray(p.t) && p.t.length === 4) P.t = p.t.map((v, i) => Number.isFinite(v) ? v : i + 1);
       P.clock = Math.max(...P.t, Number.isFinite(p.clock) ? p.clock : 0);
-      if (Number.isInteger(p.active) && p.active >= 0 && p.active < P.count) P.active = p.active;
+      if (isInt(p.active) && p.active >= 0 && p.active < P.count) P.active = p.active;
+      if (isInt(p.me) && p.me >= 0 && p.me < P.count) P.me = p.me;
     }
-    if (Number.isInteger(d.focus) && d.focus >= 1 && d.focus <= N) b.focus = d.focus;
+    const e = d.earth;
+    b.earth = e && typeof e === 'object' && isInt(e.abs) && Math.abs(e.abs) < 1e6
+      ? { abs:e.abs, conf:!!e.conf } : { abs:Math.min(...P.abs.slice(0, P.count)), conf:false };
+    if (Array.isArray(d.th)) b.th = d.th.filter(t => t && typeof t === 'object' &&
+        isInt(t.p) && t.p >= 0 && t.p < 4 && isInt(t.s) && t.s >= 1 && t.s <= N &&
+        isInt(t.pos) && t.pos >= 0 && t.pos <= 3 && ['p','c','w'].includes(t.st) && isInt(t.ph))
+      .map(t => ({ p:t.p, k:TH_TYPES.includes(t.k) ? t.k : '', s:t.s, pos:t.pos, st:t.st, ph:t.ph }));
+    if (isInt(d.phaseNo) && d.phaseNo >= 0) b.phaseNo = d.phaseNo;
+    const st = d.stage;
+    if (st && isInt(st.s) && st.s >= 1 && st.s <= N && TH_TYPES.includes(st.k)) b.stage = { s:st.s, k:st.k };
     if (d.theme === 'light' || d.theme === 'dark') b.theme = d.theme;
     return b;
   }
@@ -446,22 +503,20 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
   let S = load();
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 
+  let queue = [], earthGoal = null, task = null;
+  const dlg = $('dlg'), dIn = $('dlg-in');
+
   /* ---------- undo / redo ---------- */
   const past = [], future = [];
-  let pending = null; // snapshot taken when a text field gains focus
-  const snap = () => JSON.stringify({ grid:S.grid, f:S.f, rows:S.rows, players:S.players });
+  let pending = null;
+  const DATA = ['grid','f','rows','players','earth','th','phaseNo','stage'];
+  const snap = () => JSON.stringify(Object.fromEntries(DATA.map(k => [k, S[k]])));
   function push(s) { past.push(s); if (past.length > 300) past.shift(); future.length = 0; histUI(); }
-  // Wrap every non-typing change so it can be undone
-  function change(fn) {
-    push(snap());
-    fn();
-    if (pending !== null) pending = snap();
-    save();
-  }
+  function change(fn) { push(snap()); fn(); if (pending !== null) pending = snap(); save(); }
   function restore(str) {
-    const d = normalize(Object.assign(JSON.parse(str), { focus:S.focus, theme:S.theme }));
+    const d = normalize(Object.assign(JSON.parse(str), { theme:S.theme }));
     if (!d) return;
-    S = d; save(); refreshAll();
+    S = d; queue = []; earthGoal = null; save(); refreshAll();
     if (pending !== null) pending = snap();
   }
   function undo() { if (!past.length) return; future.push(snap()); restore(past.pop()); histUI(); }
@@ -470,9 +525,9 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
   $('undo').addEventListener('click', undo);
   $('redo').addEventListener('click', redo);
   document.addEventListener('keydown', e => {
-    if (!(e.ctrlKey || e.metaKey)) return;
+    if (!(e.ctrlKey || e.metaKey) || dlg.open) return;
     const tag = e.target.tagName;
-    if (tag === 'INPUT' || tag === 'TEXTAREA') return; // let fields use their own undo
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
     const k = e.key.toLowerCase();
     if (k === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
     else if ((k === 'z' && e.shiftKey) || k === 'y') { e.preventDefault(); redo(); }
@@ -490,15 +545,13 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 
   /* ---------- sector wheel ---------- */
   const wheel = $('wheel');
-  const TAU = Math.PI * 2;
-  // Radii in SVG units, from the outside in: number rim, pawn track, six object rings, result ring, hub
-  const G = { out:500, rimIn:456, trackIn:416, row:52, faceIn:104, hubIn:44, res:74, num:478, pawn:436, ico:30 };
-  // Object rings from the rim inward, like the paper sheet: Planet X outermost, comets innermost
-  const RINGS = ['X','E','G','D','A','C'].map(k => OBJECTS.findIndex(o => o.key === k));
-  const mid = s => (s - .5) / N * TAU;  // centre angle of sector s, clockwise from 12 o'clock
+  const TAU = Math.PI * 2, D2R = Math.PI / 180;
+  const G = { out:500, rimIn:456, trackIn:416, row:48, faceIn:128, resIn:90, earthIn:50, sun:44, num:478, pawn:436, ico:30, res:109, eico:65 };
+  const RINGS = ['X','E','G','D','A','C'].map(k => OI[k]);
+  const mid = s => (s - .5) / N * TAU;
   const pt = (r, a) => [+(r * Math.sin(a)).toFixed(2), +(-r * Math.cos(a)).toFixed(2)];
   const xy = (r, a) => pt(r, a).join(' ');
-  const seg = (r0, r1, s) => {  // ring slice between radii r0 and r1 for sector s
+  const seg = (r0, r1, s) => {
     const a0 = (s - 1) / N * TAU, a1 = s / N * TAU;
     return `M${xy(r1, a0)}A${r1} ${r1} 0 0 1 ${xy(r1, a1)}L${xy(r0, a1)}A${r0} ${r0} 0 0 0 ${xy(r0, a0)}Z`;
   };
@@ -512,85 +565,119 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
   }
 
   {
-    let h = `<circle class="base" r="${G.rimIn}"/>`;
+    const STARS = [[188,60],[196,81],[207,70],[219,57],[226,84],[237,66],[248,78],[259,58],[283,63],[291,82],[302,71],[313,57],[324,84],[333,66],[344,77],[353,59]];
+    let h = `<defs>
+      <radialGradient id="g-sun" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="${G.sun}" fx="-10" fy="-12"><stop offset="0" stop-color="#fffdf2"/><stop offset=".3" stop-color="#ffeb94"/><stop offset=".68" stop-color="#ffb531"/><stop offset="1" stop-color="#f07410"/></radialGradient>
+      <radialGradient id="g-glow" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="88"><stop offset=".46" stop-color="#ffa22e" stop-opacity=".85"/><stop offset=".7" stop-color="#ff8a1f" stop-opacity=".32"/><stop offset="1" stop-color="#ff7a10" stop-opacity="0"/></radialGradient>
+      <radialGradient id="g-earth" gradientUnits="userSpaceOnUse" cx="-2" cy="-2.5" r="8"><stop offset="0" stop-color="#a8ddff"/><stop offset=".55" stop-color="#3f8fe0"/><stop offset="1" stop-color="#17489a"/></radialGradient>
+    </defs>`;
+    h += `<circle class="base" r="${G.rimIn}"/>`;
     for (let s = 1; s <= N; s++) h += `<path class="wedge" d="${seg(G.faceIn, G.trackIn, s)}"/>`;
     for (let s = 1; s <= N; s++)
-      h += `<g class="mres"><path class="hb" d="${seg(G.hubIn, G.faceIn, s)}"/><g class="mk" transform="translate(${xy(G.res, mid(s))})"></g><title></title></g>`;
+      h += `<g class="mres"><path class="hb" d="${seg(G.resIn, G.faceIn, s)}"/><g class="mk" transform="translate(${xy(G.res, mid(s))})"></g><title></title></g>`;
+    for (let s = 1; s <= N; s++) h += `<path class="ewedge" d="${seg(G.earthIn, G.resIn, s)}"/>`;
+    h += '<g class="lines">';
+    for (let s = 0; s < N; s++) h += `<path class="esp" d="M${xy(G.earthIn, s / N * TAU)}L${xy(G.resIn, s / N * TAU)}"/>`;
+    h += '</g>';
+    // Earth board, drawn with the arrow at sector 1, then rotated as it turns
+    h += `<g class="earth" id="earth">` +
+      `<path class="dark" d="M${xy(G.resIn, Math.PI)}A${G.resIn} ${G.resIn} 0 0 1 ${xy(G.resIn, TAU)}L${xy(G.earthIn, TAU)}A${G.earthIn} ${G.earthIn} 0 0 0 ${xy(G.earthIn, Math.PI)}Z"/>` +
+      STARS.map(([d, r], i) => { const [x, y] = pt(r, d * D2R); return `<circle class="star" cx="${x}" cy="${y}" r="${i % 3 ? .9 : 1.4}"/>`; }).join('') +
+      `<g transform="translate(${xy(79, 270 * D2R)})"><circle r="6.5" fill="url(#g-earth)"/><path d="M-3.4 -2.6c1.6 0 2.6 1.2 1.8 2.6-.5.9-1.9 1-2.2 2.2M1.4 1.8c.9-.5 2.1 0 2.3 1" fill="none" stroke="#86d690" stroke-width="1.4" stroke-linecap="round" opacity=".85"/></g>` +
+      `<path class="arrow" d="M${xy(89, mid(1))}L${xy(76, mid(1) + .085)}L${xy(76, mid(1) - .085)}Z"/></g>`;
+    // The sun
+    h += `<circle class="sun-glow" r="88"/>`;
+    h += `<path class="rays" d="${range(N).map(s => { const a = mid(s); return `M${xy(G.sun - 3, a - .07)}L${xy(G.earthIn + 4, a)}L${xy(G.sun - 3, a + .07)}Z`; }).join('')}"/>`;
+    h += `<circle class="sun" r="${G.sun}"/><circle class="sun-ring" r="${G.sun - 10}"/>`;
+    // Theory and conference icons
+    THEORY_AT.forEach(s => {
+      h += `<g class="eico" data-s="${s}" transform="translate(${xy(G.eico, mid(s))})"><circle class="halo" r="14"/>${use('theory', 20)}<title>Theory phase when the earth board reaches sector ${s}</title></g>`;
+    });
+    h += `<g class="eico conf" data-s="${CONF_AT}" transform="translate(${xy(G.eico, mid(CONF_AT))})"><circle class="halo" r="14"/>${use('conf', 20)}<title>Planet X conference (X₁), the first time the earth board reaches sector ${CONF_AT}</title></g>`;
     for (let s = 1; s <= N; s++) RINGS.forEach((r, k) => {
       if (!allowed(OBJECTS[r], s)) return;
       const r1 = G.trackIn - k * G.row, [cx, cy] = pt(r1 - G.row / 2, mid(s));
-      h += `<g class="cell s0" role="button" tabindex="0" data-r="${r}" data-s="${s}">` +
-           `<path class="hit" d="${seg(r1 - G.row, r1, s)}"/><circle class="fring" cx="${cx}" cy="${cy}" r="25"/>` +
-           `<g class="mk" transform="translate(${cx} ${cy})"></g><title></title></g>`;
+      h += `<g class="cell s0" role="button" tabindex="0" data-r="${r}" data-s="${s}"><path class="hit" d="${seg(r1 - G.row, r1, s)}"/><circle class="fring" cx="${cx}" cy="${cy}" r="23"/><g class="mk" transform="translate(${cx} ${cy})"></g><title></title></g>`;
     });
     for (let s = 1; s <= N; s++)
-      h += `<g class="pslot" role="button" tabindex="0" data-s="${s}" aria-label="Move the selected pawn to sector ${s}">` +
-           `<path class="hit" d="${seg(G.trackIn, G.rimIn, s)}"/><g class="pawns"></g><title></title></g>`;
+      h += `<g class="pslot" role="button" tabindex="0" data-s="${s}" aria-label="Move the selected pawn to sector ${s}"><path class="hit" d="${seg(G.trackIn, G.rimIn, s)}"/><g class="pawns"></g><title></title></g>`;
     h += '<g class="lines">';
     for (let k = 1; k < RINGS.length; k++) h += `<circle class="rl" r="${G.trackIn - k * G.row}"/>`;
-    for (let s = 0; s < N; s++) h += `<path class="sp" d="M${xy(G.hubIn, s / N * TAU)}L${xy(G.rimIn, s / N * TAU)}"/>`;
-    h += `<circle class="rs" r="${G.faceIn}"/><circle class="rs" r="${G.trackIn}"/></g>`;
-    h += `<circle class="hubc" r="${G.hubIn}"/><circle class="hubdot" r="6"/><text class="hubtxt" id="hubtxt" dy=".35em" text-anchor="middle"></text>`;
+    for (let s = 0; s < N; s++) h += `<path class="sp" d="M${xy(G.resIn, s / N * TAU)}L${xy(G.rimIn, s / N * TAU)}"/>`;
+    h += `<circle class="rs" r="${G.resIn}"/><circle class="rs" r="${G.faceIn}"/><circle class="rs" r="${G.trackIn}"/></g>`;
     for (let s = 1; s <= N; s++) {
       const [x, y] = pt(G.num, mid(s));
-      h += `<g class="rim" role="button" tabindex="0" data-s="${s}" aria-label="Sector ${s}: highlight it and the next ${SKY - 1} sectors">` +
-           `<path d="${seg(G.rimIn, G.out, s)}"/><text x="${x}" y="${y}" dy=".35em" text-anchor="middle">${s}</text><title>Sector ${s}</title></g>`;
+      h += `<g class="rim" role="button" tabindex="0" data-s="${s}" aria-label="Sector ${s}: turn the earth board here"><path d="${seg(G.rimIn, G.out, s)}"/><text x="${x}" y="${y}" dy=".35em" text-anchor="middle">${s}</text><title>Sector ${s}</title></g>`;
     }
     wheel.innerHTML = h;
   }
   const q = sel => [...wheel.querySelectorAll(sel)];
-  const wedges = q('.wedge'), mres = q('.mres'), pslots = q('.pslot'), rims = q('.rim'), cellEls = q('.cell');
-  const hubtxt = $('hubtxt');
+  const wedges = q('.wedge'), ewedges = q('.ewedge'), mres = q('.mres'), pslots = q('.pslot'), rims = q('.rim'), cellEls = q('.cell'), eicos = q('.eico');
+  const earthG = $('earth');
 
   const keyEl = $('key');
   keyEl.innerHTML = '<span class="key-h">Rings, from the rim inward</span>' +
     RINGS.map(r => `<span class="ki">${icon(OBJECTS[r].icon)}${OBJECTS[r].name}<b class="ct" data-r="${r}"></b></span>`).join('') +
-    '<span class="ki" title="The object each sector must hold, or how many objects it could still hold">Centre ring: result</span>';
+    '<span class="ki" title="The object each sector must hold, or how many objects it could still hold">Result ring</span>' +
+    `<span class="ki">${icon('theory')}Theory phase</span><span class="ki">${icon('conf')}X₁ conference</span>` +
+    '<span class="ki"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4L20 19H4Z" fill="#f2c230" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>Earth board arrow</span>';
   const counts = OBJECTS.map((o, r) => keyEl.querySelector(`.ct[data-r="${r}"]`));
 
+  let earthAng = null, earthRaf = 0;
+  const still = matchMedia('(prefers-reduced-motion: reduce)');
+  function setEarth(target) {
+    if (earthAng === target) return;
+    cancelAnimationFrame(earthRaf);
+    if (earthAng === null || still.matches || Math.abs(target - earthAng) > 360) {
+      earthAng = target; earthG.setAttribute('transform', `rotate(${target})`); return;
+    }
+    const from = earthAng, t0 = performance.now();
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / 450), e = 1 - Math.pow(1 - k, 3);
+      earthAng = k === 1 ? target : from + (target - from) * e;
+      earthG.setAttribute('transform', `rotate(${earthAng.toFixed(2)})`);
+      if (k < 1) earthRaf = requestAnimationFrame(tick);
+    };
+    earthRaf = requestAnimationFrame(tick);
+  }
+
   function render() {
-    const f = S.focus;
-    const sky = f ? Array.from({ length:SKY }, (_, k) => wrapS(f + k)) : [];
-    wheel.classList.toggle('has-focus', !!f);
-    hubtxt.textContent = f ? `${f}–${wrapS(f + SKY - 1)}` : '';
-
+    const f = wrapS(S.earth.abs), sky = range(SKY).map(k => wrapS(f + k - 1));
+    setEarth((S.earth.abs - 1) * 360 / N);
+    $('sky-txt').textContent = `${f}–${sky[SKY - 1]}`;
+    const nt = nextTheory();
+    for (const e of eicos) {
+      const s = +e.dataset.s, conf = e.classList.contains('conf');
+      e.classList.toggle('hid', !sky.includes(s));
+      e.classList.toggle('next', !conf && s === nt);
+      e.classList.toggle('done', conf && S.earth.conf);
+    }
     for (let i = 0; i < N; i++) {
-      const s = i + 1, isF = f === s, isN = !isF && sky.includes(s);
-      const conf = [], cand = [];
-      OBJECTS.forEach((o, r) => {
-        if (!allowed(o, s)) return;
-        const v = S.grid[r][i];
-        if (v === 3) conf.push(r);
-        if (v !== 1) cand.push(r);
-      });
-      const bad = conf.length > 1 || cand.length === 0;
-
+      const s = i + 1, isF = f === s, isN = !isF && sky.includes(s), info = sectorInfo(s);
       const rim = rims[i];
       rim.classList.toggle('focus', isF);
       rim.classList.toggle('near', isN);
-      rim.classList.toggle('conflict', bad);
-      rim.setAttribute('aria-pressed', String(isF));
-      for (const e of [wedges[i], pslots[i], mres[i]]) { e.classList.toggle('colf', isF); e.classList.toggle('coln', isN); }
-
+      rim.classList.toggle('conflict', info.bad);
+      rim.setAttribute('aria-label', `Sector ${s}${isF ? ', where the earth board arrow points' : ''}: turn the earth board here`);
+      for (const e of [wedges[i], ewedges[i], pslots[i], mres[i]]) { e.classList.toggle('colf', isF); e.classList.toggle('coln', isN); }
       const m = mres[i], mk = m.querySelector('.mk');
       m.classList.remove('known', 'forced', 'bad');
       let tip;
-      if (conf.length === 1 || (conf.length === 0 && cand.length === 1)) {
-        const o = OBJECTS[conf.length ? conf[0] : cand[0]];
-        m.classList.add(conf.length ? 'known' : 'forced');
-        mk.innerHTML = (conf.length ? '' : '<circle class="fd" r="18"/>') + use(o.icon, 26);
-        tip = conf.length ? `Sector ${s}: ${o.name}` : `Sector ${s}: only ${o.name} is left`;
-      } else if (bad) {
+      if (info.known >= 0) {
+        const o = OBJECTS[info.known], c = info.conf.length === 1;
+        m.classList.add(c ? 'known' : 'forced');
+        mk.innerHTML = (c ? '' : '<circle class="fd" r="18"/>') + use(o.icon, 26);
+        tip = c ? `Sector ${s}: ${o.name}` : `Sector ${s}: only ${o.name} is left`;
+      } else if (info.bad) {
         m.classList.add('bad');
         mk.innerHTML = '<text dy=".35em" text-anchor="middle">!</text>';
-        tip = conf.length > 1 ? `Sector ${s}: more than one object confirmed` : `Sector ${s}: every object is ruled out`;
+        tip = info.conf.length > 1 ? `Sector ${s}: more than one object confirmed` : `Sector ${s}: every object is ruled out`;
       } else {
-        mk.innerHTML = `<text dy=".35em" text-anchor="middle">${cand.length}</text>`;
-        tip = `Sector ${s}: ${cand.length} objects still possible`;
+        mk.innerHTML = `<text dy=".35em" text-anchor="middle">${info.cand.length}</text>`;
+        tip = `Sector ${s}: ${info.cand.length} objects still possible`;
       }
       m.querySelector('title').textContent = tip;
     }
-
     for (const c of cellEls) {
       const r = +c.dataset.r, s = +c.dataset.s, o = OBJECTS[r], v = S.grid[r][s - 1];
       const txt = `${o.name} in sector ${s}: ${MARKS[v]}`;
@@ -599,10 +686,8 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
       c.querySelector('.mk').innerHTML = mark(o, v);
       c.querySelector('title').textContent = txt;
     }
-
     OBJECTS.forEach((o, r) => {
-      const n = S.grid[r].filter((v, i) => v === 3 && allowed(o, i + 1)).length;
-      const ct = counts[r];
+      const n = S.grid[r].filter((v, i) => v === 3 && allowed(o, i + 1)).length, ct = counts[r];
       ct.textContent = `${n}/${o.n}`;
       ct.classList.toggle('done', n === o.n);
       ct.classList.toggle('over', n > o.n);
@@ -612,22 +697,17 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
   function activate(t, back) {
     const p = t.closest('.pslot');
     if (p) {
-      const s = +p.dataset.s, P = S.players, a = P.active;
-      if (P.pos[a] === s) return;
-      change(() => { P.pos[a] = s; P.t[a] = ++P.clock; });
-      renderPlayers(); return;
+      const s = +p.dataset.s, a = S.players.active, d = (s - wrapS(S.players.abs[a]) + N) % N;
+      if (d) movePawn(a, d <= SKY ? d : d - N);
+      return;
     }
     const h = t.closest('.rim');
-    if (h) { const s = +h.dataset.s; S.focus = S.focus === s ? null : s; save(); render(); return; }
+    if (h) { turnEarthTo(+h.dataset.s); return; }
     const c = t.closest('.cell');
     if (c) step(c, back ? -1 : 1);
   }
   wheel.addEventListener('click', e => activate(e.target, e.shiftKey));
-  wheel.addEventListener('contextmenu', e => {
-    const c = e.target.closest('.cell');
-    if (!c) return;
-    e.preventDefault(); step(c, -1);
-  });
+  wheel.addEventListener('contextmenu', e => { const c = e.target.closest('.cell'); if (!c) return; e.preventDefault(); step(c, -1); });
   wheel.addEventListener('keydown', e => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const t = e.target.closest('[role="button"]');
@@ -642,32 +722,44 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 
   /* ---------- players & pawns ---------- */
   const pchips = $('pchips');
+  const backOrder = () => { const P = S.players; return range(P.count).map(i => i - 1).sort((a, b) => P.abs[a] - P.abs[b] || P.t[a] - P.t[b]); };
+  const minAbs = () => Math.min(...S.players.abs.slice(0, S.players.count));
   function renderPlayers() {
-    const P = S.players;
+    const P = S.players, next = backOrder()[0];
     $('pcount').value = String(P.count);
     pchips.innerHTML = '';
     for (let i = 0; i < P.count; i++) {
-      const c = P.colors[i];
+      const c = P.colors[i], s = wrapS(P.abs[i]);
       const chip = el('div', 'pchip' + (i === P.active ? ' active' : ''));
       chip.style.setProperty('--pc', `var(--p-${c})`);
       chip.innerHTML =
-        `<button type="button" data-i="${i}" aria-pressed="${i === P.active}" aria-label="Select the ${CNAME[c]} pawn, now in sector ${P.pos[i]}"><span class="disc"></span>Sector ${P.pos[i]}</button>` +
+        `<button type="button" data-i="${i}" aria-pressed="${i === P.active}" aria-label="Select the ${CNAME[c]} pawn, in sector ${s}${i === next ? ', next to play' : ''}"><span class="disc"></span>Sector ${s}${i === next ? '<span class="nx">Next</span>' : ''}</button>` +
         `<select class="pcol" data-i="${i}" aria-label="Colour for player ${i + 1}">${COLOURS.map(k => `<option value="${k}"${k === c ? ' selected' : ''}>${CNAME[k]}</option>`).join('')}</select>`;
       pchips.appendChild(chip);
     }
+    $('pm-lab').textContent = `Move ${CNAME[P.colors[P.active]]}:`;
     pslots.forEach((b, idx) => {
       const s = idx + 1, a = mid(s), [cx, cy] = pt(G.pawn, a), here = [];
-      for (let i = 0; i < P.count; i++) if (P.pos[i] === s) here.push(i);
-      here.sort((x, y) => P.t[x] - P.t[y]); // most recent arrival drawn last (on top)
+      for (let i = 0; i < P.count; i++) if (wrapS(P.abs[i]) === s) here.push(i);
+      here.sort((x, y) => P.abs[x] - P.abs[y] || P.t[x] - P.t[y]);
       b.querySelector('.pawns').innerHTML = here.map((i, k) => {
-        const off = (k - (here.length - 1) / 2) * 17; // spread along the track
+        const off = (k - (here.length - 1) / 2) * 17;
         const x = (cx + off * Math.cos(a)).toFixed(1), y = (cy + off * Math.sin(a)).toFixed(1);
         return `<g class="pawn" style="--pc:var(--p-${P.colors[i]})" transform="translate(${x} ${y})"><circle class="h1" r="14"/><circle class="h2" r="12.5"/><circle class="pc" r="10.5"/></g>`;
       }).join('');
       b.querySelector('title').textContent = here.length
-        ? `Sector ${s}: ${here.map(i => CNAME[P.colors[i]]).join(', ')}${here.length > 1 ? ' (latest arrival on top)' : ''}`
-        : `Sector ${s}`;
+        ? `Sector ${s}: ${here.map(i => CNAME[P.colors[i]]).join(', ')}${here.length > 1 ? ' (back to front)' : ''}` : `Sector ${s}`;
     });
+  }
+  function movePawn(i, d) {
+    change(() => { const P = S.players; P.abs[i] += d; P.t[i] = ++P.clock; P.active = backOrder()[0]; });
+    renderPlayers(); render(); renderHyp();
+    syncEarth();
+  }
+  function penalize(list) {
+    const P = S.players, order = backOrder();
+    list.slice().sort((a, b) => order.indexOf(a) - order.indexOf(b)).forEach(i => { P.abs[i] += 1; P.t[i] = ++P.clock; });
+    P.active = backOrder()[0];
   }
   pchips.addEventListener('click', e => {
     const b = e.target.closest('button[data-i]');
@@ -678,24 +770,48 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
     const sel = e.target.closest('select.pcol');
     if (!sel) return;
     const i = +sel.dataset.i, c = sel.value;
-    change(() => {
-      const P = S.players, j = P.colors.indexOf(c);
-      if (j !== -1 && j !== i) P.colors[j] = P.colors[i]; // swap so colours stay unique
-      P.colors[i] = c;
-    });
-    renderPlayers();
+    change(() => { const P = S.players, j = P.colors.indexOf(c); if (j !== -1 && j !== i) P.colors[j] = P.colors[i]; P.colors[i] = c; });
+    renderPlayers(); renderHyp();
   });
   $('pcount').addEventListener('change', e => {
     const n = +e.target.value;
-    change(() => { S.players.count = n; if (S.players.active >= n) S.players.active = 0; });
-    renderPlayers();
+    change(() => { const P = S.players; P.count = n; if (P.active >= n) P.active = 0; if (P.me >= n) P.me = 0; });
+    renderPlayers(); render(); renderHyp();
   });
+  $('pmoves').addEventListener('click', e => { const b = e.target.closest('button[data-n]'); if (b) movePawn(S.players.active, +b.dataset.n); });
+
+  /* ---------- earth board ---------- */
+  function nextTheory() {
+    const f = wrapS(S.earth.abs);
+    for (let d = 1; d <= N; d++) { const s = wrapS(f + d); if (THEORY_AT.includes(s)) return s; }
+    return THEORY_AT[0];
+  }
+  function syncEarth() {
+    if (dlg.open) return;
+    if (!queue.length) {
+      const goal = Math.max(minAbs(), earthGoal === null ? -Infinity : earthGoal);
+      let moved = false;
+      while (S.earth.abs < goal && !queue.length) {
+        S.earth.abs++; moved = true;
+        const s = wrapS(S.earth.abs);
+        if (s === CONF_AT && !S.earth.conf) queue.push({ kind:'conf' });
+        if (THEORY_AT.includes(s)) queue.push({ kind:'theory', at:s });
+      }
+      if (earthGoal !== null && S.earth.abs >= earthGoal) earthGoal = null;
+      if (moved) { save(); render(); renderHyp(); }
+    }
+    if (queue.length) { const t = queue.shift(); openTask(t.kind === 'conf' ? { kind:'conf' } : theoryTask(t.at)); }
+  }
+  function turnEarthTo(s) {
+    const d = (s - wrapS(S.earth.abs) + N) % N;
+    if (!d) return;
+    if (d <= SKY) { push(snap()); earthGoal = S.earth.abs + d; syncEarth(); }
+    else { change(() => { S.earth.abs -= N - d; }); render(); renderHyp(); }
+  }
 
   /* ---------- placement rules ---------- */
   const rules = $('rules');
-  OBJECTS.forEach(o => {
-    rules.appendChild(el('li', null, `${icon(o.icon)}<div><b>${o.name}</b> <span class="q">(${o.n})</span><p>${o.rule}</p></div>`));
-  });
+  OBJECTS.forEach(o => rules.appendChild(el('li', null, `${icon(o.icon)}<div><b>${o.name}</b> <span class="q">(${o.n})</span><p>${o.rule}</p></div>`)));
 
   /* ---------- action log ---------- */
   const logRows = $('log-rows');
@@ -707,8 +823,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
         `<span class="idx">${n}</span>` +
         `<input class="ti" data-field="log-${i}-a" list="actions" aria-label="Action, row ${n}" autocomplete="off">` +
         `<input class="ti" data-field="log-${i}-r" aria-label="Result, row ${n}" autocomplete="off">` +
-        [1, 2, 3].map(p => `<input class="ti c" data-field="log-${i}-p${p}" aria-label="Player column ${p}, row ${n}" autocomplete="off">`).join('')
-      ));
+        [1, 2, 3].map(p => `<input class="ti c" data-field="log-${i}-p${p}" aria-label="Player column ${p}, row ${n}" autocomplete="off">`).join('')));
     }
   }
   $('add-row').addEventListener('click', () => {
@@ -726,36 +841,138 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
       inp.title = isT && used > TARGET_LIMIT ? `Target can only be used ${TARGET_LIMIT} times per game` : '';
     });
     const t = $('target-count');
-    t.textContent = used > TARGET_LIMIT
-      ? `Target used ${used} times, only ${TARGET_LIMIT} allowed`
-      : `Target used ${used} of ${TARGET_LIMIT}`;
+    t.textContent = used > TARGET_LIMIT ? `Target used ${used} times, only ${TARGET_LIMIT} allowed` : `Target used ${used} of ${TARGET_LIMIT}`;
     t.classList.toggle('warn', used > TARGET_LIMIT);
     t.classList.toggle('full', used === TARGET_LIMIT);
   }
 
   /* ---------- notes ---------- */
   const notes = $('notes-rows');
-  NOTE_ROWS.forEach(([k, label]) => {
-    notes.appendChild(el('div', 'trow',
-      `<span class="lbl">${label}</span>` +
-      `<input class="ti" data-field="note-${k}" aria-label="Research and conference note ${label}" autocomplete="off">` +
-      `<input class="ti" data-field="other-${k}" aria-label="Other note ${label}" autocomplete="off">`
-    ));
+  NOTE_ROWS.forEach(([k, label]) => notes.appendChild(el('div', 'trow',
+    `<span class="lbl">${label}</span><input class="ti" data-field="note-${k}" aria-label="Research and conference note ${label}" autocomplete="off"><input class="ti" data-field="other-${k}" aria-label="Other note ${label}" autocomplete="off">`)));
+
+  /* ---------- hypotheses ---------- */
+  const confirmedIn = s => { const t = S.th.find(t => t.s === s && t.st === 'c'); return t ? (t.k || '?') : ''; };
+  const usedBy = (p, k) => S.th.filter(t => t.p === p && t.k === k).length;
+  const left = k => TOKENS[k] - usedBy(S.players.me, k);
+  const wrongKnown = (s, k) => S.th.some(t => t.s === s && t.k === k && t.st === 'w');
+  const reviewSectors = () => [...new Set(S.th.filter(t => t.st === 'p' && t.pos === 3).map(t => t.s))].sort((a, b) => a - b);
+  const pcol = p => S.players.colors[p] || COLOURS[p];
+  const who = p => `<span class="wh"><span class="disc" style="--pc:var(--p-${pcol(p)})"></span>${CNAME[pcol(p)]}${p === S.players.me ? ' (you)' : ''}</span>`;
+  const whose = p => p === S.players.me ? 'your' : `${who(p)}’s`;
+
+  function sectorInfo(s) {
+    const conf = [], cand = [];
+    OBJECTS.forEach((o, r) => {
+      if (!allowed(o, s)) return;
+      const v = S.grid[r][s - 1];
+      if (v === 3) conf.push(r);
+      if (v !== 1) cand.push(r);
+    });
+    const known = conf.length === 1 ? conf[0] : (conf.length === 0 && cand.length === 1 ? cand[0] : -1);
+    return { conf, cand, known, bad:conf.length > 1 || cand.length === 0 };
+  }
+  function wheelConfirm(k, s) { const r = OI[k]; OBJECTS.forEach((o, j) => { if (allowed(o, s)) S.grid[j][s - 1] = j === r ? 3 : 1; }); }
+  function wheelRuleOut(k, s) { const r = OI[k]; if (allowed(OBJECTS[r], s)) S.grid[r][s - 1] = 1; }
+
+  function stageOptions(s) {
+    if (confirmedIn(s)) return [];
+    const me = S.players.me;
+    return TH_TYPES.filter(k => left(k) > 0 && !(k === 'C' && !COMET_S.includes(s)) && !S.th.some(t => t.p === me && t.s === s && t.k === k));
+  }
+  function cycleStage(s, d) {
+    const opts = stageOptions(s), here = S.stage && S.stage.s === s;
+    if (!opts.length) { if (here) { change(() => { S.stage = null; }); renderHyp(); } return; }
+    const cur = here ? opts.indexOf(S.stage.k) : -1;
+    const i = cur === -1 ? (d > 0 ? 0 : opts.length - 1) : cur + d;
+    change(() => { S.stage = i >= 0 && i < opts.length ? { s, k:opts[i] } : null; });
+    renderHyp();
+  }
+  function chip(t) {
+    const c = pcol(t.p), mine = t.p === S.players.me, o = t.k ? obj(t.k) : null;
+    const tip = `${CNAME[c]}${mine ? ' (you)' : ''}: ${o ? o.one : 'face down'} in sector ${t.s}${t.st === 'c' ? ', correct' : ''}`;
+    return `<span class="tk${o ? '' : ' fd'}" style="--pc:var(--p-${c})" title="${tip}">${o ? icon(o.icon) : ''}${t.st === 'c' ? `<b class="ck">${icon('check')}</b>` : ''}</span>`;
+  }
+  function renderHyp() {
+    const P = S.players, me = P.me;
+    $('me').innerHTML = range(P.count).map(i => `<option value="${i - 1}"${i - 1 === me ? ' selected' : ''}>${CNAME[P.colors[i - 1]]}</option>`).join('');
+    $('supply').innerHTML = TH_TYPES.map(k => {
+      const o = obj(k), u = usedBy(me, k), st = S.stage && S.stage.k === k ? 1 : 0;
+      return `<span class="sup" title="${o.name}: ${Math.max(0, TOKENS[k] - u)} of ${TOKENS[k]} theory tokens left">${icon(o.icon)}` +
+        range(TOKENS[k]).map(i => `<i class="${i <= u ? 'u' : i <= u + st ? 'st' : ''}"></i>`).join('') + '</span>';
+    }).join('');
+    const fe = document.activeElement, fs = fe && fe.closest && fe.closest('#hgrid') ? fe.dataset.s : null;
+    let h = '<span class="corner"></span>' + range(N).map(s => `<span class="hh">S${s}</span>`).join('');
+    h += `<span class="rlab" title="Your planned theory, one at a time">${icon('plus')}<small>max 1</small></span>`;
+    for (let s = 1; s <= N; s++) {
+      const conf = confirmedIn(s), st = S.stage && S.stage.s === s ? S.stage : null;
+      const outer = S.th.filter(t => t.s === s && t.pos === 0 && t.st !== 'w');
+      const label = conf ? `Sector ${s} is confirmed` : st ? `Planned: ${obj(st.k).one} in sector ${s}. Tap to change` : `Plan a theory for sector ${s}`;
+      const off = !!conf || (!st && !stageOptions(s).length);
+      h += `<button type="button" class="stg" data-s="${s}" aria-label="${label}" title="${label}"${off ? ' disabled' : ''}>${st ? `<span class="plan">${icon(obj(st.k).icon)}</span>` : ''}${outer.map(chip).join('')}</button>`;
+    }
+    [1, 2, 3].forEach(pos => {
+      h += pos === 3 ? `<span class="rlab r3">${icon('review')}<small>review</small></span>` : `<span class="rlab">${pos}</span>`;
+      for (let s = 1; s <= N; s++) h += `<span${pos === 3 ? ' class="r3"' : ''}>${S.th.filter(t => t.s === s && t.pos === pos && t.st !== 'w').map(chip).join('')}</span>`;
+    });
+    h += `<span class="rlab">${icon('check')}<small>result</small></span>`;
+    for (let s = 1; s <= N; s++) {
+      const c = confirmedIn(s);
+      if (c) {
+        const o = c !== '?' ? obj(c) : null;
+        h += `<span><span class="res" title="Sector ${s}: ${o ? o.one : 'object'} confirmed by peer review">${icon(o ? o.icon : 'check')}</span></span>`;
+        continue;
+      }
+      const no = [...new Set(S.th.filter(t => t.s === s && t.st === 'w' && t.k).map(t => t.k))];
+      h += `<span>${no.map(k => `<span class="nope" title="Sector ${s}: not ${obj(k).a}">${icon(obj(k).icon)}</span>`).join('')}</span>`;
+    }
+    $('hgrid').innerHTML = h;
+    if (fs) { const b = $('hgrid').querySelector(`button[data-s="${fs}"]`); if (b && !b.disabled) b.focus(); }
+    $('hyp-status').textContent = `${S.phaseNo} theory phase${S.phaseNo === 1 ? '' : 's'} so far · next at sector ${nextTheory()}`;
+    const rs = reviewSectors(), rb = $('h-review');
+    rb.disabled = !rs.length;
+    rb.textContent = rs.length ? `Peer review (${rs.length})` : 'Peer review';
+    $('tlog-n').textContent = S.th.length ? `(${S.th.length})` : '';
+    $('tlog-rows').innerHTML = !S.th.length ? '<div class="tempty">No theories yet.</div>' : S.th.map((t, i) =>
+      `<div class="trow" data-i="${i}"><span class="idx">${t.ph === FINAL_PH ? 'Final' : t.ph}</span><span class="tcell">${who(t.p)}</span>` +
+      `<select class="tsel" data-key="s" aria-label="Sector">${range(N).map(s => `<option value="${s}"${s === t.s ? ' selected' : ''}>${s}</option>`).join('')}</select>` +
+      `<select class="tsel" data-key="k" aria-label="Object"><option value="">Face down</option>${TH_TYPES.map(k => `<option value="${k}"${k === t.k ? ' selected' : ''}>${obj(k).name}</option>`).join('')}</select>` +
+      `<select class="tsel" data-key="pos" aria-label="Space on the peer review track">${['+', '1', '2', '⟳'].map((l, j) => `<option value="${j}"${j === t.pos ? ' selected' : ''}>${l}</option>`).join('')}</select>` +
+      `<select class="tsel" data-key="st" aria-label="Status">${[['p', 'Waiting'], ['c', 'Correct'], ['w', 'Wrong']].map(([v, l]) => `<option value="${v}"${v === t.st ? ' selected' : ''}>${l}</option>`).join('')}</select>` +
+      `<button type="button" class="tdel" aria-label="Remove this theory" title="Remove">×</button></div>`).join('');
+  }
+  $('hgrid').addEventListener('click', e => { const b = e.target.closest('button.stg'); if (b && !b.disabled) cycleStage(+b.dataset.s, e.shiftKey ? -1 : 1); });
+  $('hgrid').addEventListener('contextmenu', e => { const b = e.target.closest('button.stg'); if (!b || b.disabled) return; e.preventDefault(); cycleStage(+b.dataset.s, -1); });
+  $('me').addEventListener('change', e => { change(() => { S.players.me = +e.target.value; S.stage = null; }); renderHyp(); });
+  $('tlog-rows').addEventListener('change', e => {
+    const sel = e.target.closest('.tsel');
+    if (!sel) return;
+    const t = S.th[+sel.closest('.trow').dataset.i], key = sel.dataset.key;
+    if (!t) return;
+    change(() => { t[key] = key === 'k' || key === 'st' ? sel.value : +sel.value; });
+    renderHyp();
   });
+  $('tlog-rows').addEventListener('click', e => {
+    const b = e.target.closest('.tdel');
+    if (!b) return;
+    const i = +b.closest('.trow').dataset.i;
+    change(() => { S.th.splice(i, 1); });
+    renderHyp();
+  });
+  $('h-phase').addEventListener('click', () => openTask(theoryTask(null)));
+  $('h-review').addEventListener('click', () => openTask({ kind:'review', step:'review', log:[], pen:{}, sectors:reviewSectors() }));
+  $('h-end').addEventListener('click', () => openTask(endTask()));
 
   /* ---------- score ---------- */
   const scoreEl = $('score-rows');
   SCORE.forEach(sc => {
-    const o = OBJECTS.find(x => x.key === sc.id);
-    const label = o ? o.name : sc.label;
+    const o = OBJECTS.find(x => x.key === sc.id), label = o ? o.name : sc.label;
     const note = sc.options ? '10, 8, 6, 4 or 2 points' : (sc.note || `${sc.pts} points each`);
     const ic = o ? icon(o.icon) : '<span class="badge">1st</span>';
     const ctl = sc.options
       ? `<select class="pick" data-field="sc-${sc.id}" aria-label="${label} points"><option value="0">None</option>${sc.options.map(v => `<option value="${v}">${v}</option>`).join('')}</select>`
       : `<span class="stepper"><button type="button" data-d="-1" aria-label="One fewer ${label}">−</button><input type="number" inputmode="numeric" min="0" max="${sc.max ?? o.n}" value="0" data-field="sc-${sc.id}" aria-label="${label} scored"><button type="button" data-d="1" aria-label="One more ${label}">+</button></span>`;
-    scoreEl.appendChild(el('div', 'srow',
-      `<span class="sic">${ic}</span><span class="slab">${label}<small>${note}</small></span>${ctl}<span class="ssub" data-sub="${sc.id}">0</span>`
-    ));
+    scoreEl.appendChild(el('div', 'srow', `<span class="sic">${ic}</span><span class="slab">${label}<small>${note}</small></span>${ctl}<span class="ssub" data-sub="${sc.id}">0</span>`));
   });
   scoreEl.addEventListener('click', e => {
     const b = e.target.closest('button[data-d]');
@@ -769,8 +986,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
   function updateScore() {
     let total = 0;
     SCORE.forEach(sc => {
-      const v = Math.max(0, parseInt(S.f['sc-' + sc.id] || '0', 10) || 0);
-      const pts = sc.options ? v : v * sc.pts;
+      const v = Math.max(0, parseInt(S.f['sc-' + sc.id] || '0', 10) || 0), pts = sc.options ? v : v * sc.pts;
       total += pts;
       const out = scoreEl.querySelector(`[data-sub="${sc.id}"]`);
       out.textContent = pts;
@@ -778,6 +994,348 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
     });
     $('total').textContent = total;
   }
+  function myScore() {
+    const me = S.players.me, out = { first:0, A:0, C:0, G:0, D:0 };
+    for (let s = 1; s <= N; s++) {
+      const ok = S.th.filter(t => t.s === s && t.st === 'c');
+      if (!ok.length) continue;
+      const min = Math.min(...ok.map(t => t.ph));
+      if (ok.some(t => t.p === me && t.ph === min)) out.first++;
+    }
+    S.th.forEach(t => { if (t.p === me && t.st === 'c' && t.k in out) out[t.k]++; });
+    return out;
+  }
+  function fillScore(sc, x) {
+    change(() => {
+      S.f['sc-first'] = String(Math.min(12, sc.first));
+      TH_TYPES.forEach(k => { S.f['sc-' + k] = String(sc[k]); });
+      if (x != null) S.f['sc-X'] = String(x);
+    });
+    hydrate(); updateScore();
+  }
+  $('fill-score').addEventListener('click', () => { fillScore(myScore(), null); flash($('fill-score'), 'Filled'); });
+
+  /* ---------- phase dialog ---------- */
+  const head = (ic, title, sub) => `<header class="dh">${icon(ic)}<div><h3 id="dlg-h">${title}</h3>${sub ? `<p>${sub}</p>` : ''}</div></header>`;
+  const stepsBar = (names, on) => `<ol class="steps">${names.map((n, i) => `<li class="${i === on ? 'on' : i < on ? 'done' : ''}">${n}</li>`).join('')}</ol>`;
+  const foot = html => `<footer class="df">${html}</footer>`;
+  const B = (act, label, cls) => `<button type="button" class="btn${cls ? ' ' + cls : ''}" data-act="${act}">${label}</button>`;
+  const logHTML = lines => `<ul class="logl">${lines.map(l => `<li>${l}</li>`).join('')}</ul>`;
+
+  function openTask(t) { task = t; drawTask(); if (!dlg.open) dlg.showModal(); focusTask(); }
+  function focusTask() {
+    const f = dIn.querySelector('.qbtns button, .db select, .db input') || dIn.querySelector('.df .primary:not(:disabled)') || dIn.querySelector('.df button');
+    if (f) f.focus({ preventScroll:true });
+  }
+  function drawTask() {
+    const t = task;
+    if (t.kind === 'conf') drawConf();
+    else if (t.step === 'who') drawWho();
+    else if (t.step === 'submit') drawSubmit();
+    else if (t.step === 'review') drawReview();
+    else if (t.step === 'reveal') drawReveal();
+    else if (t.step === 'score') drawScore();
+    else drawDone();
+    dlg.scrollTop = 0;
+    if (dlg.open) focusTask();
+  }
+  dlg.addEventListener('close', () => { flushPen(); task = null; refreshAll(); syncEarth(); });
+
+  function theoryTask(at) {
+    const me = S.players.me;
+    return { kind:'theory', at, step:'submit', log:[], pen:{}, sectors:[],
+      slots:backOrder().map(p => p === me && S.stage ? { p, s:S.stage.s, k:S.stage.k } : { p, s:'', k:'' }) };
+  }
+  function endTask() {
+    const P = S.players;
+    const loc = range(P.count).map(i => i - 1).sort((a, b) => P.abs[b] - P.abs[a] || P.t[b] - P.t[a])[0];
+    return { kind:'end', step:'who', loc, log:[], slots:[] };
+  }
+
+  function drawConf() {
+    dIn.innerHTML = head('conf', 'Planet X conference', `The earth board reached sector ${CONF_AT}`) +
+      `<div class="db"><p>In the app press <strong>Planet X Conference</strong> and choose <strong>X1</strong>. Announce the clue to everyone, then note it here. It goes into the X₁ line of your notes.</p>` +
+      `<label class="dl">Conference clue<input class="dsel" id="d-clue" data-field="note-X1" autocomplete="off"></label></div>` +
+      foot(B('skip', 'Skip') + B('save', 'Save clue', 'primary'));
+    $('d-clue').value = S.f['note-X1'] || '';
+  }
+
+  function slotsHTML(slots) {
+    const me = S.players.me;
+    return '<div class="slots">' + slots.map((sl, j) => {
+      const mine = sl.p === me, name = CNAME[pcol(sl.p)];
+      const secs = '<option value="">No theory</option>' + range(N).map(s => {
+        const c = !!confirmedIn(s);
+        return `<option value="${s}"${c ? ' disabled' : ''}${sl.s === s ? ' selected' : ''}>Sector ${s}${c ? ' (confirmed)' : ''}</option>`;
+      }).join('');
+      const objs = mine
+        ? `<select data-j="${j}" data-k="k" aria-label="Object for your theory"><option value="">Object</option>${TH_TYPES.map(k =>
+            `<option value="${k}"${left(k) <= 0 ? ' disabled' : ''}${sl.k === k ? ' selected' : ''}>${obj(k).name} (${Math.max(0, left(k))} left)</option>`).join('')}</select>`
+        : '<span class="fdn">Face down</span>';
+      return `<div class="slot">${who(sl.p)}<select data-j="${j}" data-k="s" aria-label="Sector for ${name}">${secs}</select>${objs}<p class="msg" data-msg="${j}"></p></div>`;
+    }).join('') + '</div>';
+  }
+  function checkTheory({ p, s, k }, others) {
+    const isMe = p === S.players.me;
+    if (!s) return isMe && k ? { err:'Pick a sector, or set the object back to blank to pass.' } : {};
+    if (isMe && !k) return { err:'Pick which object this theory is for.' };
+    if (confirmedIn(s)) return { err:`Sector ${s} is already confirmed by peer review, so no new theories can go there.` };
+    if (others.some(o => o.s === s)) return { err:'Two theories can’t go into the same sector at the same time.' };
+    if (!isMe) return S.th.filter(t => t.p === p).length + others.filter(o => o.s).length >= TOKEN_TOTAL ? { err:`This player has used all ${TOKEN_TOTAL} theory tokens.` } : {};
+    const o = obj(k);
+    if (left(k) - others.filter(x => x.s && x.k === k).length <= 0) return { err:`You have no ${o.one} theory tokens left.` };
+    if (S.th.some(t => t.p === p && t.s === s && t.k === k)) return { err:`You already submitted ${o.a} theory in sector ${s}.` };
+    if (k === 'C' && !COMET_S.includes(s)) return { warn:'Comets are only ever in sectors 2, 3, 5, 7 or 11, so this theory can’t be right.' };
+    if (wrongKnown(s, k)) return { warn:`Peer review already showed sector ${s} doesn’t hold ${o.a}.` };
+    if (S.grid[OI[k]][s - 1] === 1) return { warn:`Your wheel has ${o.a} ruled out in sector ${s}.` };
+    const info = sectorInfo(s);
+    if (info.known >= 0 && info.known !== OI[k]) return { warn:`Your wheel says sector ${s} ${holds(OBJECTS[info.known].key)}.` };
+    return {};
+  }
+  function checkSlots() {
+    let bad = false;
+    task.slots.forEach((sl, j) => {
+      const r = checkTheory(sl, task.slots.filter((o, i) => i !== j && o.p === sl.p));
+      const m = dIn.querySelector(`[data-msg="${j}"]`);
+      if (m) { m.textContent = r.err || r.warn || ''; m.className = 'msg' + (r.err ? ' err' : r.warn ? ' warn' : ''); }
+      if (r.err) bad = true;
+    });
+    const b = dIn.querySelector('[data-act="place"]');
+    if (b) b.disabled = bad;
+    return bad;
+  }
+  function drawSubmit() {
+    const t = task, fin = t.kind === 'end';
+    const sub = fin ? `${CNAME[pcol(t.loc)]} located Planet X` : t.at ? `The earth board reached sector ${t.at}` : 'Started by hand';
+    const intro = fin
+      ? 'Players behind the finder get one last chance, back to front: 1 to 3 sectors back may submit 1 theory, 4 or 5 sectors back up to 2. Anyone locating Planet X instead leaves their rows on “No theory”.'
+      : 'Each player may submit <strong>1 theory</strong>. Everyone chooses in secret, then the theories go on the board in player order, back to front on the time track. Leave a row on “No theory” to pass.';
+    dIn.innerHTML = head('theory', fin ? 'Final theories' : 'Theory phase', sub) + stepsBar(fin ? END_STEPS : TH_STEPS, fin ? 1 : 0) +
+      `<div class="db"><p>${intro}</p>${t.slots.length ? slotsHTML(t.slots) : '<p class="note">Nobody is far enough behind to submit a final theory.</p>'}${fin ? finalNote() : ''}</div>` +
+      foot(B('skip', fin ? 'Skip' : 'Skip this phase') + B('place', fin ? 'Submit and reveal' : 'Place and advance', 'primary'));
+    checkSlots();
+  }
+  function place() {
+    const t = task, me = S.players.me, fin = t.kind === 'end';
+    if (checkSlots()) return;
+    const sub = t.slots.filter(sl => sl.s && (sl.p !== me || sl.k));
+    change(() => {
+      const ph = fin ? FINAL_PH : ++S.phaseNo;
+      sub.forEach(sl => S.th.push({ p:sl.p, k:sl.p === me ? sl.k : '', s:sl.s, pos:0, st:'p', ph }));
+      if (!fin) S.th.forEach(x => { if (x.st === 'p') x.pos = Math.min(3, x.pos + 1); });
+      if (sub.some(sl => sl.p === me)) S.stage = null;
+    });
+    sub.forEach(sl => t.log.push(`${who(sl.p)} placed ${sl.p === me ? obj(sl.k).a + ' theory' : 'a theory'} in sector ${sl.s}.`));
+    if (!sub.length) t.log.push(fin ? 'No final theories.' : 'Nobody submitted a theory this time.');
+    if (fin) t.step = 'reveal';
+    else {
+      t.log.push('Every face-down theory moved one space inward.');
+      t.sectors = reviewSectors();
+      t.log.push(t.sectors.length ? `Peer review in sector${t.sectors.length > 1 ? 's' : ''} ${t.sectors.join(', ')}.` : 'Nothing has reached the review space yet.');
+      t.step = 'review';
+    }
+    drawTask();
+  }
+
+  function addPen(s, p) { (task.pen[s] = task.pen[s] || []).push(p); }
+  function penText(list) {
+    const n = {};
+    list.forEach(p => { n[p] = (n[p] || 0) + 1; });
+    return Object.keys(n).map(p => `${who(+p)} moves ${n[p]} sector${n[p] > 1 ? 's' : ''} on the time track as a penalty.`);
+  }
+  function flushPen() {
+    if (!task || !task.pen) return;
+    const all = [];
+    for (const s of Object.keys(task.pen)) { all.push(...task.pen[s]); task.pen[s] = []; }
+    if (all.length) change(() => penalize(all));
+  }
+  function nextQuestion() {
+    const t = task;
+    for (const s of t.sectors) {
+      for (let guard = 0; guard < 60; guard++) {
+        const conf = confirmedIn(s), pend = S.th.filter(x => x.s === s && x.st === 'p');
+        if (conf && conf !== '?') {
+          const known = pend.filter(x => x.k);
+          if (known.length) {
+            change(() => known.forEach(x => { x.st = x.k === conf ? 'c' : 'w'; }));
+            known.forEach(x => {
+              if (x.st === 'w') addPen(s, x.p);
+              t.log.push(`${who(x.p)}: ${obj(x.k).a} in sector ${s} is ${x.st === 'c' ? 'right' : 'wrong'}.`);
+            });
+            continue;
+          }
+          if (pend.length) return { type:'flip', t:pend[0], s, conf };
+        } else if (!conf) {
+          const inner = pend.filter(x => x.pos === 3);
+          const dup = inner.find(x => x.k && wrongKnown(s, x.k));
+          if (dup) {
+            const same = inner.filter(x => x.k === dup.k);
+            change(() => same.forEach(x => { x.st = 'w'; }));
+            same.forEach(x => { addPen(s, x.p); t.log.push(`${who(x.p)}: ${obj(x.k).a} in sector ${s} is wrong (already disproved).`); });
+            continue;
+          }
+          if (inner.length) return { type:inner[0].k ? 'result' : 'reveal', t:inner[0], s };
+        }
+        const pen = t.pen[s];
+        if (pen && pen.length) { t.pen[s] = []; change(() => penalize(pen)); t.log.push(...penText(pen)); }
+        break;
+      }
+    }
+    return null;
+  }
+  function drawReview() {
+    const t = task, q = nextQuestion();
+    t.q = q;
+    if (!q) { t.step = 'done'; drawDone(); return; }
+    const x = q.t, s = q.s;
+    let body;
+    if (q.type === 'reveal') {
+      body = `<h4>${icon('review')}Sector ${s}: ${whose(x.p)} theory</h4><p>It’s flipped face up for peer review. Which object does it show?</p>` +
+        `<div class="qbtns">${TH_TYPES.map(k => `<button type="button" class="btn" data-act="kind" data-k="${k}">${icon(obj(k).icon)}${cap(obj(k).one)}</button>`).join('')}</div>`;
+    } else if (q.type === 'result') {
+      const o = obj(x.k);
+      body = `<h4>${icon('review')}Sector ${s}: ${whose(x.p)} ${o.one} theory</h4><p>In the app press <strong>Peer Review</strong>, choose sector ${s} and the ${o.one}, then <strong>View Results</strong>. What does it say?</p>` +
+        `<div class="qbtns">${B('right', icon('check') + 'Correct', 'good')}${B('wrong', icon('cross') + 'Incorrect', 'bad')}</div>`;
+    } else {
+      const sp = x.pos === 3 ? 'the review space' : x.pos === 0 ? 'the outer space' : `space ${x.pos}`;
+      body = `<h4>${icon('check')}Sector ${s} ${holds(q.conf)}</h4><p>${who(x.p)}’s theory in ${sp} is flipped face up. Does it show ${obj(q.conf).a}?</p>` +
+        `<div class="qbtns">${B('yes', icon('check') + 'Yes, correct', 'good')}${B('no', icon('cross') + 'No, wrong', 'bad')}</div>`;
+    }
+    const hd = t.kind === 'review' ? head('review', 'Peer review', 'Theories that reached the review space')
+      : head('theory', 'Theory phase', t.at ? `The earth board reached sector ${t.at}` : 'Started by hand') + stepsBar(TH_STEPS, 2);
+    dIn.innerHTML = hd + `<div class="db"><div class="qcard">${body}</div>${t.log.length ? '<p class="sofar">So far</p>' + logHTML(t.log) : ''}</div>` + foot(B('close', 'Finish later'));
+  }
+  function resolveRight(q) {
+    const x = q.t;
+    change(() => { x.st = 'c'; wheelConfirm(x.k, q.s); });
+    task.log.push(`Sector ${q.s} ${holds(x.k)}: ${whose(x.p)} theory was right.`);
+  }
+  function resolveWrong(q) {
+    const x = q.t, same = S.th.filter(y => y.s === q.s && y.st === 'p' && y.pos === 3 && y.k === x.k);
+    change(() => { same.forEach(y => { y.st = 'w'; }); wheelRuleOut(x.k, q.s); });
+    same.forEach(y => addPen(q.s, y.p));
+    task.log.push(`Sector ${q.s} doesn’t hold ${obj(x.k).a}: ${same.map(y => who(y.p)).join(', ')} ${same.length > 1 ? 'were' : 'was'} wrong.`);
+  }
+  function flip(q, yes) {
+    const x = q.t;
+    change(() => { if (yes) { x.st = 'c'; x.k = q.conf; } else x.st = 'w'; });
+    if (!yes) addPen(q.s, x.p);
+    task.log.push(`${who(x.p)}’s flipped theory in sector ${q.s} was ${yes ? 'right' : 'wrong'}.`);
+  }
+  function drawDone() {
+    const t = task, th = t.kind === 'theory';
+    dIn.innerHTML = (th ? head('theory', 'Theory phase done', t.at ? `The earth board reached sector ${t.at}` : 'Started by hand') + stepsBar(TH_STEPS, 3)
+        : head('review', 'Peer review done', '')) +
+      `<div class="db">${logHTML(t.log.length ? t.log : ['Nothing needed peer review.'])}<p class="note">Results are marked on your wheel and in the Hypotheses grid. Undo steps back through each one if something went in wrong.</p></div>` +
+      foot(B('close', 'Continue', 'primary'));
+  }
+
+  function drawWho() {
+    const P = S.players, t = task;
+    dIn.innerHTML = head('planetx', 'Planet X found', 'End of the game') + stepsBar(END_STEPS, 0) +
+      `<div class="db"><p>Move the finder’s pawn first (Locate Planet X costs 5), then choose who found it.</p>` +
+      `<label class="dl">Found by<select class="dsel" id="d-loc">${range(P.count).map(i => `<option value="${i - 1}"${i - 1 === t.loc ? ' selected' : ''}>${CNAME[P.colors[i - 1]]}${i - 1 === P.me ? ' (you)' : ''}</option>`).join('')}</select></label>` +
+      `<div id="d-backs"></div></div>` + foot(B('skip', 'Cancel') + B('next', 'Next', 'primary'));
+    drawBacks();
+  }
+  function drawBacks() {
+    const P = S.players, loc = task.loc;
+    $('d-backs').innerHTML = logHTML(backOrder().filter(i => i !== loc).map(i => {
+      const back = P.abs[loc] - P.abs[i];
+      if (back < 1) return `${who(i)}: not behind, so no final turn.`;
+      return `${who(i)}: ${back} sector${back > 1 ? 's' : ''} back, so ${back >= 4 ? 'up to 2 theories' : '1 theory'}, or locate Planet X for ${Math.min(10, back * 2)} points.`;
+    }));
+  }
+  function buildFinalSlots() {
+    const P = S.players, t = task, me = P.me;
+    t.slots = [];
+    backOrder().forEach(i => {
+      if (i === t.loc) return;
+      const back = P.abs[t.loc] - P.abs[i], n = back >= 4 ? 2 : back >= 1 ? 1 : 0;
+      for (let j = 0; j < n; j++) t.slots.push(i === me && j === 0 && S.stage ? { p:i, s:S.stage.s, k:S.stage.k } : { p:i, s:'', k:'' });
+    });
+  }
+  function finalNote() {
+    const P = S.players, me = P.me, loc = task.loc;
+    if (me === loc) return '<p class="note">You found Planet X first, which is worth 10 points.</p>';
+    const back = P.abs[loc] - P.abs[me];
+    return back >= 1 ? `<p class="note">You’re ${back} sector${back > 1 ? 's' : ''} back. Locating Planet X instead is worth ${Math.min(10, back * 2)} points if you’re right; set that under Final score.</p>` : '';
+  }
+  function drawReveal() {
+    const t = task, secs = [...new Set(S.th.filter(x => x.st === 'p').map(x => x.s))].sort((a, b) => a - b);
+    if (!secs.length) { t.step = 'score'; drawScore(); return; }
+    dIn.innerHTML = head('planetx', 'Reveal objects', 'Check the theories still face down') + stepsBar(END_STEPS, 2) +
+      `<div class="db"><p>In the app press <strong>Reveal Objects</strong>. For each sector below, pick what the app shows. For other players’ face-down theories, tick the ones that turn out right.</p>` +
+      secs.map(s => {
+        const info = sectorInfo(s), pre = info.known >= 0 ? OBJECTS[info.known].key : '';
+        const ths = S.th.map((x, i) => [x, i]).filter(([x]) => x.s === s && x.st === 'p');
+        return `<div class="rv"><b>Sector ${s}</b><select class="dsel" data-rs="${s}" aria-label="Object in sector ${s}"><option value="">Not sure</option>${OBJECTS.map(o =>
+            `<option value="${o.key}"${o.key === pre ? ' selected' : ''}${allowed(o, s) ? '' : ' disabled'}>${o.key === 'E' ? 'Truly empty' : cap(o.one)}</option>`).join('')}</select>` +
+          `<div class="toks">${ths.map(([x, i]) => x.k ? `<span>${who(x.p)}: ${obj(x.k).one}</span>` : `<label><input type="checkbox" data-ri="${i}"> ${who(x.p)} right</label>`).join('')}</div></div>`;
+      }).join('') + '</div>' + foot(B('score', 'Skip') + B('check', 'Check theories', 'primary'));
+  }
+  function checkReveal() {
+    const t = task, picks = {}, out = {};
+    dIn.querySelectorAll('select[data-rs]').forEach(sel => { if (sel.value) picks[+sel.dataset.rs] = sel.value; });
+    const ticks = new Set([...dIn.querySelectorAll('input[data-ri]')].filter(c => c.checked).map(c => +c.dataset.ri));
+    change(() => {
+      S.th.forEach((x, i) => {
+        const k = picks[x.s];
+        if (x.st !== 'p' || !k) return;
+        if (x.k) x.st = x.k === k ? 'c' : 'w';
+        else if (ticks.has(i) && TH_TYPES.includes(k)) { x.st = 'c'; x.k = k; }
+        else x.st = 'w';
+        (out[x.s] = out[x.s] || []).push(`${who(x.p)} ${x.st === 'c' ? 'right' : 'wrong'}`);
+      });
+      for (const s of Object.keys(picks)) wheelConfirm(picks[s], +s);
+    });
+    Object.keys(out).sort((a, b) => a - b).forEach(s => t.log.push(`Sector ${s} ${holds(picks[s])}: ${out[s].join(', ')}.`));
+    t.step = 'score';
+    drawTask();
+  }
+  function drawScore() {
+    const t = task, sc = myScore(), x = t.loc === S.players.me ? 10 : null;
+    const rows = [['First to publish', sc.first, 1], ['Asteroids', sc.A, 2], ['Comets', sc.C, 3], ['Gas clouds', sc.G, 4], ['Dwarf planet', sc.D, 4]];
+    const tot = rows.reduce((a, r) => a + r[1] * r[2], 0) + (x || 0);
+    dIn.innerHTML = head('check', 'Your score from theories', 'Everything has been revealed') + stepsBar(END_STEPS, 3) +
+      `<div class="db">${t.log.length ? logHTML(t.log) : ''}<table class="stab">` +
+      rows.map(([l, n, p]) => `<tr><td>${l} <small>${n} × ${p}</small></td><td>${n * p}</td></tr>`).join('') +
+      (x ? `<tr><td>Planet X <small>found first</small></td><td>${x}</td></tr>` : '') +
+      `<tr class="tot"><td>Total${x ? '' : ' before Planet X'}</td><td>${tot}</td></tr></table>` +
+      `<p class="note">Fill final score copies these into the Final score panel${x ? '' : '; your Planet X points stay as you set them'}.</p></div>` +
+      foot(B('close', 'Close') + B('fill', 'Fill final score', 'primary'));
+  }
+
+  dIn.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]');
+    if (!b || !task) return;
+    const t = task, a = b.dataset.act;
+    if (a === 'close') return dlg.close();
+    if (t.kind === 'conf') { change(() => { S.earth.conf = true; }); return dlg.close(); }
+    if (a === 'skip') {
+      if (t.kind === 'end' && t.step === 'submit') { t.step = 'reveal'; return drawTask(); }
+      return dlg.close();
+    }
+    if (a === 'place') return place();
+    if (a === 'kind') { change(() => { t.q.t.k = b.dataset.k; }); return drawTask(); }
+    if (a === 'right') { resolveRight(t.q); return drawTask(); }
+    if (a === 'wrong') { resolveWrong(t.q); return drawTask(); }
+    if (a === 'yes' || a === 'no') { flip(t.q, a === 'yes'); return drawTask(); }
+    if (a === 'next') { buildFinalSlots(); t.step = 'submit'; return drawTask(); }
+    if (a === 'check') return checkReveal();
+    if (a === 'score') { t.step = 'score'; return drawTask(); }
+    if (a === 'fill') { fillScore(myScore(), t.loc === S.players.me ? 10 : null); return dlg.close(); }
+  });
+  dIn.addEventListener('change', e => {
+    if (!task) return;
+    const x = e.target;
+    if (x.id === 'd-loc') { task.loc = +x.value; drawBacks(); return; }
+    if (x.dataset.j != null && task.slots) {
+      const sl = task.slots[+x.dataset.j];
+      if (x.dataset.k === 's') sl.s = x.value ? +x.value : ''; else sl.k = x.value;
+      checkSlots();
+    }
+  });
 
   /* ---------- text fields: save, restore, undo ---------- */
   function hydrate() {
@@ -797,7 +1355,6 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
     if (k.startsWith('sc-')) updateScore();
     if (/^log-\d+-a$/.test(k)) updateTarget();
   });
-  // A finished edit (field left, or select changed) becomes one undo step
   document.addEventListener('change', e => {
     const t = e.target;
     if (!t.dataset || !t.dataset.field || pending === null) return;
@@ -815,7 +1372,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
     btn._t = setTimeout(() => { btn.textContent = btn.dataset.label; btn.classList.remove('armed'); }, 1800);
   }
   $('save-json').addEventListener('click', () => {
-    const data = { app:'survey-log', version:1, savedAt:new Date().toISOString(), state:JSON.parse(snap()) };
+    const data = { app:'survey-log', version:2, savedAt:new Date().toISOString(), state:JSON.parse(snap()) };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
     const d = new Date();
     const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -834,10 +1391,10 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
     if (!file) return;
     try {
       const raw = JSON.parse(await file.text());
-      const st = raw && raw.state ? raw.state : raw;
-      const d = normalize(Object.assign({}, st, { theme:S.theme, focus:null }));
+      const d = normalize(Object.assign({}, raw && raw.state ? raw.state : raw, { theme:S.theme }));
       if (!d) throw new Error('bad file');
       change(() => { S = d; });
+      queue = []; earthGoal = null;
       refreshAll();
       flash($('load-json'), 'Loaded');
     } catch (err) {
@@ -850,26 +1407,21 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
   let armed = null;
   const disarm = () => { clearTimeout(armed); armed = null; resetBtn.textContent = 'Reset'; resetBtn.classList.remove('armed'); };
   resetBtn.addEventListener('click', () => {
-    if (!armed) {
-      resetBtn.textContent = 'Tap again to reset';
-      resetBtn.classList.add('armed');
-      armed = setTimeout(disarm, 3000);
-      return;
-    }
+    if (!armed) { resetBtn.textContent = 'Tap again to reset'; resetBtn.classList.add('armed'); armed = setTimeout(disarm, 3000); return; }
     disarm();
     change(() => {
       const nb = blank(), P = S.players;
       nb.theme = S.theme;
       if (S.f.name) nb.f.name = S.f.name;
-      nb.players.count = P.count;
-      nb.players.colors = P.colors.slice();
+      nb.players.count = P.count; nb.players.colors = P.colors.slice(); nb.players.me = P.me;
       S = nb;
     });
+    queue = []; earthGoal = null;
     refreshAll();
   });
 
   /* ---------- go ---------- */
-  function refreshAll() { buildLog(); hydrate(); renderPlayers(); render(); updateScore(); updateTarget(); }
+  function refreshAll() { buildLog(); hydrate(); renderPlayers(); render(); renderHyp(); updateScore(); updateTarget(); }
   refreshAll();
   histUI();
 })();
