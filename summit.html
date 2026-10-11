@@ -64,7 +64,8 @@
     </style>
 </head>
 <body class="bg-[#d2b641] text-stone-900 min-h-screen flex items-center justify-center p-4 antialiased overflow-x-hidden">
-
+<!-- Navbar -->
+<div id="nav-placeholder"></div>
     <div class="w-full max-w-7xl flex flex-col md:flex-row gap-6 relative">
 
         <!-- LEFT COLUMN: ID BADGE / CLIPBOARD -->
@@ -177,6 +178,13 @@
     </div>
 
     <script>
+// --- Navbar ---
+  fetch('nav.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('nav-placeholder').innerHTML = data;
+    });
+        
 const characterData = {
     bruce: {
         name: "Dr. Bruce Pynner", 
