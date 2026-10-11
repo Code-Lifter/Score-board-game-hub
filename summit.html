@@ -180,7 +180,94 @@
     </div>
 
     <script>
-        const characterData = {
+const newCharacterData = {
+    bruce: {
+        name: "Dr. Bruce Pynner", 
+        age: 42, 
+        height: "189cm", 
+        baseWeight: "98.2 kg", 
+        ability: "\"On your turn you may skip your movement to gain [health][health][health][health]. You may stop players from affecting your [health].\"", //[cite: 1]
+        icon: "fa-user-ninja",
+        tracks: {
+            food: {
+                max: 8,
+                barriers: [4, 6, 8] 
+            },
+            oxygen: {
+                max: 6, 
+                barriers: [3, 5, 6] 
+            },
+            weight: {
+                max: 6, 
+                barriers: [3, 5] 
+            },
+            health: {
+                max: 11, 
+                barriers: [8, 5, 2] 
+            },
+            speed: {
+                max: 6
+            }
+        }
+    },
+    kathy: {
+        name: "Kathy Taylor", 
+        age: 30, 
+        height: "165cm", 
+        baseWeight: "54.7 kg", 
+        ability: "\"On your turn you may consume [food] to satisfy equal [oxygen] requirements. You may stop players from affecting your [oxygen].\"", 
+        icon: "fa-user-ninja",
+        tracks: {
+            food: {
+                max: 9, 
+                barriers: [4, 6, 8] 
+            },
+            oxygen: {
+                max: 5, 
+                barriers: [2, 3, 4, 5] 
+            },
+            weight: {
+                max: 7, 
+                barriers: [2, 4, 6] 
+            },
+            health: {
+                max: 10, 
+                barriers: [8, 6, 4, 2] 
+            },
+            speed: {
+                max: 7 
+            }
+        }
+    },
+    vince: {
+        name: "Vince Mirabelli", 
+        age: 36, 
+        height: "191.5cm", 
+        baseWeight: "92.9 kg", 
+        ability: "\"On your turn you may skip your movement to gain [food][food] or [oxygen][oxygen]. You may stop players from affecting your [weight].\"", 
+        icon: "fa-user-ninja",
+        tracks: {
+            food: {
+                max: 10, 
+                barriers: [5, 8, 10] 
+            },
+            oxygen: {
+                max: 7, 
+                barriers: [3, 5, 7] 
+            },
+            weight: {
+                max: 7, 
+                barriers: [4, 7] 
+            },
+            health: {
+                max: 9, 
+                barriers: [7, 5, 3, 1] 
+            },
+            speed: {
+                max: 6 
+            }
+        }
+    },
     wilma: {
         name: "Wilma Hezemans",
         age: 58,
@@ -269,6 +356,7 @@
         }
     }
 };
+
         
         let currentChar = null;
         let states = { food: 0, oxygen: 0, weight: 0, health: 10, gearCards: 0, isNight: false };
