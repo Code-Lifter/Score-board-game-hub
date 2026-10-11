@@ -139,6 +139,8 @@
     </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen p-2 md:p-6 overflow-y-auto">
+    <!-- Navbar -->
+<div id="nav-placeholder"></div>
 
     <div class="scanlines"></div>
 
@@ -384,6 +386,13 @@
     <template id="svg-stress"><svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 drop-shadow-sm"><path d="M12 2L22 12L12 22L2 12Z" fill="white"/><path d="M6 12h2.5l1.5-3.5L13.5 16L15 12h3" stroke="#7f1d1d" stroke-width="2" stroke-linejoin="round"/></svg></template>
 
     <script>
+
+        // --- Navbar ---
+  fetch('nav.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('nav-placeholder').innerHTML = data;
+    });
         // --- MASTER STATE & HISTORY ---
         let STATE = {
             day: 1, maxDays: 3, time: 480, location: 'Headquarters', stressLimit: 5,
