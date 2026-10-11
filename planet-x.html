@@ -303,8 +303,7 @@ input.dsel{cursor:text;font-weight:500}
   <symbol id="i-cross" viewBox="-12 -12 24 24"><path d="M-6 -6L6 6M6 -6L-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
   <symbol id="i-plus" viewBox="-12 -12 24 24"><path d="M0 -7V7M-7 0H7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
 </svg>
-      <!-- Navbar -->
-<div id="nav-placeholder"></div>
+
 <div class="wrap">
   <header class="top">
     <div class="brand">
@@ -428,13 +427,6 @@ input.dsel{cursor:text;font-weight:500}
 <datalist id="actions"><option value="Survey"></option><option value="Target"></option><option value="Research"></option><option value="Locate Planet X"></option></datalist>
 
 <script>
-
-  // --- Navbar ---
-  fetch('nav.html')
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('nav-placeholder').innerHTML = data;
-    });
 (() => {
   'use strict';
 
