@@ -335,6 +335,9 @@
   </style>
 </head>
 <body>
+<!-- Navbar -->
+<div id="nav-placeholder"></div>
+  
   <div style="max-width: 720px; margin: 0 auto;">
 
     <header style="text-align: center; padding: 1.5rem 0 2rem;">
@@ -540,6 +543,13 @@
   </div>
 
   <script>
+// --- Navbar ---
+  fetch('nav.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('nav-placeholder').innerHTML = data;
+    });
+    
     // ── BASE DECK DATA ──────────────────────────────────────────────────────────
 
     // Standard game deck (from the rulebook Determining Allegiances table, p.4)
