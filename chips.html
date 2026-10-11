@@ -135,7 +135,8 @@
     </style>
 </head>
 <body>
-
+<!-- Navbar -->
+<div id="nav-placeholder"></div>
     <div id="setup-screen">
         <h2 style="color:#ddd; margin-bottom:20px;">Board Setup</h2>
         
@@ -171,6 +172,12 @@
     <div id="player-zone"></div>
 
     <script>
+        // --- Navbar ---
+  fetch('nav.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('nav-placeholder').innerHTML = data;
+    });
         // --- CONFIG & STATE ---
         const bank = document.getElementById('token-bank');
         const trash = document.getElementById('trash-zone');
