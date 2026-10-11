@@ -78,6 +78,9 @@
     })(window, document, "clarity", "script", "v2qr7384fa");
 </script>
 </head>
+
+    <div id="nav-placeholder"></div>
+    
 <body class="text-slate-800 h-screen flex flex-col overflow-hidden">
 
     <div class="max-w-lg mx-auto bg-white w-full h-full shadow-xl flex flex-col relative">
@@ -161,6 +164,13 @@
     </div>
 
     <script>
+// --- Navbar ---
+  fetch('nav.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('nav-placeholder').innerHTML = data;
+    });
+        
         const allTrees = [
             { name: "Blue Spruce", color: "#2563EB", text: "text-blue-600" },
             { name: "Cassia", color: "#F59E0B", text: "text-amber-500" },
