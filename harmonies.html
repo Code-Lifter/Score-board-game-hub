@@ -46,6 +46,8 @@
     </style>
 </head>
 <body class="text-[#3A2B1F] h-screen flex flex-col overflow-hidden">
+    <!-- Navbar -->
+<div id="nav-placeholder"></div>
 
     <div class="max-w-lg mx-auto bg-[#F3E9CE] w-full h-full shadow-2xl flex flex-col relative border-x border-black/10">
         
@@ -93,6 +95,13 @@
     </div>
 
 <script>
+
+    // --- Navbar ---
+  fetch('nav.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('nav-placeholder').innerHTML = data;
+    });
     // 1. State now tracks how many animal rows exist (defaults to 4)
     let state = {
         playerCount: 4,
