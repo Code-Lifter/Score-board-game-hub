@@ -64,9 +64,7 @@
     </style>
 </head>
 <body class="bg-[#d2b641] text-stone-900 min-h-screen flex items-center justify-center p-4 antialiased overflow-x-hidden">
-<!-- Navbar -->
-<div id="nav-placeholder"></div>
-    <div class="w-full max-w-7xl flex flex-col md:flex-row gap-6 relative">
+
 
         <!-- LEFT COLUMN: ID BADGE / CLIPBOARD -->
         <div class="w-full md:w-1/4 flex flex-col space-y-4 relative z-10 shrink-0">
@@ -178,12 +176,6 @@
     </div>
 
     <script>
-// --- Navbar ---
-  fetch('nav.html')
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('nav-placeholder').innerHTML = data;
-    });
         
 const characterData = {
     bruce: {
