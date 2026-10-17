@@ -1,0 +1,149 @@
+{
+  "schema": 1,
+  "id": "robinson-crusoe",
+  "title": "Robinson Crusoe",
+  "subtitle": "Adventures on the Cursed Island",
+  "icon": "🏝️",
+  "theme": {
+    "background": "#f5f5f4",
+    "header": "#1c1917",
+    "accent": "#fbbf24",
+    "button": "#1c1917",
+    "buttonText": "#ffffff"
+  },
+  "settings": [
+    { "id": "days", "label": "Total Days / Rounds", "type": "number", "min": 1, "max": 99, "default": 12, "help": "Check your scenario sheet for the round limit." }
+  ],
+  "rounds": {
+    "label": "Day",
+    "setting": "days",
+    "trackerTitle": "Survival Track",
+    "trackerSubtitle": "Max {{roundLimit}} days"
+  },
+  "startLabel": "Begin Survival",
+  "endLabel": "Game Over 💀",
+  "resetConfirm": "Abandon current expedition and reset?",
+  "assetBase": "https://assets.dized.app/project/9511acbd-c4f7-4ed3-8abd-33a7353cda5e/en-US/eb51938ff9a3aaa135a6ae051260d1ab/",
+  "icons": {
+    "eventPhase": "ef26306c-105b-4a80-8475-b82aa814fa98-d41d8cd98f00b204e9800998ecf8427e.png",
+    "moralePhase": "5018e5eb-66fc-42bd-96a6-b305254b19d5-d41d8cd98f00b204e9800998ecf8427e.png",
+    "actionPhase": "72f6bf36-65fa-4b59-8295-c39b7e69849b-d41d8cd98f00b204e9800998ecf8427e.png",
+    "weatherPhase": "eab093ab-d3c9-4de1-880f-358ff7bf12fa-d41d8cd98f00b204e9800998ecf8427e.png",
+    "brownEvent": "eb311e1b-4427-47e5-84c0-bd39f0bcf9ff-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "grayEvent": "e851aad3-537a-433e-90b7-e22776f9fc1a-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "greenEvent": "342aeadd-2e49-4281-b7a5-54186bcfb901-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "book": "18a1ce44-39fd-4cc3-aaab-a17ed2294643-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "threat": "e2f31638-2ce9-4c8b-ab3d-3107ca992edf-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "determination": "890b32bd-3ffb-466f-b51f-bd9fd335423b-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "heal": "18d18460-461f-431f-9123-9c68078a798d-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "wound": "21aa2e12-b089-4828-ab01-5deb674fd001-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "wood": "c89cabf2-01c9-45e6-9ba9-2f9d23ed7121-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "food": "88eccfd8-2216-4414-b3aa-6e10f8a1d609-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "camp": "4572fbaa-eb05-4ff0-b021-f6e8001ec84e-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "pawn": "7d6014fa-b0a7-471c-b6ff-0a1b6e9f5c1f-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "treasure": "c305aaa0-36d6-4232-b4a2-e9181263f2cb-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "snow": "cfa6513c-f36c-4e67-b720-2c1240680ef9-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "rain": "f45a63a3-a4a2-466a-8ad2-7f518ca28959-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "roof": "e5fe461b-16b8-47e2-9b57-759ea368a9f3-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "palisade": "76c0ecc4-3777-4f67-b1d1-919e466377cc-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "storm": "dfb9216b-045c-4148-a911-65eee8049296-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "shelter": "a7152d82-811d-4ed2-baa9-a2e84bce9d5b-ee8cea4644162f0111f7a35e6a22a25f.png",
+    "nonPerishable": "2bfc8823-3b35-4c0b-aa88-635ed0efadf0-ee8cea4644162f0111f7a35e6a22a25f.png"
+  },
+  "phases": [
+    {
+      "id": "event",
+      "title": "Event Phase",
+      "color": "#15803d",
+      "icon": "eventPhase",
+      "content": [
+        { "type": "highlight", "text": "The first round of the game has no Event Phase — tap Next.", "showIf": { "round": 1 } },
+        {
+          "type": "list",
+          "ordered": true,
+          "showIf": { "round": { "min": 2 } },
+          "items": [
+            {
+              "text": "Draw the top card from the Event deck and resolve {{icon:brownEvent}} {{icon:grayEvent}} {{icon:greenEvent}}.",
+              "items": [
+                "If it wasn't an Event card, draw another card.",
+                "If the card shows a {{icon:book}} book icon, resolve the effect on the scenario sheet.",
+                "If the card shows an adventure icon, place the matching Adventure token on the matching Adventure deck."
+              ]
+            },
+            "Resolve the event text.",
+            "Place the card in the right-hand Threat {{icon:threat}} space and move cards to the left. If a card is moved off the board, resolve its Threat Effect."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "morale",
+      "title": "Morale Phase",
+      "color": "#f59e0b",
+      "icon": "moralePhase",
+      "content": [
+        "Check Morale. If you are the first player, gain or discard {{icon:determination}} Determination tokens (or heal {{icon:heal}} 1 Wound).",
+        { "type": "warning", "text": "If you can't discard enough tokens, take 1 {{icon:wound}} Wound per missing token." }
+      ]
+    },
+    {
+      "id": "production",
+      "title": "Production Phase",
+      "color": "#ea580c",
+      "icon": "box",
+      "content": [
+        "Take {{icon:wood}} wood and {{icon:food}} food according to the sources on the Island tile with the {{icon:camp}} camp."
+      ]
+    },
+    {
+      "id": "action",
+      "title": "Action Phase",
+      "color": "#b91c1c",
+      "icon": "actionPhase",
+      "content": [
+        { "type": "list", "ordered": true, "items": [
+          "Assign {{icon:pawn}} pawns and resources.",
+          "Resolve Actions, removing {{icon:pawn}} pawns as you do.",
+          "Resolve newly acquired {{icon:treasure}} Treasures.",
+          "Resolve newly built Items and place on board.",
+          "Move resources and tokens to Available Resources space."
+        ] }
+      ]
+    },
+    {
+      "id": "weather",
+      "title": "Weather Phase",
+      "color": "#2563eb",
+      "icon": "weatherPhase",
+      "content": [
+        { "type": "list", "ordered": true, "items": [
+          "Roll dice according to scenario sheet and add tokens in Weather space.",
+          "Discard 1 {{icon:wood}} wood per {{icon:snow}} snow cloud.",
+          "Discard 1 {{icon:wood}} wood and 1 {{icon:food}} food per point of difference between {{icon:roof}} Roof level and sum of {{icon:snow}} snow and {{icon:rain}} rain clouds.",
+          "Resolve Hungry Animals die.",
+          "Reduce {{icon:palisade}} Palisade level by 1 if {{icon:storm}} storm is present.",
+          "Discard all Weather tokens."
+        ] }
+      ]
+    },
+    {
+      "id": "night",
+      "title": "Night Phase",
+      "color": "#292524",
+      "icon": "moon",
+      "content": [
+        { "type": "list", "ordered": true, "items": [
+          "Each player discards 1 {{icon:food}} food or takes 2 {{icon:wound}} Wounds.",
+          "Move camp if desired.",
+          "Each character takes 1 {{icon:wound}} Wound if there is no {{icon:shelter}} Shelter.",
+          "Discard all food except {{icon:nonPerishable}} non-perishable.",
+          "Remove markers from characters' special ability spaces.",
+          "Move round marker and pass First Player token."
+        ] },
+        { "type": "note", "text": "{{roundsLeft}} days left after tonight.", "showIf": { "isLastRound": false } },
+        { "type": "warning", "text": "Last day! Check your scenario goal before you finish.", "showIf": { "isLastRound": true } }
+      ]
+    }
+  ]
+}

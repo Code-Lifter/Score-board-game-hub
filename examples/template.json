@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "title": "My Game",
+  "subtitle": "Phase Tracker",
+  "settings": [
+    { "id": "players", "label": "Number of Players", "type": "select", "options": [2, 3, 4], "default": 3, "suffix": "Players" },
+    { "id": "rounds", "label": "Rounds", "type": "number", "min": 1, "max": 20, "default": 5 }
+  ],
+  "rounds": {
+    "label": "Round",
+    "setting": "rounds",
+    "trackerSubtitle": "{{players}} players",
+    "showLimit": true
+  },
+  "startLabel": "Start Game",
+  "endLabel": "Game Over 🏁",
+  "tables": {
+    "cardsToDraw": { "by": "players", "values": { "2": 5, "3": 4, "4": 3 } }
+  },
+  "phases": [
+    {
+      "title": "Draw Phase",
+      "color": "#2563eb",
+      "icon": "cards",
+      "content": [
+        { "type": "callout", "title": "Draw {{cardsToDraw}} cards" },
+        "Each player draws cards from the deck."
+      ]
+    },
+    {
+      "title": "Action Phase",
+      "color": "#dc2626",
+      "icon": "bolt",
+      "content": [
+        { "type": "list", "ordered": true, "items": [
+          "Take your actions in turn order.",
+          "Resolve any **end of turn** effects."
+        ] }
+      ]
+    },
+    {
+      "title": "Scoring",
+      "color": "#059669",
+      "icon": "trophy",
+      "showIf": { "any": [ { "round": { "every": 2 } }, { "isLastRound": true } ] },
+      "content": [
+        "Score points every second round, and at the end of the game.",
+        { "type": "warning", "text": "Final scoring!", "showIf": { "isLastRound": true } }
+      ]
+    }
+  ]
+}

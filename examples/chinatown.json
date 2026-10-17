@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "id": "chinatown",
+  "title": "Chinatown",
+  "subtitle": "Phase & Income Tracker",
+  "icon": "🏮",
+  "theme": {
+    "background": "#fef2f2",
+    "header": "#7f1d1d",
+    "accent": "#facc15",
+    "button": "#b91c1c",
+    "buttonText": "#facc15"
+  },
+  "settings": [
+    { "id": "players", "label": "Number of Players", "type": "select", "options": [3, 4, 5], "default": 4, "suffix": "Players" },
+    { "id": "rounds", "label": "Total Rounds", "type": "select", "options": [4, 6], "default": 6, "suffix": "Rounds" }
+  ],
+  "rounds": {
+    "label": "Round",
+    "short": "Rnd",
+    "setting": "rounds",
+    "trackerTitle": "Year",
+    "trackerSubtitle": "{{players}} players",
+    "showLimit": true
+  },
+  "startLabel": "Start Trading",
+  "endLabel": "Game Over 🏙️",
+  "resetConfirm": "End the current game and return to setup?",
+  "tables": {
+    "cardsDraw": { "by": "players", "values": { "3": [7, 6, 6, 6, 6, 6], "4": [6, 5, 5, 5, 5, 5], "5": [5, 5, 5, 4, 4, 4] } },
+    "cardsKeep": { "by": "players", "values": { "3": [5, 4, 4, 4, 4, 4], "4": [4, 3, 3, 3, 3, 3], "5": [3, 3, 3, 2, 2, 2] } },
+    "tilesDraw": { "by": "players", "values": { "3": [7, 4, 4, 4, 4, 4], "4": [6, 3, 3, 3, 3, 3], "5": [5, 3, 3, 2, 2, 2] } }
+  },
+  "phases": [
+    {
+      "id": "cards",
+      "title": "Building Cards",
+      "color": "#dc2626",
+      "content": [
+        { "type": "callout", "title": "Draw {{cardsDraw}} numbered cards", "text": "keep {{cardsKeep}}" },
+        { "type": "list", "items": [
+          "Deal the required number of building cards to each player.",
+          "Players secretly choose which cards to keep and place them face down.",
+          "Discard the remaining cards face down to the discard pile.",
+          "Reveal kept cards simultaneously and place ownership markers on the board."
+        ] }
+      ]
+    },
+    {
+      "id": "tiles",
+      "title": "Shop Tiles",
+      "color": "#f97316",
+      "content": [
+        { "type": "callout", "title": "Draw {{tilesDraw}} shop tiles" },
+        { "type": "list", "items": [
+          "Each player draws the required number of shop tiles from the bag.",
+          "Place them face up in front of you so all players can see them."
+        ] }
+      ]
+    },
+    {
+      "id": "trading",
+      "title": "Trading",
+      "color": "#eab308",
+      "content": [
+        { "type": "highlight", "text": "Everything is negotiable!" },
+        "Players may trade simultaneously in any combination of:",
+        { "type": "list", "items": [
+          "**Building Cards** (ownership of spaces)",
+          "**Shop Tiles** (both placed and unplaced)",
+          "**Cash**"
+        ] },
+        { "type": "note", "text": "Trading ends when all players agree to stop." }
+      ]
+    },
+    {
+      "id": "placement",
+      "title": "Placement",
+      "color": "#059669",
+      "content": [
+        "In any order, players may place their unplaced shop tiles onto building spaces they own on the board.",
+        { "type": "list", "items": [
+          "A tile placed on the board **cannot be moved** to a different space later.",
+          "You may choose to keep shop tiles unplaced in front of you for future rounds."
+        ] }
+      ]
+    },
+    {
+      "id": "income",
+      "title": "Earn Income",
+      "color": "#2563eb",
+      "content": [
+        "Earn income based on connected shop tiles of the same business type.",
+        {
+          "type": "table",
+          "headers": ["Tile number", "Businesses", "1-tile", "2-tile", "3-tile", "4-tile", "5-tile", "6-tile"],
+          "align": ["center", "left"],
+          "rows": [
+            ["**3**", "photo, sea food, tea house", "$10,000", "$20,000", "**$50,000**", "-", "-", "-"],
+            ["**4**", "florist, jewelry, tropical fish", "$10,000", "$20,000", "$40,000", "**$80,000**", "-", "-"],
+            ["**5**", "dim sum, laundry, take-out", "$10,000", "$20,000", "$40,000", "$60,000", "**$110,000**", "-"],
+            ["**6**", "antiques, factory, restaurant", "$10,000", "$20,000", "$40,000", "$60,000", "$80,000", "**$140,000**"]
+          ]
+        },
+        { "type": "note", "text": "Income is paid out for *each* separate business you own." },
+        { "type": "warning", "text": "Final round — after income, the richest player wins!", "showIf": { "isLastRound": true } }
+      ]
+    }
+  ]
+}
