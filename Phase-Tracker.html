@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+    <style>
+        :root {
+            --bg: #f5f5f4;
+            --header: #1c1917;
+            --accent: #fbbf24;
+            --btn: #1c1917;
+            --btn-text: #ffffff;
+            --phase: #57534e;
+        }
+        body { background: var(--bg); }
+        button { transition: all 0.15s ease-in-out; }
+        button:active:not(:disabled) { transform: scale(0.96); }
+
+        /* Themed chrome */
+        .app-nav { background: var(--header); color: #e7e5e4; }
+        .nav-chip { font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 8px;
+            background: color-mix(in srgb, var(--header) 75%, white); color: var(--accent); }
+        .nav-chip:hover { background: color-mix(in srgb, var(--header) 60%, white); }
+        .nav-home { color: var(--accent); }
+        .track-panel {
+            background: linear-gradient(90deg, var(--header), color-mix(in srgb, var(--header) 85%, white), var(--header));
+            border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+        }
+        .track-badge { background: color-mix(in srgb, var(--header) 70%, black);
+            border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); }
+        .track-btn { background: color-mix(in srgb, var(--header) 85%, white); color: var(--accent);
+            border: 1px solid color-mix(in srgb, var(--header) 65%, white); }
+        .track-btn:hover:not(:disabled) { background: color-mix(in srgb, var(--header) 70%, white); }
+        .text-accent { color: var(--accent); }
+        .accent-glow { color: var(--accent); filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--accent) 40%, transparent)); }
+        .track-muted { color: color-mix(in srgb, var(--header) 35%, white); }
+        .track-divider { border-color: color-mix(in srgb, var(--header) 60%, white); }
+        .dot-past { background: var(--accent); opacity: .55; }
+        .dot-now { background: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent); }
+        .dot-future { background: color-mix(in srgb, var(--header) 70%, white); }
+        .btn-primary { background: var(--btn); color: var(--btn-text); }
+        .btn-primary:hover:not(:disabled) { filter: brightness(1.12); }
+        .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+        .btn-secondary:disabled { opacity: .4; cursor: not-allowed; }
+        .focus-accent:focus { outline: none; border-color: var(--btn); box-shadow: 0 0 0 2px color-mix(in srgb, var(--btn) 25%, transparent); }
+
+        /* Phase strip: one segment per phase */
+        .seg { flex: 1 1 0; height: 12px; background: var(--seg); opacity: .22; border: 0; padding: 0; cursor: pointer; }
+        .seg.now { opacity: 1; }
+        .seg.off { opacity: .08; cursor: default; }
+        .seg + .seg { margin-left: 2px; }
+
+        /* Phase content */
+        .phase-content { color: #57534e; font-size: 15px; line-height: 1.65; }
+        .phase-content > * + * { margin-top: .75rem; }
+        .phase-content strong { color: #292524; }
+        .phase-content ol { list-style: decimal; padding-left: 1.25rem; }
+        .phase-content ul { list-style: disc; padding-left: 1.25rem; }
+        .phase-content li + li { margin-top: .4rem; }
+        .phase-content li > ol, .phase-content li > ul { margin-top: .3rem; font-size: 14px; color: #78716c; }
+        .phase-content a { color: var(--phase); text-decoration: underline; }
+        img { overflow: hidden; }
+        .ic { display: inline-block; width: 1.3em; height: 1.3em; vertical-align: -0.3em; object-fit: contain; }
+        span.ic { width: auto; height: auto; vertical-align: baseline; }
+        .tok-missing { color: #dc2626; background: #fee2e2; border-radius: 4px; padding: 0 3px; font-family: ui-monospace, monospace; font-size: .85em; }
+        .blk-h { font-weight: 800; color: #292524; font-size: 16px; }
+        .blk-callout { text-align: center; padding: 1rem; border-radius: 12px;
+            background: color-mix(in srgb, var(--phase) 9%, white);
+            border: 1px solid color-mix(in srgb, var(--phase) 30%, white); }
+        .blk-callout .t { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.01em; line-height: 1.2;
+            color: color-mix(in srgb, var(--phase) 80%, black); }
+        .blk-callout .s { font-size: 1.1rem; font-weight: 700; margin-top: .4rem; color: color-mix(in srgb, var(--phase) 85%, black); }
+        .blk-highlight { font-weight: 700; font-size: 1.05rem; color: #292524; border-left: 4px solid var(--phase); padding-left: .75rem; }
+        .blk-note { font-size: 13px; color: #78716c; font-style: italic; }
+        .blk-warning { color: #b91c1c; font-weight: 600; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: .6rem .8rem; }
+        .blk-tip { background: #f5f5f4; border-radius: 10px; padding: .6rem .8rem; font-size: 14px; }
+        .blk-img { border-radius: 10px; max-width: 100%; margin: 0 auto; }
+        .blk-cap { text-align: center; font-size: 12px; color: #a8a29e; margin-top: .25rem; }
+        .blk-hr { border: 0; border-top: 1px solid #e7e5e4; }
+        .tbl-wrap { overflow-x: auto; border: 1px solid #e7e5e4; border-radius: 12px; }
+        .tbl-wrap::-webkit-scrollbar { height: 6px; }
+        .tbl-wrap::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+        .tbl { width: 100%; border-collapse: collapse; font-size: 12px; background: white; min-width: max-content; }
+        .tbl th { background: #f5f5f4; color: #57534e; font-weight: 700; border-bottom: 1px solid #d6d3d1; }
+        .tbl th, .tbl td { padding: .5rem; text-align: center; white-space: nowrap; }
+        .tbl th + th, .tbl td + td { border-left: 1px solid #e7e5e4; }
+        .tbl tr + tr td { border-top: 1px solid #e7e5e4; }
+        .tbl td.muted { color: #d6d3d1; }
+        .tbl tr.hl td { background: color-mix(in srgb, var(--phase) 10%, white); }
+
+        /* Library */
+        .drop-zone { border: 2px dashed #a8a29e; background: white; }
+        .drop-zone:hover, .drop-zone:focus { border-color: var(--btn); outline: none; }
+        #dropOverlay { background: color-mix(in srgb, var(--header) 85%, transparent); }
+
+        /* Guide (markdown) */
+        .md h1 { font-size: 1.6rem; font-weight: 900; margin: 0 0 .75rem; color: #1c1917; }
+        .md h2 { font-size: 1.25rem; font-weight: 800; margin: 1.75rem 0 .5rem; color: #1c1917; padding-bottom: .25rem; border-bottom: 1px solid #e7e5e4; }
+        .md h3 { font-size: 1.05rem; font-weight: 800; margin: 1.25rem 0 .4rem; color: #292524; }
+        .md p, .md ul, .md ol, .md pre, .md table, .md blockquote { margin: .6rem 0; }
+        .md ul { list-style: disc; padding-left: 1.25rem; }
+        .md ol { list-style: decimal; padding-left: 1.25rem; }
+        .md code { font-family: ui-monospace, SFMono-Regular, monospace; font-size: .85em; background: #f5f5f4; padding: .1em .3em; border-radius: 4px; }
+        .md pre { background: #1c1917; color: #f5f5f4; padding: .8rem; border-radius: 10px; overflow-x: auto; font-size: 12.5px; line-height: 1.5; }
+        .md pre code { background: none; padding: 0; color: inherit; }
+        .md table { border-collapse: collapse; font-size: 13px; display: block; overflow-x: auto; }
+        .md th, .md td { border: 1px solid #e7e5e4; padding: .35rem .5rem; text-align: left; vertical-align: top; }
+        .md th { background: #f5f5f4; }
+        .md blockquote { border-left: 4px solid var(--accent); padding-left: .75rem; color: #57534e; }
+        .md a { color: #b45309; text-decoration: underline; }
+    </style>
+</head>
+<body class="text-stone-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Your site's shared navbar (nav.html) loads here if it exists -->
+    <div id="nav-placeholder"></div>
+
+    <nav class="app-nav w-full p-3 flex justify-between items-center shadow-md gap-2">
+        <button id="homeBtn" class="nav-home font-bold tracking-widest text-sm px-2 py-2 rounded">🏠 GAMES</button>
+        <span id="navTitle" class="hidden sm:block flex-1 text-center text-xs font-bold uppercase tracking-widest truncate opacity-70"></span>
+        <div class="flex items-center gap-2">
+            <button id="guideBtn" class="nav-chip" title="How to write a game file">📖 Guide</button>
+            <button id="soundBtn" class="nav-chip" title="Sound on/off">🔊</button>
+            <button id="resetBtn" class="hidden text-xs font-bold uppercase bg-red-700 hover:bg-red-600 text-white px-3 py-2 rounded shadow">Reset</button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-md mx-auto p-4 flex flex-col">
+
+        <!-- ============ LIBRARY ============ -->
+        <section id="libraryScreen" class="hidden flex-col flex-grow gap-5 py-2">
+            <div class="text-center pt-4">
+                <h1 class="text-3xl font-extrabold text-stone-900">Phase Tracker</h1>
+                <p class="text-stone-500 text-sm mt-1">Drop in a game file and get a round-by-round phase guide.</p>
+            </div>
+
+            <div id="dropZone" class="drop-zone rounded-2xl p-8 text-center cursor-pointer" tabindex="0" role="button" aria-label="Choose a game file">
+                <svg class="w-10 h-10 mx-auto text-stone-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                <p class="font-bold text-stone-800">Drop a game <code class="text-sm bg-stone-100 px-1 rounded">.json</code> file here</p>
+                <p class="text-sm text-stone-500 mt-1">or tap to choose one</p>
+                <input type="file" id="fileInput" accept=".json,application/json" class="hidden">
+            </div>
+
+            <div id="loadError" class="hidden bg-red-50 border border-red-200 text-red-800 rounded-xl p-4 text-sm"></div>
+
+            <details class="bg-white rounded-xl border border-stone-200 p-4">
+                <summary class="font-semibold text-sm text-stone-700 cursor-pointer">Paste JSON instead</summary>
+                <textarea id="pasteInput" rows="6" spellcheck="false" placeholder='{ "title": "My Game", "phases": [ ... ] }'
+                    class="focus-accent mt-3 w-full p-3 border border-stone-300 rounded-lg font-mono text-xs"></textarea>
+                <button id="pasteBtn" class="btn-primary mt-2 w-full font-bold py-3 rounded-lg">Load pasted JSON</button>
+            </details>
+
+            <div id="librarySection" class="hidden">
+                <h2 class="text-xs font-black uppercase tracking-widest text-stone-500 mb-2">Your games</h2>
+                <ul id="libraryList" class="space-y-2"></ul>
+            </div>
+
+            <div id="exampleSection">
+                <h2 class="text-xs font-black uppercase tracking-widest text-stone-500 mb-2">Examples</h2>
+                <div id="exampleList" class="space-y-2"></div>
+            </div>
+
+            <button id="guideLink" class="text-sm font-semibold text-stone-600 underline underline-offset-4 py-2">📖 How to write a game file</button>
+        </section>
+
+        <!-- ============ SETUP ============ -->
+        <section id="setupScreen" class="hidden flex-col flex-grow justify-center gap-6 py-2">
+            <div class="text-center">
+                <h1 id="setupTitle" class="text-3xl font-extrabold text-stone-900 mb-1"></h1>
+                <p id="setupSubtitle" class="text-stone-500 text-sm"></p>
+            </div>
+
+            <div id="loadWarnings" class="hidden bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-4 text-sm"></div>
+
+            <div class="w-full bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                <div id="setupBlocks" class="phase-content mb-5 hidden"></div>
+                <div id="settingsForm" class="space-y-4 mb-6"></div>
+                <button id="resumeBtn" class="hidden w-full mb-3 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold py-4 rounded-lg border border-stone-300"></button>
+                <button id="startBtn" class="btn-primary w-full font-bold py-4 rounded-lg shadow-md text-lg">Start</button>
+            </div>
+        </section>
+
+        <!-- ============ GAME ============ -->
+        <section id="gameScreen" class="hidden flex-col flex-grow">
+
+            <div class="track-panel text-white p-4 rounded-2xl shadow-lg mb-4 flex flex-col">
+                <div class="flex justify-between items-center gap-2">
+                    <div class="flex space-x-2">
+                        <button id="undoBtn" class="track-btn p-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed" title="Undo (Ctrl+Z)">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                        </button>
+                        <button id="redoBtn" class="track-btn p-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed" title="Redo (Ctrl+Shift+Z)">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg>
+                        </button>
+                    </div>
+
+                    <div class="track-badge flex items-center space-x-3 px-4 py-2 rounded-xl shadow-inner">
+                        <div class="flex flex-col items-end min-w-0">
+                            <span id="trackerTitle" class="text-[10px] uppercase font-black tracking-widest text-accent"></span>
+                            <span id="trackerSubtitle" class="text-xs track-muted font-medium uppercase"></span>
+                        </div>
+                        <div class="flex items-center space-x-1 border-l track-divider pl-3">
+                            <span id="roundShort" class="text-xs text-accent font-bold uppercase"></span>
+                            <span id="roundNow" class="text-3xl font-black accent-glow">1</span>
+                            <span id="roundOf" class="text-sm font-bold track-muted self-end mb-1"></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="roundDots" class="flex space-x-1 mt-3 justify-center overflow-x-auto py-1"></div>
+            </div>
+
+            <div id="phaseCard" class="bg-white rounded-2xl shadow-sm border border-stone-200 flex-grow flex flex-col mb-4 overflow-hidden relative">
+                <div id="phaseStrip" class="flex w-full"></div>
+                <div class="p-5 sm:p-6 flex-grow flex flex-col">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div id="phaseIcon" class="overflow-hidden flex-shrink-0 w-10 h-10 flex items-center justify-center text-3xl"></div>
+                        <div id="phaseNumber" class="text-3xl font-black text-stone-300">1</div>
+                        <h2 id="phaseTitle" class="text-2xl font-bold text-stone-800 leading-tight"></h2>
+                    </div>
+                    <div id="phaseContent" class="phase-content"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-auto">
+                <button id="prevBtn" class="btn-secondary bg-stone-200 hover:bg-stone-300 text-stone-800 font-semibold py-4 px-2 rounded-xl flex justify-center items-center">&larr; Previous</button>
+                <button id="nextBtn" class="btn-primary font-semibold py-4 px-2 rounded-xl shadow-md flex justify-center items-center">Next &rarr;</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Drag-and-drop overlay -->
+    <div id="dropOverlay" class="hidden fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
+        <div class="bg-white rounded-2xl px-8 py-6 shadow-2xl text-center">
+            <div class="text-4xl mb-2">📥</div>
+            <p class="font-bold text-stone-800">Drop to load this game</p>
+        </div>
+    </div>
+
+    <!-- Guide modal -->
+    <div id="guideModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center">
+        <div class="bg-white w-full sm:max-w-2xl h-[92vh] sm:h-[85vh] rounded-t-2xl sm:rounded-2xl flex flex-col shadow-2xl">
+            <div class="flex items-center justify-between px-5 py-3 border-b border-stone-200">
+                <span class="font-black text-stone-800">📖 Game file guide</span>
+                <div class="flex items-center gap-3">
+                    <a href="guide.md" download class="text-xs font-semibold text-stone-500 underline">Download .md</a>
+                    <button id="guideClose" class="text-2xl leading-none text-stone-500 hover:text-stone-900 px-2" aria-label="Close">&times;</button>
+                </div>
+            </div>
+            <div id="guideBody" class="md overflow-y-auto px-5 py-4 text-[15px] leading-relaxed text-stone-700"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-white text-sm px-4 py-3 rounded-xl shadow-xl max-w-[90vw] text-center"></div>
+
+    <script>
+    (() => {
+    'use strict';
+
+    // ---------------------------------------------------------------
+    // Config
+    // ---------------------------------------------------------------
+    const EXAMPLES = [
+        { file: 'examples/chinatown.json',        name: 'Chinatown',       note: 'Player-count tables, income chart' },
+        { file: 'examples/robinson-crusoe.json',  name: 'Robinson Crusoe', note: 'Icons, round conditions' },
+        { file: 'examples/template.json',         name: 'Blank template',  note: 'Starting point for your own' }
+    ];
+    const SCHEMA_VERSION = 1;
+    const DEFAULT_THEME = { background: '#f5f5f4', header: '#1c1917', accent: '#fbbf24', button: '#1c1917', buttonText: '#ffffff' };
+    const BLOCK_TYPES = ['text', 'heading', 'list', 'callout', 'highlight', 'note', 'tip', 'warning', 'table', 'image', 'divider', 'group'];
+    const SETTING_TYPES = ['select', 'number', 'toggle'];
+    const BUILTIN_VARS = ['round', 'roundLimit', 'roundsLeft', 'phase', 'phaseCount', 'phaseTitle', 'isFirstRound', 'isLastRound'];
+
+    // Built-in line icons (Heroicons outline, 24px)
+    const BUILTIN_ICONS = {
+        box: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
+        moon: 'M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z',
+        sun: 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z',
+        users: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
+        clock: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+        star: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z',
+        bolt: 'M13 10V3L4 14h7v7l9-11h-7z',
+        flag: 'M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9',
+        cash: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z',
+        map: 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7',
+        fire: 'M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657zM9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z',
+        refresh: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
+        check: 'M5 13l4 4L19 7',
+        eye: 'M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z',
+        shield: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
+        chat: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
+        cards: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
+        cloud: 'M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z',
+        dice: 'M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zM8 8h.01M16 16h.01M12 12h.01M16 8h.01M8 16h.01',
+        home: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
+        trophy: 'M8 21h8m-4-4v4m-5-17h10v5a5 5 0 01-10 0V4zM7 6H4v1a3 3 0 003 3m10-4h3v1a3 3 0 01-3 3'
+    };
+
+    // ---------------------------------------------------------------
+    // Storage (never throws)
+    // ---------------------------------------------------------------
+    const LS = {
+        get(k, fb = null) { try { const v = localStorage.getItem(k); return v == null ? fb : JSON.parse(v); } catch (e) { return fb; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+        del(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+    };
+    const K_LIB = 'phaseTracker.library';
+    const K_ACTIVE = 'phaseTracker.active';
+    const K_SOUND = 'phaseTracker.sound';
+    const kState = id => 'phaseTracker.state.' + id;
+    const kLast = id => 'phaseTracker.lastSettings.' + id;
+
+    // ---------------------------------------------------------------
+    // App state
+    // ---------------------------------------------------------------
+    let game = null;          // active game definition
+    let state = null;         // { settings, round, phaseIndex }
+    let historyStack = [];
+    let redoStack = [];
+    let pendingWarnings = [];
+    let soundOn = LS.get(K_SOUND, true) !== false;
+
+    const $ = id => document.getElementById(id);
+
+    // ---------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------
+    function esc(s) {
+        return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function slug(s) {
+        return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'game';
+    }
+    function isColor(c) {
+        return typeof c === 'string' && (window.CSS && CSS.supports ? CSS.supports('color', c) : true);
+    }
+    function toast(msg, ms = 2600) {
+        const t = $('toast');
+        t.textContent = msg;
+        t.classList.remove('hidden');
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => t.classList.add('hidden'), ms);
+    }
+
+    // ---------------------------------------------------------------
+    // Sound (Web Audio, created lazily on first tap)
+    // ---------------------------------------------------------------
+    let audioCtx = null;
+    function playSound(type) {
+        if (!soundOn) return;
+        try {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            if (type === 'round') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.setValueAtTime(440, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now); osc.stop(now + 0.25);
+            } else {
+                const up = type !== 'prev';
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(up ? 320 : 450, now);
+                osc.frequency.exponentialRampToValueAtTime(up ? 540 : 280, now + 0.12);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now); osc.stop(now + 0.12);
+            }
+        } catch (e) { /* audio unavailable */ }
+    }
+    function renderSoundBtn() {
+        $('soundBtn').textContent = soundOn ? '🔊' : '🔇';
+        $('soundBtn').title = soundOn ? 'Sound on (tap to mute)' : 'Sound off (tap to unmute)';
+    }
+
+    // ---------------------------------------------------------------
+    // Icons & text formatting
+    // ---------------------------------------------------------------
+    function assetUrl(v) {
+        if (/^(https?:)?\/\//i.test(v) || /^data:image\//i.test(v)) return v;
+        if (/^[\w\-./%]+\.(png|jpe?g|gif|svg|webp|avif)(\?\S*)?$/i.test(v)) return (game && game.assetBase ? game.assetBase : '') + v;
+        return null;
+    }
+    function builtinSvg(name, cls) {
+        return `<svg class="${cls}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="${BUILTIN_ICONS[name]}"></path></svg>`;
+    }
+    // Resolves: name in game.icons → built-in icon → image URL/file → emoji/text
+    function iconHTML(raw, cls, label) {
+        if (raw == null || raw === '') return '';
+        let v = String(raw).trim();
+        const icons = (game && game.icons) || {};
+        if (Object.prototype.hasOwnProperty.call(icons, v)) { label = label || v; v = String(icons[v]).trim(); }
+        if (v.startsWith('builtin:')) v = v.slice(8);
+        if (BUILTIN_ICONS[v]) return builtinSvg(v, cls);
+        const url = assetUrl(v);
+        if (url) return `<img src="${esc(url)}" alt="${esc(label || '')}" title="${esc(label || '')}" class="${cls}" loading="lazy">`;
+        return `<span class="${cls}">${esc(v)}</span>`;
+    }
+    function lookupVar(name, ctx) {
+        return Object.prototype.hasOwnProperty.call(ctx, name) ? ctx[name] : undefined;
+    }
+    // Text → safe HTML. Supports **bold**, *italic*, [link](https://…), line breaks,
+    // {{variable}} and {{icon:name}}.
+    function fmt(text, ctx) {
+        if (text == null) return '';
+        let s = esc(String(text));
+        s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/(^|[^*\w])\*(?!\s)(.+?)\*(?!\w)/g, '$1<em>$2</em>');
+        s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        s = s.replace(/\n/g, '<br>');
+        s = s.replace(/\{\{\s*([^{}]+?)\s*\}\}/g, (m, inner) => {
+            if (/^icon\s*:/i.test(inner)) {
+                const name = inner.replace(/^icon\s*:\s*/i, '');
+                const icons = (game && game.icons) || {};
+                const known = Object.prototype.hasOwnProperty.call(icons, name) || BUILTIN_ICONS[name.replace(/^builtin:/, '')] || assetUrl(name);
+                if (!known && /^[A-Za-z][\w-]*$/.test(name)) return `<span class="tok-missing" title="Unknown icon">${m}</span>`;
+                return iconHTML(name, 'ic', name) || `<span class="tok-missing">${m}</span>`;
+            }
+            const v = lookupVar(inner, ctx || {});
+            if (v === undefined || v === null) return `<span class="tok-missing" title="Unknown variable">${m}</span>`;
+            return esc(v);
+        });
+        return s;
+    }
+
+    // ---------------------------------------------------------------
+    // Variables, tables and conditions
+    // ---------------------------------------------------------------
+    function roundLimit() {
+        const r = game.rounds || {};
+        if (r.setting) {
+            const v = Number(state.settings[r.setting]);
+            return Number.isFinite(v) && v > 0 ? Math.floor(v) : null;
+        }
+        if (r.limit) return Math.max(1, Math.floor(Number(r.limit))) || null;
+        return null;
+    }
+    function resolveTable(t, ctx) {
+        if (!t || typeof t !== 'object') return undefined;
+        let v = t.values;
+        for (const key of [].concat(t.by || [])) {
+            if (v == null || typeof v !== 'object' || Array.isArray(v)) break;
+            v = v[String(ctx[key])];
+        }
+        if (Array.isArray(v)) v = v.length ? v[Math.min(Math.max(ctx.round, 1), v.length) - 1] : undefined;
+        if (v === undefined || (typeof v === 'object' && v !== null)) v = t.default;
+        return v;
+    }
+    function ctxFor(round, phaseIndex) {
+        const lim = roundLimit();
+        const p = game.phases[phaseIndex] || {};
+        const c = Object.assign({}, state.settings, {
+            round,
+            roundLimit: lim == null ? '∞' : lim,
+            roundsLeft: lim == null ? '∞' : Math.max(0, lim - round),
+            phase: phaseIndex + 1,
+            phaseCount: game.phases.length,
+            phaseTitle: p.title || '',
+            isFirstRound: round === 1,
+            isLastRound: lim != null && round === lim
+        });
+        for (const [name, t] of Object.entries(game.tables || {})) c[name] = resolveTable(t, c);
+        return c;
+    }
+    function same(a, b) { return String(a) === String(b); }
+    // showIf: { var: value | [values] | {min,max,every,start,not} }, plus "any" (OR) and "not"
+    function check(cond, ctx) {
+        if (cond == null || typeof cond !== 'object') return true;
+        if (Array.isArray(cond)) return cond.some(c => check(c, ctx));
+        return Object.entries(cond).every(([k, want]) => {
+            if (k === 'any') return Array.isArray(want) ? want.some(c => check(c, ctx)) : check(want, ctx);
+            if (k === 'not') return !check(want, ctx);
+            const have = ctx[k];
+            if (Array.isArray(want)) return want.some(w => same(w, have));
+            if (want && typeof want === 'object') {
+                const n = Number(have);
+                if ('min' in want && !(n >= Number(want.min))) return false;
+                if ('max' in want && !(n <= Number(want.max))) return false;
+                if ('every' in want) {
+                    const every = Number(want.every) || 1;
+                    const start = 'start' in want ? Number(want.start) : every;
+                    if (!(n >= start && (n - start) % every === 0)) return false;
+                }
+                if ('not' in want && [].concat(want.not).some(w => same(w, have))) return false;
+                if ('is' in want && !same(want.is, have)) return false;
+                return true;
+            }
+            return same(want, have);
+        });
+    }
+
+    // ---------------------------------------------------------------
+    // Content blocks
+    // ---------------------------------------------------------------
+    function renderBlocks(blocks, ctx) {
+        if (blocks == null) return '';
+        return [].concat(blocks).map(b => renderBlock(b, ctx)).join('');
+    }
+    function renderList(b, ctx) {
+        const tag = b.ordered ? 'ol' : 'ul';
+        const items = (b.items || []).map(it => {
+            if (it == null) return '';
+            if (typeof it !== 'object') return `<li>${fmt(it, ctx)}</li>`;
+            if (it.showIf && !check(it.showIf, ctx)) return '';
+            const sub = Array.isArray(it.items) && it.items.length ? renderList({ ordered: !!it.ordered, items: it.items }, ctx) : '';
+            return `<li>${fmt(it.text, ctx)}${sub}</li>`;
+        }).join('');
+        return items ? `<${tag}>${items}</${tag}>` : '';
+    }
+    function renderTable(b, ctx) {
+        const align = b.align || [];
+        const cellAlign = i => align[i] && ['left', 'center', 'right'].includes(align[i]) ? ` style="text-align:${align[i]}"` : '';
+        const head = Array.isArray(b.headers) && b.headers.length
+            ? `<thead><tr>${b.headers.map((h, i) => `<th${cellAlign(i)}>${fmt(h, ctx)}</th>`).join('')}</tr></thead>` : '';
+        const hlRows = [].concat(b.highlightRow != null ? b.highlightRow : []).map(String);
+        const rows = (b.rows || []).map((row, ri) => {
+            if (!Array.isArray(row)) return '';
+            const cells = row.map((cell, i) => {
+                const txt = cell == null ? '' : String(cell);
+                const muted = /^\s*(-|—|–)?\s*$/.test(txt) ? ' class="muted"' : '';
+                return `<td${muted}${cellAlign(i)}>${fmt(txt === '' ? '-' : txt, ctx)}</td>`;
+            }).join('');
+            const hl = hlRows.some(h => fmt(h, ctx) === String(ri + 1) || h === String(ri + 1)) ? ' class="hl"' : '';
+            return `<tr${hl}>${cells}</tr>`;
+        }).join('');
+        return `<div class="tbl-wrap"><table class="tbl">${head}<tbody>${rows}</tbody></table></div>`;
+    }
+    function renderBlock(b, ctx) {
+        if (b == null) return '';
+        if (typeof b !== 'object') b = { type: 'text', text: b };
+        if (b.showIf && !check(b.showIf, ctx)) return '';
+        const style = isColor(b.color) ? ` style="--phase:${esc(b.color)}"` : '';
+        switch (b.type || 'text') {
+            case 'text': return `<p${style}>${fmt(b.text, ctx)}</p>`;
+            case 'heading': return `<h3 class="blk-h">${fmt(b.text, ctx)}</h3>`;
+            case 'list': return renderList(b, ctx);
+            case 'callout':
+                return `<div class="blk-callout"${style}>${b.title != null ? `<div class="t">${fmt(b.title, ctx)}</div>` : ''}${b.text != null ? `<div class="s">${fmt(b.text, ctx)}</div>` : ''}</div>`;
+            case 'highlight': return `<p class="blk-highlight"${style}>${fmt(b.text, ctx)}</p>`;
+            case 'note': return `<p class="blk-note">${fmt(b.text, ctx)}</p>`;
+            case 'tip': return `<p class="blk-tip">${fmt(b.text, ctx)}</p>`;
+            case 'warning': return `<p class="blk-warning">${fmt(b.text, ctx)}</p>`;
+            case 'table': return renderTable(b, ctx) + (b.caption ? `<p class="blk-note">${fmt(b.caption, ctx)}</p>` : '');
+            case 'image': {
+                const url = b.src ? assetUrl(String(b.src)) : null;
+                if (!url) return '';
+                const w = Number(b.width) > 0 ? ` style="width:${Number(b.width)}px"` : '';
+                return `<figure><img class="blk-img" src="${esc(url)}" alt="${esc(b.alt || '')}"${w} loading="lazy">${b.caption ? `<figcaption class="blk-cap">${fmt(b.caption, ctx)}</figcaption>` : ''}</figure>`;
+            }
+            case 'divider': return '<hr class="blk-hr">';
+            case 'group': return `<div class="phase-content"${style}>${renderBlocks(b.blocks, ctx)}</div>`;
+            default: return '';
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Validation
+    // ---------------------------------------------------------------
+    function walkBlocks(blocks, path, errors, warnings) {
+        if (blocks == null) return;
+        if (!Array.isArray(blocks)) blocks = [blocks];
+        blocks.forEach((b, i) => {
+            const p = `${path}[${i}]`;
+            if (typeof b === 'string' || typeof b === 'number') return;
+            if (!b || typeof b !== 'object' || Array.isArray(b)) { errors.push(`${p} must be text or a block object.`); return; }
+            const type = b.type || 'text';
+            if (!BLOCK_TYPES.includes(type)) { warnings.push(`${p}: unknown block type "${type}" — it won't be shown. Valid types: ${BLOCK_TYPES.join(', ')}.`); return; }
+            if (type === 'list' && !Array.isArray(b.items)) errors.push(`${p}: a list needs an "items" array.`);
+            if (type === 'table' && !Array.isArray(b.rows)) errors.push(`${p}: a table needs a "rows" array.`);
+            if (type === 'image' && !b.src) warnings.push(`${p}: image has no "src".`);
+            if (type === 'group') walkBlocks(b.blocks, `${p}.blocks`, errors, warnings);
+            if (b.color != null && !isColor(b.color)) warnings.push(`${p}: "${b.color}" isn't a valid colour.`);
+        });
+    }
+    function validateGame(raw) {
+        const errors = [], warnings = [];
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+            return { errors: ['The file must contain one JSON object, starting with { and ending with }.'], warnings };
+        }
+        if (typeof raw.title !== 'string' || !raw.title.trim()) errors.push('"title" is missing — every game needs a title.');
+        if (raw.schema != null && Number(raw.schema) > SCHEMA_VERSION) warnings.push(`This file uses schema ${raw.schema}; this tracker understands schema ${SCHEMA_VERSION}. Some features may be ignored.`);
+
+        // settings
+        const settingIds = [];
+        if (raw.settings != null && !Array.isArray(raw.settings)) errors.push('"settings" must be a list.');
+        (Array.isArray(raw.settings) ? raw.settings : []).forEach((s, i) => {
+            const p = `settings[${i}]`;
+            if (!s || typeof s !== 'object') { errors.push(`${p} must be an object.`); return; }
+            if (typeof s.id !== 'string' || !/^[A-Za-z_][\w]*$/.test(s.id)) errors.push(`${p}: "id" must be a single word (letters, numbers, underscores), e.g. "players".`);
+            else if (BUILTIN_VARS.includes(s.id)) errors.push(`${p}: "${s.id}" is a reserved name — pick a different id.`);
+            else if (settingIds.includes(s.id)) errors.push(`${p}: duplicate id "${s.id}".`);
+            else settingIds.push(s.id);
+            const type = s.type || 'select';
+            if (!SETTING_TYPES.includes(type)) errors.push(`${p}: type must be one of ${SETTING_TYPES.join(', ')}.`);
+            if (type === 'select' && (!Array.isArray(s.options) || !s.options.length)) errors.push(`${p}: a select needs an "options" list.`);
+        });
+
+        // rounds
+        const r = raw.rounds;
+        if (r != null && typeof r !== 'object') errors.push('"rounds" must be an object.');
+        if (r && r.setting && !settingIds.includes(r.setting)) errors.push(`rounds.setting is "${r.setting}" but there's no setting with that id.`);
+        if (r && r.limit != null && !(Number(r.limit) >= 1)) errors.push('rounds.limit must be a number of 1 or more.');
+
+        // tables
+        const tableIds = [];
+        if (raw.tables != null && (typeof raw.tables !== 'object' || Array.isArray(raw.tables))) errors.push('"tables" must be an object of named tables.');
+        else Object.entries(raw.tables || {}).forEach(([name, t]) => {
+            if (!/^[A-Za-z_][\w]*$/.test(name)) errors.push(`tables."${name}": table names must be a single word.`);
+            else if (BUILTIN_VARS.includes(name) || settingIds.includes(name)) errors.push(`tables."${name}" clashes with a setting or built-in name.`);
+            if (!t || typeof t !== 'object' || !('values' in t)) errors.push(`tables."${name}" needs a "values" entry.`);
+            [].concat((t && t.by) || []).forEach(by => {
+                if (!settingIds.includes(by) && !BUILTIN_VARS.includes(by)) warnings.push(`tables."${name}" looks up by "${by}", which isn't a setting.`);
+            });
+            tableIds.push(name);
+        });
+
+        // phases
+        if (!Array.isArray(raw.phases) || !raw.phases.length) errors.push('"phases" must be a list with at least one phase.');
+        else raw.phases.forEach((ph, i) => {
+            const p = `phases[${i}]`;
+            if (!ph || typeof ph !== 'object' || Array.isArray(ph)) { errors.push(`${p} must be an object.`); return; }
+            if (typeof ph.title !== 'string' || !ph.title.trim()) errors.push(`${p} needs a "title".`);
+            if (ph.color != null && !isColor(ph.color)) warnings.push(`${p}: "${ph.color}" isn't a valid colour.`);
+            walkBlocks(ph.content, `${p}.content`, errors, warnings);
+        });
+        walkBlocks(raw.setup, 'setup', errors, warnings);
+
+        // theme
+        Object.entries(raw.theme || {}).forEach(([k, v]) => {
+            if (!(k in DEFAULT_THEME)) warnings.push(`theme.${k} isn't a theme option (use ${Object.keys(DEFAULT_THEME).join(', ')}).`);
+            else if (!isColor(v)) warnings.push(`theme.${k}: "${v}" isn't a valid colour.`);
+        });
+
+        // {{tokens}} used anywhere
+        const known = new Set([...BUILTIN_VARS, ...settingIds, ...tableIds]);
+        const icons = raw.icons && typeof raw.icons === 'object' ? raw.icons : {};
+        const seen = new Set();
+        (JSON.stringify(raw).match(/\{\{\s*[^{}]+?\s*\}\}/g) || []).forEach(tok => {
+            const inner = tok.slice(2, -2).trim();
+            if (seen.has(inner)) return; seen.add(inner);
+            if (/^icon\s*:/i.test(inner)) {
+                const name = inner.replace(/^icon\s*:\s*/i, '');
+                if (!(name in icons) && !BUILTIN_ICONS[name.replace(/^builtin:/, '')] && !/\.(png|jpe?g|gif|svg|webp|avif)$/i.test(name) && !/^https?:/i.test(name))
+                    warnings.push(`{{${inner}}} — there's no icon called "${name}" in "icons" and it isn't a built-in icon.`);
+            } else if (!known.has(inner)) {
+                warnings.push(`{{${inner}}} isn't a known variable. It will show in red.`);
+            }
+        });
+
+        if (errors.length) return { errors, warnings };
+        const g = JSON.parse(JSON.stringify(raw));
+        g.id = slug(g.id || g.title);
+        return { errors, warnings, game: g };
+    }
+
+    // ---------------------------------------------------------------
+    // Library
+    // ---------------------------------------------------------------
+    function library() { return LS.get(K_LIB, {}) || {}; }
+    function saveLibrary(lib) {
+        if (!LS.set(K_LIB, lib)) toast('Couldn’t save to this browser’s storage — the game will work until you close the page.');
+    }
+    function addToLibrary(g) {
+        const lib = library();
+        lib[g.id] = { game: g, added: Date.now() };
+        saveLibrary(lib);
+    }
+    function removeFromLibrary(id) {
+        const lib = library();
+        delete lib[id];
+        saveLibrary(lib);
+        LS.del(kState(id));
+        LS.del(kLast(id));
+    }
+
+    function showLoadError(title, lines) {
+        if ($('libraryScreen').classList.contains('hidden')) openLibrary();
+        const box = $('loadError');
+        box.innerHTML = `<p class="font-bold mb-1">${esc(title)}</p>` +
+            (lines && lines.length ? `<ul class="list-disc pl-5 space-y-1">${lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul>` : '') +
+            `<p class="mt-2 text-xs">Open the <button class="underline font-semibold" data-open-guide>guide</button> for the file format.</p>`;
+        box.classList.remove('hidden');
+        box.querySelector('[data-open-guide]').addEventListener('click', openGuide);
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function loadFromText(text, sourceName) {
+        $('loadError').classList.add('hidden');
+        let raw;
+        try {
+            raw = JSON.parse(text.replace(/^﻿/, ''));
+        } catch (e) {
+            let msg = e.message;
+            const m = /position (\d+)/.exec(msg);
+            if (m && !/line \d+/.test(msg)) msg += ` (around line ${text.slice(0, +m[1]).split('\n').length})`;
+            showLoadError(`${sourceName ? sourceName + ': ' : ''}this isn't valid JSON.`, [msg, 'Common causes: a missing comma, a trailing comma before ] or }, or “smart quotes” instead of plain quotes.']);
+            return false;
+        }
+        const res = validateGame(raw);
+        if (res.errors.length) {
+            showLoadError(`${sourceName ? sourceName + ': ' : ''}the game file has ${res.errors.length} problem${res.errors.length > 1 ? 's' : ''}.`, res.errors.concat(res.warnings));
+            return false;
+        }
+        addToLibrary(res.game);
+        pendingWarnings = res.warnings;
+        openGame(res.game.id, { toSetup: true });
+        return true;
+    }
+    function loadFile(file) {
+        if (!file) return;
+        if (file.size > 4 * 1024 * 1024) { showLoadError('That file is over 4 MB — game files should be much smaller.', []); return; }
+        const reader = new FileReader();
+        reader.onload = () => loadFromText(String(reader.result), file.name);
+        reader.onerror = () => showLoadError('Couldn’t read that file.', []);
+        reader.readAsText(file);
+    }
+    function loadExample(ex) {
+        fetch(ex.file, { cache: 'no-cache' })
+            .then(r => r.ok ? r.text() : Promise.reject(new Error(r.status)))
+            .then(text => loadFromText(text, ex.name))
+            .catch(() => toast('Examples load when the site is hosted (GitHub Pages etc.), not opened straight from your files.', 4000));
+    }
+
+    function renderLibrary() {
+        const lib = library();
+        const entries = Object.values(lib).sort((a, b) => (b.added || 0) - (a.added || 0));
+        $('librarySection').classList.toggle('hidden', !entries.length);
+        $('libraryList').innerHTML = entries.map(({ game: g }) => {
+            const saved = LS.get(kState(g.id));
+            const progress = saved && saved.state ? `In progress · ${esc(((g.rounds || {}).label) || 'Round')} ${esc(saved.state.round)}` : `${g.phases.length} phases`;
+            return `<li class="bg-white rounded-xl border border-stone-200 p-3 flex items-center gap-3">
+                <div class="w-9 h-9 flex items-center justify-center text-2xl text-stone-500 flex-shrink-0" style="color:${isColor(g.theme && g.theme.button) ? esc(g.theme.button) : '#57534e'}">${libIcon(g)}</div>
+                <button class="flex-1 text-left min-w-0" data-play="${esc(g.id)}">
+                    <span class="block font-bold text-stone-900 truncate">${esc(g.title)}</span>
+                    <span class="block text-xs text-stone-500 truncate">${progress}</span>
+                </button>
+                <button class="btn-primary text-sm font-bold px-4 py-2 rounded-lg" data-play="${esc(g.id)}">${saved && saved.state ? 'Resume' : 'Play'}</button>
+                <button class="text-stone-400 hover:text-red-600 text-xl px-1" title="Remove" data-remove="${esc(g.id)}">&times;</button>
+            </li>`;
+        }).join('');
+        $('libraryList').querySelectorAll('[data-play]').forEach(b => b.addEventListener('click', () => openGame(b.dataset.play)));
+        $('libraryList').querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', () => {
+            const g = (library()[b.dataset.remove] || {}).game;
+            if (g && confirm(`Remove “${g.title}” and its saved progress from this browser?`)) { removeFromLibrary(g.id); renderLibrary(); }
+        }));
+    }
+    function libIcon(g) {
+        const prev = game; game = g;
+        const html = iconHTML(g.icon || (g.phases[0] && g.phases[0].icon) || 'dice', 'w-8 h-8 object-contain', g.title);
+        game = prev;
+        return html;
+    }
+    function renderExamples() {
+        $('exampleList').innerHTML = EXAMPLES.map((ex, i) => `
+            <div class="bg-white rounded-xl border border-stone-200 p-3 flex items-center gap-3">
+                <button class="flex-1 text-left" data-ex="${i}">
+                    <span class="block font-semibold text-stone-800">${esc(ex.name)}</span>
+                    <span class="block text-xs text-stone-500">${esc(ex.note)}</span>
+                </button>
+                <a href="${esc(ex.file)}" download class="text-xs font-semibold text-stone-500 underline">JSON</a>
+                <button class="text-sm font-bold px-3 py-2 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800" data-ex="${i}">Try</button>
+            </div>`).join('');
+        $('exampleList').querySelectorAll('[data-ex]').forEach(b => b.addEventListener('click', () => loadExample(EXAMPLES[+b.dataset.ex])));
+    }
+
+    // ---------------------------------------------------------------
+    // Theme & screens
+    // ---------------------------------------------------------------
+    function applyTheme(t) {
+        const theme = Object.assign({}, DEFAULT_THEME);
+        Object.entries(t || {}).forEach(([k, v]) => { if (k in theme && isColor(v)) theme[k] = v; });
+        const root = document.documentElement.style;
+        root.setProperty('--bg', theme.background);
+        root.setProperty('--header', theme.header);
+        root.setProperty('--accent', theme.accent);
+        root.setProperty('--btn', theme.button);
+        root.setProperty('--btn-text', theme.buttonText);
+    }
+    function show(screen) {
+        ['libraryScreen', 'setupScreen', 'gameScreen'].forEach(id => {
+            $(id).classList.toggle('hidden', id !== screen);
+            $(id).classList.toggle('flex', id === screen);
+        });
+        $('resetBtn').classList.toggle('hidden', screen !== 'gameScreen');
+        $('navTitle').textContent = screen === 'libraryScreen' || !game ? '' : game.title;
+        document.title = screen === 'libraryScreen' || !game ? 'Phase Tracker' : `${game.title}${game.subtitle ? ': ' + game.subtitle : ''}`;
+        window.scrollTo(0, 0);
+    }
+    function openLibrary() {
+        game = null; state = null;
+        LS.del(K_ACTIVE);
+        applyTheme(null);
+        renderLibrary();
+        show('libraryScreen');
+    }
+    function openGame(id, opts = {}) {
+        const entry = library()[id];
+        if (!entry) { openLibrary(); return; }
+        game = entry.game;
+        LS.set(K_ACTIVE, id);
+        applyTheme(game.theme);
+        const saved = LS.get(kState(id));
+        if (saved && saved.state && !opts.toSetup) {
+            state = saved.state;
+            historyStack = saved.historyStack || [];
+            redoStack = saved.redoStack || [];
+            sanitiseState();
+            renderGame();
+            show('gameScreen');
+        } else {
+            renderSetup(saved && saved.state);
+            show('setupScreen');
+        }
+    }
+    function sanitiseState() {
+        state.settings = Object.assign(defaultSettings(), state.settings || {});
+        state.round = Math.max(1, Math.floor(Number(state.round)) || 1);
+        state.phaseIndex = Math.min(Math.max(0, Math.floor(Number(state.phaseIndex)) || 0), game.phases.length - 1);
+        const lim = roundLimit();
+        if (lim != null && state.round > lim) state.round = lim;
+    }
+
+    // ---------------------------------------------------------------
+    // Setup screen
+    // ---------------------------------------------------------------
+    function normOptions(s) {
+        return (s.options || []).map(o => (o && typeof o === 'object')
+            ? { value: o.value, label: o.label != null ? String(o.label) : String(o.value) }
+            : { value: o, label: s.suffix ? `${o} ${s.suffix}` : String(o) });
+    }
+    function settingDefault(s) {
+        const type = s.type || 'select';
+        if (type === 'toggle') return !!s.default;
+        if (type === 'number') return s.default != null ? Number(s.default) : (s.min != null ? Number(s.min) : 1);
+        const opts = normOptions(s);
+        if (s.default != null && opts.some(o => same(o.value, s.default))) return opts.find(o => same(o.value, s.default)).value;
+        return opts.length ? opts[0].value : '';
+    }
+    function defaultSettings() {
+        const out = {};
+        (game.settings || []).forEach(s => { out[s.id] = settingDefault(s); });
+        return out;
+    }
+    function renderSetup(savedState) {
+        $('setupTitle').textContent = game.title;
+        $('setupSubtitle').textContent = game.subtitle || game.description || '';
+        $('startBtn').textContent = game.startLabel || 'Start';
+
+        if (pendingWarnings.length) {
+            $('loadWarnings').innerHTML = `<p class="font-bold mb-1">Loaded with ${pendingWarnings.length} warning${pendingWarnings.length > 1 ? 's' : ''}:</p><ul class="list-disc pl-5 space-y-1">${pendingWarnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul>`;
+            $('loadWarnings').classList.remove('hidden');
+            pendingWarnings = [];
+        } else {
+            $('loadWarnings').classList.add('hidden');
+        }
+
+        const last = Object.assign(defaultSettings(), LS.get(kLast(game.id), {}) || {});
+        const tmpState = state; state = { settings: last, round: 1, phaseIndex: 0 };
+        const setupHtml = renderBlocks(game.setup, ctxFor(1, 0));
+        state = tmpState;
+        $('setupBlocks').innerHTML = setupHtml;
+        $('setupBlocks').classList.toggle('hidden', !setupHtml);
+
+        const field = 'focus-accent w-full p-3 border border-stone-300 rounded-lg text-lg font-semibold text-stone-700 bg-stone-50';
+        $('settingsForm').innerHTML = (game.settings || []).map((s, i) => {
+            const type = s.type || 'select';
+            const label = `<label for="set_${i}" class="block text-sm font-bold text-stone-700 mb-2">${esc(s.label || s.id)}</label>`;
+            const help = s.help ? `<p class="text-xs text-stone-500 mt-1">${esc(s.help)}</p>` : '';
+            const cur = last[s.id];
+            if (type === 'toggle') {
+                return `<label class="flex items-center justify-between gap-3 cursor-pointer">
+                    <span><span class="block text-sm font-bold text-stone-700">${esc(s.label || s.id)}</span>${help}</span>
+                    <input type="checkbox" id="set_${i}" class="w-6 h-6 accent-stone-800" ${cur ? 'checked' : ''}>
+                </label>`;
+            }
+            if (type === 'number') {
+                const min = s.min != null ? ` min="${Number(s.min)}"` : '';
+                const max = s.max != null ? ` max="${Number(s.max)}"` : '';
+                return `<div>${label}<input type="number" inputmode="numeric" id="set_${i}" class="${field}" value="${esc(cur)}"${min}${max}>${help}</div>`;
+            }
+            const opts = normOptions(s).map((o, oi) => `<option value="${oi}" ${same(o.value, cur) ? 'selected' : ''}>${esc(o.label)}</option>`).join('');
+            return `<div>${label}<select id="set_${i}" class="${field}">${opts}</select>${help}</div>`;
+        }).join('');
+        $('settingsForm').classList.toggle('hidden', !(game.settings || []).length);
+
+        if (savedState) {
+            const R = game.rounds || {};
+            $('resumeBtn').textContent = `Resume · ${R.label || 'Round'} ${savedState.round}`;
+            $('resumeBtn').classList.remove('hidden');
+            $('startBtn').textContent = (game.startLabel || 'Start') + ' (new game)';
+        } else {
+            $('resumeBtn').classList.add('hidden');
+        }
+    }
+    function readSettings() {
+        const out = {};
+        (game.settings || []).forEach((s, i) => {
+            const el = $('set_' + i);
+            const type = s.type || 'select';
+            if (!el) { out[s.id] = settingDefault(s); return; }
+            if (type === 'toggle') out[s.id] = el.checked;
+            else if (type === 'number') {
+                let n = parseInt(el.value, 10);
+                if (!Number.isFinite(n)) n = settingDefault(s);
+                if (s.min != null) n = Math.max(Number(s.min), n);
+                if (s.max != null) n = Math.min(Number(s.max), n);
+                out[s.id] = n;
+            } else {
+                const o = normOptions(s)[+el.value];
+                out[s.id] = o ? o.value : settingDefault(s);
+            }
+        });
+        return out;
+    }
+    function startGame() {
+        const settings = readSettings();
+        LS.set(kLast(game.id), settings);
+        state = { settings, round: 1, phaseIndex: 0 };
+        const first = phaseVisible(0, 1) ? { round: 1, phaseIndex: 0 } : nextPos(1, 0);
+        if (first) { state.round = first.round; state.phaseIndex = first.phaseIndex; }
+        historyStack = []; redoStack = [];
+        playSound('round');
+        renderGame();
+        show('gameScreen');
+    }
+
+    // ---------------------------------------------------------------
+    // Navigation
+    // ---------------------------------------------------------------
+    function phaseVisible(i, round) {
+        const p = game.phases[i];
+        if (!p) return false;
+        return !p.showIf || check(p.showIf, ctxFor(round, i));
+    }
+    function nextPos(round, i) {
+        const lim = roundLimit();
+        const n = game.phases.length;
+        const maxRound = lim != null ? lim : round + 100;
+        let r = round, j = i;
+        for (let guard = 0; guard < n * 200; guard++) {
+            j++;
+            if (j >= n) { j = 0; r++; }
+            if (r > maxRound) return null;
+            if (phaseVisible(j, r)) return { round: r, phaseIndex: j };
+        }
+        return null;
+    }
+    function prevPos(round, i) {
+        const n = game.phases.length;
+        let r = round, j = i;
+        for (let guard = 0; guard < n * 200; guard++) {
+            j--;
+            if (j < 0) { j = n - 1; r--; }
+            if (r < 1) return null;
+            if (phaseVisible(j, r)) return { round: r, phaseIndex: j };
+        }
+        return null;
+    }
+    function snapshot() { return { round: state.round, phaseIndex: state.phaseIndex }; }
+    function moveTo(pos, sound) {
+        if (!pos) return;
+        historyStack.push(snapshot());
+        if (historyStack.length > 300) historyStack.shift();
+        redoStack = [];
+        const roundChanged = pos.round !== state.round;
+        state.round = pos.round; state.phaseIndex = pos.phaseIndex;
+        playSound(roundChanged ? 'round' : sound);
+        renderGame();
+    }
+    function goNext() { moveTo(nextPos(state.round, state.phaseIndex), 'next'); }
+    function goPrev() { moveTo(prevPos(state.round, state.phaseIndex), 'prev'); }
+    function undo() {
+        if (!historyStack.length) return;
+        redoStack.push(snapshot());
+        Object.assign(state, historyStack.pop());
+        playSound('prev');
+        renderGame();
+    }
+    function redo() {
+        if (!redoStack.length) return;
+        historyStack.push(snapshot());
+        Object.assign(state, redoStack.pop());
+        playSound('next');
+        renderGame();
+    }
+    function saveProgress() {
+        LS.set(kState(game.id), { state, historyStack, redoStack });
+    }
+    function resetGame() {
+        if (!confirm(game.resetConfirm || 'End the current game and return to setup?')) return;
+        LS.del(kState(game.id));
+        state = null; historyStack = []; redoStack = [];
+        renderSetup(null);
+        show('setupScreen');
+    }
+
+    // ---------------------------------------------------------------
+    // Game screen
+    // ---------------------------------------------------------------
+    function renderGame() {
+        const R = game.rounds || {};
+        const lim = roundLimit();
+        const phase = game.phases[state.phaseIndex];
+        const ctx = ctxFor(state.round, state.phaseIndex);
+
+        // Round tracker
+        $('trackerTitle').innerHTML = fmt(R.trackerTitle != null ? R.trackerTitle : (R.label ? R.label + ' track' : 'Round track'), ctx);
+        $('trackerSubtitle').innerHTML = fmt(R.trackerSubtitle != null ? R.trackerSubtitle : (lim != null ? 'of {{roundLimit}}' : ''), ctx);
+        $('roundShort').textContent = R.short || R.label || 'Round';
+        $('roundNow').textContent = state.round;
+        $('roundOf').textContent = R.showLimit && lim != null ? '/' + lim : '';
+        const dots = $('roundDots');
+        dots.innerHTML = '';
+        dots.classList.toggle('hidden', lim == null || R.showDots === false);
+        if (lim != null && R.showDots !== false) {
+            for (let i = 1; i <= lim; i++) {
+                const d = document.createElement('div');
+                d.className = 'rounded-full flex-shrink-0 ' + (i < state.round ? 'w-2 h-2 dot-past' : i === state.round ? 'w-3 h-3 dot-now' : 'w-2 h-2 dot-future');
+                dots.appendChild(d);
+            }
+        }
+
+        // Phase strip (tap a segment to jump within this round)
+        const strip = $('phaseStrip');
+        strip.innerHTML = game.phases.map((p, i) => {
+            const col = isColor(p.color) ? p.color : '#57534e';
+            const vis = phaseVisible(i, state.round);
+            const cls = i === state.phaseIndex ? 'seg now' : vis ? 'seg' : 'seg off';
+            return `<button class="${cls}" style="--seg:${esc(col)}" data-jump="${i}" ${vis ? '' : 'disabled'} title="${esc(p.title)}" aria-label="Go to ${esc(p.title)}"></button>`;
+        }).join('');
+        strip.querySelectorAll('[data-jump]').forEach(b => b.addEventListener('click', () => {
+            const i = +b.dataset.jump;
+            if (i !== state.phaseIndex) moveTo({ round: state.round, phaseIndex: i }, i > state.phaseIndex ? 'next' : 'prev');
+        }));
+
+        // Phase card
+        const col = isColor(phase.color) ? phase.color : '#57534e';
+        $('phaseCard').style.setProperty('--phase', col);
+        $('phaseIcon').style.color = col;
+        $('phaseIcon').innerHTML = iconHTML(phase.icon, 'w-10 h-10 object-contain', phase.title);
+        $('phaseIcon').classList.toggle('hidden', !phase.icon);
+        $('phaseNumber').textContent = phase.number != null ? phase.number : state.phaseIndex + 1;
+        $('phaseNumber').classList.toggle('hidden', game.showPhaseNumbers === false);
+        $('phaseTitle').innerHTML = fmt(phase.title, ctx);
+        $('phaseContent').innerHTML = renderBlocks(phase.content, ctx);
+
+        // Buttons
+        $('undoBtn').disabled = !historyStack.length;
+        $('redoBtn').disabled = !redoStack.length;
+        $('prevBtn').disabled = !prevPos(state.round, state.phaseIndex);
+        const atEnd = !nextPos(state.round, state.phaseIndex);
+        const nb = $('nextBtn');
+        nb.disabled = atEnd;
+        nb.innerHTML = atEnd ? fmt(game.endLabel || 'Game over', ctx) : 'Next &rarr;';
+
+        saveProgress();
+    }
+
+    // ---------------------------------------------------------------
+    // Guide (renders guide.md)
+    // ---------------------------------------------------------------
+    let guideLoaded = false;
+    function openGuide() {
+        $('guideModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        if (guideLoaded) return;
+        $('guideBody').innerHTML = '<p class="text-stone-500">Loading guide…</p>';
+        fetch('guide.md', { cache: 'no-cache' })
+            .then(r => r.ok ? r.text() : Promise.reject(new Error(r.status)))
+            .then(md => {
+                $('guideBody').innerHTML = window.marked ? window.marked.parse(md) : `<pre style="white-space:pre-wrap;background:none;color:inherit">${esc(md)}</pre>`;
+                $('guideBody').querySelectorAll('a[href^="http"]').forEach(a => { a.target = '_blank'; a.rel = 'noopener'; });
+                $('guideBody').querySelectorAll('h1, h2, h3').forEach(h => { if (!h.id) h.id = slug(h.textContent); });
+                $('guideBody').querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+                    const target = $('guideBody').querySelector('#' + CSS.escape(a.getAttribute('href').slice(1)));
+                    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+                }));
+                guideLoaded = true;
+            })
+            .catch(() => {
+                $('guideBody').innerHTML = '<p>The guide couldn’t be loaded here. It loads when the site is hosted; you can also open <a href="guide.md" target="_blank">guide.md</a> directly.</p>';
+            });
+    }
+    function closeGuide() {
+        $('guideModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    // ---------------------------------------------------------------
+    // Events
+    // ---------------------------------------------------------------
+    $('homeBtn').addEventListener('click', openLibrary);
+    $('guideBtn').addEventListener('click', openGuide);
+    $('guideLink').addEventListener('click', openGuide);
+    $('guideClose').addEventListener('click', closeGuide);
+    $('guideModal').addEventListener('click', e => { if (e.target === $('guideModal')) closeGuide(); });
+    $('soundBtn').addEventListener('click', () => { soundOn = !soundOn; LS.set(K_SOUND, soundOn); renderSoundBtn(); playSound('next'); });
+    $('resetBtn').addEventListener('click', resetGame);
+    $('startBtn').addEventListener('click', startGame);
+    $('resumeBtn').addEventListener('click', () => openGame(game.id));
+    $('nextBtn').addEventListener('click', goNext);
+    $('prevBtn').addEventListener('click', goPrev);
+    $('undoBtn').addEventListener('click', undo);
+    $('redoBtn').addEventListener('click', redo);
+
+    const fileInput = $('fileInput');
+    $('dropZone').addEventListener('click', () => fileInput.click());
+    $('dropZone').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+    fileInput.addEventListener('change', () => { loadFile(fileInput.files[0]); fileInput.value = ''; });
+    $('pasteBtn').addEventListener('click', () => {
+        const t = $('pasteInput').value.trim();
+        if (!t) { toast('Paste your game JSON first.'); return; }
+        if (loadFromText(t, 'Pasted JSON')) $('pasteInput').value = '';
+    });
+
+    // Drag a file anywhere onto the page
+    let dragDepth = 0;
+    const hasFiles = e => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files');
+    window.addEventListener('dragenter', e => { if (!hasFiles(e)) return; e.preventDefault(); dragDepth++; $('dropOverlay').classList.remove('hidden'); });
+    window.addEventListener('dragover', e => { if (hasFiles(e)) e.preventDefault(); });
+    window.addEventListener('dragleave', e => { if (!hasFiles(e)) return; dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) $('dropOverlay').classList.add('hidden'); });
+    window.addEventListener('drop', e => {
+        if (!hasFiles(e)) return;
+        e.preventDefault(); dragDepth = 0; $('dropOverlay').classList.add('hidden');
+        loadFile(e.dataTransfer.files[0]);
+    });
+
+    // Keyboard: ←/→ phases, Ctrl+Z / Ctrl+Shift+Z, Esc closes guide
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !$('guideModal').classList.contains('hidden')) { closeGuide(); return; }
+        if ($('gameScreen').classList.contains('hidden') || !$('guideModal').classList.contains('hidden')) return;
+        if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName)) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); goNext(); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev(); }
+        else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+        else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); }
+    });
+
+    // Swipe left/right on the phase card
+    let touch = null;
+    $('phaseCard').addEventListener('touchstart', e => {
+        if (e.target.closest('.tbl-wrap')) { touch = null; return; }
+        touch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }, { passive: true });
+    $('phaseCard').addEventListener('touchend', e => {
+        if (!touch) return;
+        const dx = e.changedTouches[0].clientX - touch.x, dy = e.changedTouches[0].clientY - touch.y;
+        touch = null;
+        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) dx < 0 ? goNext() : goPrev();
+    }, { passive: true });
+
+    // Your site's shared navbar, if nav.html exists next to this page
+    fetch('nav.html').then(r => r.ok ? r.text() : '').then(html => { if (html) $('nav-placeholder').innerHTML = html; }).catch(() => {});
+
+    // ---------------------------------------------------------------
+    // Start
+    // ---------------------------------------------------------------
+    renderSoundBtn();
+    renderExamples();
+    const active = LS.get(K_ACTIVE);
+    if (active && library()[active]) openGame(active); else openLibrary();
+    })();
+    </script>
+</body>
+</html>
