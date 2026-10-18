@@ -23,6 +23,7 @@
     font-family: 'Inter', sans-serif;
     color: var(--text-main);
     transition: background 0.35s ease;
+    overflow-x: clip;
   }
 
   body.side-black {
@@ -75,17 +76,19 @@
     text-transform: uppercase;
     border-radius: 2px;
     flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s;
   }
   .sq-input:focus { outline: none; border-width: 2px; }
+  .sq-input.dup { border-color: #dc2626; background: rgba(220,38,38,0.14); }
+  .sq-input:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(128,128,128,0.28) 4px 6px);
+  }
 
   .slant-right { transform: skewX(-25deg); transform-origin: bottom left; }
 
-  textarea::-webkit-scrollbar { width: 6px; }
-  textarea::-webkit-scrollbar-track { background: transparent; }
-  textarea::-webkit-scrollbar-thumb { background: #a0a0a0; border-radius: 3px; }
-
   .toolbar-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
   .toolbar-btn-outline { border: 1px solid var(--line); color: var(--text-main); }
   .toolbar-btn-outline:hover:not(:disabled) { background: var(--bg-alt); }
 
@@ -94,18 +97,41 @@
 
   .side-badge { font-family: 'Orbitron', sans-serif; letter-spacing: 0.12em; }
 
-  #sheetContent { transition: opacity 0.18s ease; }
-  #sheetContent.flipping { opacity: 0; }
-
-  .round-result-badge {
-    font-size: 10.5px; font-weight: 700;
-    padding: 2px 7px 2px 4px; border-radius: 4px;
-    display: inline-flex; align-items: center; gap: 4px;
+  /* ---------- PAPER FLIP ---------- */
+  #paper { position: relative; transform-origin: 50% 50%; will-change: transform; }
+  #paper.is-flipping {
+    background: var(--bg-page);
+    border-radius: 14px;
+    box-shadow: 0 28px 60px rgba(0,0,0,0.30), 0 4px 12px rgba(0,0,0,0.15);
+    pointer-events: none;
+  }
+  .paper-shade {
+    position: absolute; inset: 0; z-index: 5;
+    border-radius: 14px; pointer-events: none; opacity: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.30), rgba(0,0,0,0.05) 45%, rgba(255,255,255,0.08) 55%, rgba(0,0,0,0.24));
   }
 
-  #teamContextBanner { font-size: 11.5px; line-height: 1.4; }
+  /* ---------- ROUNDS ---------- */
+  .round-result-badge {
+    font-size: 10.5px; font-weight: 700;
+    padding: 2px 7px 2px 5px; border-radius: 4px;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .current-round { outline: 2.5px solid var(--text-main); outline-offset: 2px; }
+  .now-tag {
+    font-family: 'Orbitron', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+    padding: 1px 6px; border-radius: 999px; margin-left: 8px;
+    background: var(--text-main); color: var(--bg-panel);
+  }
 
-  /* Team switch (single either/or slider) */
+  .clue-row { display: flex; align-items: baseline; gap: 8px; padding: 4px 0; border-bottom: 1px dashed rgba(128,128,128,0.35); }
+  .clue-row:last-child { border-bottom: none; }
+  .clue-round { font-family: 'Orbitron', sans-serif; font-size: 9.5px; font-weight: 700; color: var(--text-muted); flex-shrink: 0; width: 22px; }
+  .clue-text { font-size: 14px; font-weight: 600; text-transform: uppercase; word-break: break-word; }
+
+  #teamContextBanner { font-size: 11.5px; line-height: 1.45; }
+
+  /* ---------- TEAM SWITCH + LOCK ---------- */
   .team-switch {
     position: relative;
     display: inline-flex;
@@ -135,9 +161,13 @@
     font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
     background: transparent; border: none; cursor: pointer;
     color: var(--text-main);
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, opacity 0.2s ease;
   }
   .team-switch-option.selected { color: var(--bg-panel); }
+  .team-switch.locked .team-switch-option { cursor: default; }
+  .team-switch.locked .team-switch-option:not(.selected) { opacity: 0.3; cursor: not-allowed; }
+  .team-switch.just-locked { animation: lockIn 0.45s ease; }
+  .team-switch.shake { animation: shake 0.35s ease; }
   .team-swatch {
     width: 10px; height: 10px; border-radius: 50%;
     border: 1px solid var(--line); flex-shrink: 0;
@@ -145,10 +175,35 @@
   .team-swatch.white-swatch { background: #ffffff; }
   .team-swatch.black-swatch { background: #111214; }
 
-  .token-icon-img { width: 5rem; height: 5rem; border-radius: 50%; object-fit: cover; }
-  .token-slot-empty {
-    width: 5rem; height: 5rem; border-radius: 50%;
-    border: 2px dashed var(--line); opacity: 0.5;
+  .lock-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 6px 11px; border-radius: 999px;
+    border: 1.5px solid var(--line); color: var(--text-main); background: var(--bg-panel);
+    transition: background 0.15s;
+  }
+  .lock-btn[hidden] { display: none; }
+  .lock-btn:hover { background: var(--bg-alt); }
+  .lock-btn.shake { animation: shake 0.35s ease; }
+
+  /* ---------- TOKENS ---------- */
+  .token { display: inline-block; border-radius: 50%; overflow: hidden; flex-shrink: 0; vertical-align: middle; }
+  .token img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .token.miscomm { background: radial-gradient(circle at 35% 30%, #3a3c40, #0b0c0d); }
+  .token.intercept { background: radial-gradient(circle at 35% 30%, #ffffff, #c9cbcf); border: 1px solid #9ca3af; }
+  .token-lg, .token-slot-empty { width: 5rem; height: 5rem; }
+  .token-sm { width: 1rem; height: 1rem; }
+  .token-slot-empty { border-radius: 50%; border: 2px dashed var(--line); opacity: 0.5; display: inline-block; }
+  .token.pop { animation: tokenPop 0.5s cubic-bezier(.2,.8,.3,1.2); }
+  #tokensPanel { transition: opacity 0.2s; }
+  #tokensPanel.inactive { opacity: 0.5; }
+
+  @keyframes tokenPop { 0% { transform: scale(0.3); opacity: 0; } 60% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+  @keyframes lockIn { 0% { transform: scale(1); } 40% { transform: scale(1.07); } 100% { transform: scale(1); } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .token.pop, .team-switch.just-locked, .team-switch.shake, .lock-btn.shake { animation: none; }
   }
 
   /* ---------- MOBILE LAYOUT ---------- */
@@ -161,19 +216,20 @@
       scroll-padding-left: 12px;
       -webkit-overflow-scrolling: touch;
       gap: 12px !important;
-      padding-bottom: 6px;
+      padding: 5px 5px 8px;
     }
     #roundsWrap > div {
       flex: 0 0 87%;
       scroll-snap-align: center;
     }
-    #wordColsOuter { min-width: 0 !important; }
+    #wordColsOuter > div { min-width: 0 !important; }
     #wordCols { grid-template-columns: 1fr !important; }
     #wordCols > div {
       border-right: none !important;
       border-bottom: var(--line-width) solid var(--line);
     }
     #wordCols > div:last-child { border-bottom: none; }
+    .token-lg, .token-slot-empty { width: 3.5rem; height: 3.5rem; }
   }
 </style>
 </head>
@@ -185,18 +241,19 @@
         <span aria-hidden="true">←</span> Home
       </a>
       <div class="flex items-center gap-2 flex-wrap">
-        <button id="flipBtn" class="text-xs sm:text-sm px-3 py-1.5 rounded font-bold flex items-center gap-1.5 transition-colors">
+        <button id="flipBtn" class="text-xs sm:text-sm px-3 py-1.5 rounded font-bold flex items-center gap-1.5 transition-colors" title="Flip sheet (F)">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 3h5v5M4 20L20 4M8 21H3v-5M20 4L4 20"/></svg>
-          Flip Sheet
+          <span id="flipLabel">Flip Sheet</span>
         </button>
-        <button id="undoBtn" class="toolbar-btn toolbar-btn-outline text-xs sm:text-sm px-3 py-1.5 rounded transition-colors font-medium">Undo</button>
-        <button id="redoBtn" class="toolbar-btn toolbar-btn-outline text-xs sm:text-sm px-3 py-1.5 rounded transition-colors font-medium">Redo</button>
+        <button id="undoBtn" class="toolbar-btn toolbar-btn-outline text-xs sm:text-sm px-3 py-1.5 rounded transition-colors font-medium" title="Undo (Ctrl/⌘+Z)">Undo</button>
+        <button id="redoBtn" class="toolbar-btn toolbar-btn-outline text-xs sm:text-sm px-3 py-1.5 rounded transition-colors font-medium" title="Redo (Ctrl/⌘+Shift+Z)">Redo</button>
         <button id="resetBtn" class="text-xs sm:text-sm px-3 py-1.5 rounded border border-red-700 text-red-600 hover:bg-red-600 hover:text-white transition-colors font-medium ml-2">Reset</button>
       </div>
     </div>
   </div>
 
-  <main class="max-w-7xl mx-auto px-3 sm:px-6 py-6 sm:py-8">
+  <main id="paper" class="max-w-7xl mx-auto px-3 sm:px-6 py-6 sm:py-8">
+    <div class="paper-shade" aria-hidden="true"></div>
 
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 gap-5">
       <div class="flex flex-col gap-3">
@@ -204,13 +261,17 @@
           <h1 class="font-orbitron text-4xl sm:text-[2.75rem] font-black tracking-[0.08em] pl-2 drop-shadow-sm">DECRYPTO</h1>
           <span id="sideBadge" class="side-badge text-[11px] font-bold px-2.5 py-1 rounded border-game mb-1"></span>
         </div>
-        <div class="flex items-center gap-2 pl-2">
+        <div class="flex items-center gap-2 pl-2 flex-wrap">
           <span class="text-xs font-bold uppercase tracking-wide text-muted mr-1">My Team:</span>
           <div id="teamSwitch" class="team-switch">
             <div class="team-switch-thumb"></div>
             <button data-team="white" class="team-switch-option" id="pickWhiteBtn"><span class="team-swatch white-swatch"></span>White</button>
             <button data-team="black" class="team-switch-option" id="pickBlackBtn"><span class="team-swatch black-swatch"></span>Black</button>
           </div>
+          <button id="lockBtn" class="lock-btn" hidden title="Team locked in — click to change">
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V11a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 8V6a3 3 0 1 1 6 0v3H9z"/></svg>
+            Locked
+          </button>
         </div>
       </div>
 
@@ -227,27 +288,34 @@
     </div>
 
     <!-- Token Tracker Panel -->
-    <div class="border-game rounded-lg bg-panel shadow-sm mb-6 overflow-hidden">
+    <div id="tokensPanel" class="border-game rounded-lg bg-panel shadow-sm mb-6 overflow-hidden">
       <div class="flex h-7 border-b-game bg-panel">
         <div class="bg-alt pl-3 pr-2 flex items-center font-orbitron text-[11px] font-bold text-muted uppercase tracking-widest">TOKENS</div>
         <div class="w-4 bg-alt slant-right border-r-game -ml-[1px]"></div>
+        <div id="tokensHint" class="flex-1 flex items-center justify-end pr-3 text-[11px] font-semibold text-muted"></div>
       </div>
-      <div class="p-3 sm:p-4 flex flex-col sm:flex-row gap-4 sm:gap-8">
+      <div class="p-3 sm:p-4 flex flex-col sm:flex-row gap-4 sm:gap-10">
         <div class="flex items-center gap-3">
-          <span class="text-xs font-bold uppercase tracking-wide text-muted w-[130px]">Miscommunication</span>
+          <div class="w-[140px]">
+            <div class="text-xs font-bold uppercase tracking-wide">Miscommunications</div>
+            <div class="text-[11px] font-semibold text-muted">2 = your team loses</div>
+          </div>
           <div id="miscommPips" class="flex gap-1.5"></div>
-          <span id="miscommWarning" class="text-xs font-bold text-amber-600 hidden">2 = GAME OVER</span>
+          <span id="miscommWarning" class="text-xs font-bold text-amber-600 hidden">YOU LOSE</span>
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-xs font-bold uppercase tracking-wide text-muted w-[110px]">Interception</span>
+          <div class="w-[140px]">
+            <div class="text-xs font-bold uppercase tracking-wide">Interceptions</div>
+            <div class="text-[11px] font-semibold text-muted">2 = your team wins</div>
+          </div>
           <div id="interceptPips" class="flex gap-1.5"></div>
-          <span id="interceptWarning" class="text-xs font-bold text-red-600 hidden">2 = GAME OVER</span>
+          <span id="interceptWarning" class="text-xs font-bold text-green-600 hidden">YOU WIN</span>
         </div>
       </div>
     </div>
 
     <div id="sheetContent">
-      <div id="roundsWrap" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"></div>
+      <div id="roundsWrap" class="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"></div>
 
       <div id="wordColsOuter" class="overflow-x-auto w-full border-game rounded-lg shadow-sm bg-panel">
         <div class="min-w-[600px] flex overflow-hidden">
@@ -258,22 +326,33 @@
 
   </main>
 
-  <footer class="text-center pb-8 pt-4">
-    <p class="text-xs font-semibold text-muted tracking-wide">Autosaved to this device · Codes are 1–4, exact match required — no partial credit</p>
+  <footer class="text-center pb-8 pt-4 px-4">
+    <p class="text-xs font-semibold text-muted tracking-wide">Autosaved to this device · Codes are 3 different digits from 1–4, exact match required · Press F to flip</p>
   </footer>
 
 <script>
 (function(){
   "use strict";
 
-  const STORAGE_KEY = "decrypto-sheet-state-v10";
-  const LEGACY_KEYS = ["decrypto-sheet-state-v9","decrypto-sheet-state-v8","decrypto-sheet-state-v7","decrypto-sheet-state-v6","decrypto-sheet-state-v5"];
+  const STORAGE_KEY = "decrypto-sheet-state-v11";
+  const LEGACY_KEYS = ["decrypto-sheet-state-v10","decrypto-sheet-state-v9","decrypto-sheet-state-v8","decrypto-sheet-state-v7","decrypto-sheet-state-v6","decrypto-sheet-state-v5"];
   const LEGACY_KEY_V4 = "decrypto-sheet-state-v4";
   const ROUNDS = 8;
-  const MAX_HISTORY = 60;
+  const MAX_HISTORY = 80;
+  const DIGITS = ["1","2","3","4"];
+  const FOCUS_ORDER = [["a",0],["a",1],["a",2],["b",0],["b",1],["b",2]];
 
   const MISCOMM_ICON = "https://www.ultraboardgames.com/decrypto/gfx/game12.jpg";
   const INTERCEPT_ICON = "https://www.ultraboardgames.com/decrypto/gfx/game11.jpg";
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const mobileQuery = window.matchMedia("(max-width: 767px)");
+  const clone = o => JSON.parse(JSON.stringify(o));
+
+  let isFlipping = false;
+  let lastTokens = { miscomm: null, intercept: null };
+
+  /* ---------- STATE ---------- */
 
   function freshSideData(){
     return {
@@ -283,8 +362,7 @@
           {text: "", a: "", b: ""},
           {text: "", a: "", b: ""}
         ]
-      })),
-      words: ["", "", "", ""]
+      }))
     };
   }
 
@@ -302,16 +380,19 @@
            Array.isArray(parsed.sides.white.rounds) && Array.isArray(parsed.sides.black.rounds);
   }
 
-  function stripCField(parsed){
+  function normalize(parsed){
     ["white", "black"].forEach(sideKey => {
       const side = parsed.sides[sideKey];
-      if(!side || !Array.isArray(side.rounds)) return;
+      delete side.words;
       side.rounds.forEach(r => {
         if(!r.lines) return;
         r.lines.forEach(ln => { if(ln.c !== undefined) delete ln.c; });
       });
     });
-    if(parsed.myTeam === undefined) parsed.myTeam = null;
+    if(parsed.myTeam !== "white" && parsed.myTeam !== "black") parsed.myTeam = null;
+    if(parsed.activeSide !== "white" && parsed.activeSide !== "black") parsed.activeSide = "white";
+    if(typeof parsed.teamName !== "string") parsed.teamName = "";
+    return parsed;
   }
 
   function loadInitial(){
@@ -320,7 +401,7 @@
         const raw = localStorage.getItem(key);
         if(raw){
           const parsed = JSON.parse(raw);
-          if(isValidState(parsed)){ stripCField(parsed); return parsed; }
+          if(isValidState(parsed)) return normalize(parsed);
         }
       }catch(e){ }
       return null;
@@ -334,13 +415,12 @@
       const legacyRaw = localStorage.getItem(LEGACY_KEY_V4);
       if(legacyRaw){
         const legacy = JSON.parse(legacyRaw);
-        if(legacy && legacy.rounds && legacy.words){
+        if(legacy && legacy.rounds){
           const migrated = freshState();
           migrated.teamName = legacy.teamName || "";
           migrated.sides.white.rounds = legacy.rounds.map(r => ({
             lines: r.lines.map(ln => ({ text: ln.text || "", a: ln.a || "", b: ln.b || "" }))
           }));
-          migrated.sides.white.words = legacy.words;
           return migrated;
         }
       }
@@ -350,7 +430,13 @@
   }
 
   let state = loadInitial();
-  let history = [JSON.parse(JSON.stringify(state))];
+
+  /* History only tracks sheet content. Team lock and which side is showing are
+     not undoable, but undo/redo jumps to the side where the change happened. */
+  function snap(){
+    return { data: clone({ teamName: state.teamName, sides: state.sides }), side: state.activeSide };
+  }
+  let history = [snap()];
   let histIdx = 0;
 
   function persist(){
@@ -359,38 +445,49 @@
 
   function commit(){
     history = history.slice(0, histIdx + 1);
-    history.push(JSON.parse(JSON.stringify(state)));
+    history.push(snap());
     if(history.length > MAX_HISTORY){ history.shift(); }
     histIdx = history.length - 1;
     persist();
     updateToolbar();
   }
 
+  function restore(entry, side){
+    const changesSide = side !== state.activeSide;
+    const apply = () => {
+      state.teamName = entry.data.teamName;
+      state.sides = clone(entry.data.sides);
+      state.activeSide = side;
+      persist();
+      render();
+      updateToolbar();
+      if(changesSide) scrollToCurrent();
+    };
+    if(changesSide) flipAnimate(apply); else apply();
+  }
+
   function undo(){
-    if(histIdx <= 0) return;
+    if(isFlipping || histIdx <= 0) return;
+    const sideOfChange = history[histIdx].side;
     histIdx -= 1;
-    state = JSON.parse(JSON.stringify(history[histIdx]));
-    persist();
-    render();
-    updateToolbar();
+    restore(history[histIdx], sideOfChange);
   }
 
   function redo(){
-    if(histIdx >= history.length - 1) return;
+    if(isFlipping || histIdx >= history.length - 1) return;
     histIdx += 1;
-    state = JSON.parse(JSON.stringify(history[histIdx]));
-    persist();
-    render();
-    updateToolbar();
+    restore(history[histIdx], history[histIdx].side);
   }
 
   function resetAll(){
     state = freshState();
-    history = [JSON.parse(JSON.stringify(state))];
+    history = [snap()];
     histIdx = 0;
+    lastTokens = { miscomm: null, intercept: null };
     persist();
     render();
     updateToolbar();
+    scrollToCurrent();
   }
 
   function updateToolbar(){
@@ -398,102 +495,113 @@
     document.getElementById("redoBtn").disabled = histIdx >= history.length - 1;
   }
 
-  function escapeAttr(str){
+  /* ---------- HELPERS ---------- */
+
+  function escapeHtml(str){
     return String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
 
   function currentSideData(){ return state.sides[state.activeSide]; }
-  function myTeamKey(){ return state.myTeam || "white"; }
-  function otherTeamKey(){ return myTeamKey() === "white" ? "black" : "white"; }
+  function otherSide(side){ return side === "white" ? "black" : "white"; }
 
-  function updateDerivedWords() {
-    const sideData = currentSideData();
-    let newWords = ["", "", "", ""];
+  function complete(arr){ return arr.length === 3 && arr.every(d => DIGITS.includes(d)); }
+
+  function dupSet(arr){
+    const seen = new Set(), dups = new Set();
+    arr.forEach(v => { if(!v) return; if(seen.has(v)) dups.add(v); seen.add(v); });
+    return dups;
+  }
+
+  /* Decrypto rule: no interception attempts in Round 1. */
+  function noIntercept(side, rIdx){
+    return !!state.myTeam && side !== state.myTeam && rIdx === 0;
+  }
+
+  function roundOutcome(side, rIdx){
+    const lines = state.sides[side].rounds[rIdx].lines;
+    const guess = lines.map(l => l.a);
+    const code = lines.map(l => l.b);
+    const codeDup = dupSet(code).size > 0;
+    const guessDup = dupSet(guess).size > 0;
+    const codeOk = complete(code) && !codeDup;
+    const guessOk = complete(guess) && !noIntercept(side, rIdx);
+    return { codeOk, guessOk, codeDup, guessDup, match: codeOk && guessOk && guess.every((g, i) => g === code[i]) };
+  }
+
+  function currentRoundIdx(side){
+    const rounds = state.sides[side].rounds;
     for(let r = 0; r < ROUNDS; r++){
-      for(let l = 0; l < 3; l++){
-        const clue = sideData.rounds[r].lines[l].text.trim();
-        const correctNum = sideData.rounds[r].lines[l].b.trim();
-        if(clue && ["1", "2", "3", "4"].includes(correctNum)){
-          const colIdx = parseInt(correctNum, 10) - 1;
-          if(newWords[colIdx].length > 0){ newWords[colIdx] += "\n" + clue; }
-          else { newWords[colIdx] = clue; }
-        }
-      }
+      if(!complete(rounds[r].lines.map(l => l.b))) return r;
     }
-    sideData.words = newWords;
+    return -1;
   }
 
-  function digitsComplete(arr){
-    return arr.length === 3 && arr.every(d => ["1","2","3","4"].includes(d));
-  }
-  function arraysEqual(a, b){
-    return a.length === b.length && a.every((v, i) => v === b[i]);
+  function tokenHtml(kind, sizeClass, extra){
+    const url = kind === "miscomm" ? MISCOMM_ICON : INTERCEPT_ICON;
+    return `<span class="token ${kind} ${sizeClass} ${extra || ""}"><img src="${url}" alt="" onerror="this.remove()"></span>`;
   }
 
-  function roundOutcomeForSide(sideKey, rIdx){
-    const lines = state.sides[sideKey].rounds[rIdx].lines;
-    const guess = [lines[0].a, lines[1].a, lines[2].a];
-    const code = [lines[0].b, lines[1].b, lines[2].b];
-    const codeSet = digitsComplete(code);
-    const guessSet = digitsComplete(guess);
-    const out = { codeSet, guessSet, match: false };
-    if(codeSet && guessSet){ out.match = arraysEqual(guess, code); }
-    return out;
+  function pill(bg, inner){
+    return `<span class="round-result-badge" style="background:${bg}; color:#fff;">${inner}</span>`;
   }
 
-  function sideRole(sideKey){
-    return sideKey === myTeamKey() ? "mine" : "other";
-  }
+  /* ---------- RENDERING ---------- */
 
   function badgeHtml(rIdx){
-    const sideKey = state.activeSide;
-    const out = roundOutcomeForSide(sideKey, rIdx);
-    if(!out.codeSet || !out.guessSet) return "";
+    const side = state.activeSide;
+    const o = roundOutcome(side, rIdx);
 
-    const role = sideRole(sideKey);
-    if(role === "mine"){
-      if(!out.match){
-        return `<span class="round-result-badge" style="background:#d97706; color:#fff;"><img src="${MISCOMM_ICON}" class="w-4 h-4 rounded-full" alt=""> MISCOMM.</span>`;
-      }
-      return `<span class="round-result-badge" style="background:#16a34a; color:#fff;">✓ NO TOKEN</span>`;
-    } else {
-      if(out.match){
-        return `<span class="round-result-badge" style="background:#dc2626; color:#fff;"><img src="${INTERCEPT_ICON}" class="w-4 h-4 rounded-full" alt=""> INTERCEPT</span>`;
-      }
-      return `<span class="round-result-badge" style="background:#6b7280; color:#fff;">— NO TOKEN</span>`;
+    if(o.codeDup) return pill("#dc2626", "⚠ Code digits must all differ");
+    if(noIntercept(side, rIdx)) return `<span class="text-[11px] font-semibold text-muted">No interception in Round 1 — just log their clues</span>`;
+    if(o.guessDup) return pill("#b45309", "⚠ Guess repeats a digit");
+    if(!o.codeOk || !o.guessOk) return "";
+
+    if(!state.myTeam){
+      return o.match ? pill("#16a34a", "✓ Match") : pill("#6b7280", "✗ No match");
     }
+    if(side === state.myTeam){
+      return o.match
+        ? pill("#16a34a", "✓ Decoded — no token")
+        : pill("#111214", tokenHtml("miscomm", "token-sm") + " Miscommunication");
+    }
+    return o.match
+      ? pill("#2563eb", tokenHtml("intercept", "token-sm") + " Intercepted!")
+      : pill("#6b7280", "— Not intercepted");
   }
 
   function roundPanel(rIdx){
+    const side = state.activeSide;
     const label = "ROUND " + String(rIdx + 1).padStart(2, "0");
-    const r = currentSideData().rounds[rIdx];
+    const r = state.sides[side].rounds[rIdx];
+    const blockA = noIntercept(side, rIdx);
+    const dupA = dupSet(r.lines.map(l => l.a));
+    const dupB = dupSet(r.lines.map(l => l.b));
+    const isCurrent = rIdx === currentRoundIdx(side);
 
     const lines = r.lines.map((ln, li) => {
-      const bgClass = li === 1 ? 'bg-alt' : 'bg-panel';
+      const bgClass = li === 1 ? "bg-alt" : "bg-panel";
       return `
         <div class="flex items-center px-2 py-2 ${bgClass}">
-          <input type="text" maxlength="30" data-round="${rIdx}" data-line="${li}" data-field="text" autocomplete="off" spellcheck="false"
-            class="line-input" value="${escapeAttr(ln.text)}">
+          <input type="text" maxlength="30" data-round="${rIdx}" data-line="${li}" data-field="text" autocomplete="off" spellcheck="false" enterkeyhint="next"
+            class="line-input" value="${escapeHtml(ln.text)}" aria-label="Round ${rIdx + 1} clue ${li + 1}">
           <div class="flex gap-1.5 sm:gap-2 ml-3 flex-shrink-0">
             <input type="text" maxlength="1" data-round="${rIdx}" data-line="${li}" data-field="a" autocomplete="off" inputmode="numeric"
-              class="sq-input" value="${escapeAttr(ln.a)}" title="Guessed digit">
+              class="sq-input ${dupA.has(ln.a) ? "dup" : ""}" value="${blockA ? "" : escapeHtml(ln.a)}" ${blockA ? "disabled" : ""}
+              title="${blockA ? "No interception in Round 1" : "Guessed digit"}" aria-label="Round ${rIdx + 1} line ${li + 1} guess">
             <input type="text" maxlength="1" data-round="${rIdx}" data-line="${li}" data-field="b" autocomplete="off" inputmode="numeric"
-              class="sq-input" value="${escapeAttr(ln.b)}" title="Correct code digit">
+              class="sq-input ${dupB.has(ln.b) ? "dup" : ""}" value="${escapeHtml(ln.b)}" title="Correct code digit" aria-label="Round ${rIdx + 1} line ${li + 1} code">
           </div>
         </div>
       `;
     }).join("");
 
-    const badge = badgeHtml(rIdx);
-
     return `
-      <div class="border-game rounded-lg overflow-hidden bg-panel flex flex-col shadow-sm relative">
+      <div data-panel="${rIdx}" class="border-game rounded-lg overflow-hidden bg-panel flex flex-col shadow-sm relative ${isCurrent ? "current-round" : ""}">
         <div class="flex justify-between items-end border-b-game bg-panel">
-           <div class="flex h-7 relative z-10">
-              <div class="bg-alt pl-3 pr-2 flex items-center font-orbitron text-[11.5px] font-bold tracking-widest text-muted uppercase">
-                 ${label}
-              </div>
-              <div class="w-4 bg-alt slant-right border-r-game -ml-[1px]"></div>
+           <div class="flex h-7 relative z-10 items-center">
+              <div class="bg-alt pl-3 pr-2 h-full flex items-center font-orbitron text-[11.5px] font-bold tracking-widest text-muted uppercase">${label}</div>
+              <div class="w-4 h-full bg-alt slant-right border-r-game -ml-[1px]"></div>
+              <span class="now-tag ${isCurrent ? "" : "hidden"}">NOW</span>
            </div>
            <div class="flex gap-1.5 sm:gap-2 pr-2 pb-1 text-muted">
               <span class="w-[28px] text-center text-[13px] font-bold font-orbitron">?</span>
@@ -502,10 +610,8 @@
               </span>
            </div>
         </div>
-        <div class="flex flex-col">
-           ${lines}
-        </div>
-        <div class="round-badge-row px-3 py-1.5 min-h-[28px] border-t-game flex items-center gap-1">${badge}</div>
+        <div class="flex flex-col">${lines}</div>
+        <div class="round-badge-row px-3 py-1.5 min-h-[28px] border-t-game flex items-center gap-1">${badgeHtml(rIdx)}</div>
       </div>
     `;
   }
@@ -514,12 +620,48 @@
     document.getElementById("roundsWrap").innerHTML = Array.from({length: ROUNDS}, (_, i) => roundPanel(i)).join("");
   }
 
+  /* Refresh one round's warnings/badge in place, without stealing focus. */
+  function refreshRound(rIdx){
+    const panel = document.querySelector(`#roundsWrap > [data-panel="${rIdx}"]`);
+    if(!panel) return;
+    const r = currentSideData().rounds[rIdx];
+    ["a", "b"].forEach(f => {
+      const dups = dupSet(r.lines.map(l => l[f]));
+      panel.querySelectorAll(`[data-field="${f}"]`).forEach(inp => {
+        inp.classList.toggle("dup", dups.has(r.lines[+inp.dataset.line][f]));
+      });
+    });
+    panel.querySelector(".round-badge-row").innerHTML = badgeHtml(rIdx);
+  }
+
+  function refreshCurrentMarker(){
+    const cur = currentRoundIdx(state.activeSide);
+    document.querySelectorAll("#roundsWrap > [data-panel]").forEach(p => {
+      const on = +p.dataset.panel === cur;
+      p.classList.toggle("current-round", on);
+      p.querySelector(".now-tag").classList.toggle("hidden", !on);
+    });
+  }
+
+  function computeWords(sideData){
+    const cols = [[], [], [], []];
+    sideData.rounds.forEach((round, r) => {
+      round.lines.forEach(ln => {
+        const clue = ln.text.trim();
+        if(clue && DIGITS.includes(ln.b)) cols[+ln.b - 1].push({ r, text: clue });
+      });
+    });
+    return cols;
+  }
+
   function renderCodesSection(){
-    const sideData = currentSideData();
-    document.getElementById("wordCols").innerHTML = [0, 1, 2, 3].map(i => {
-      const isGrey = i % 2 === 1;
-      const bgClass = isGrey ? 'bg-alt' : 'bg-panel';
-      const borderRight = i < 3 ? 'border-r-game' : '';
+    const cols = computeWords(currentSideData());
+    document.getElementById("wordCols").innerHTML = cols.map((items, i) => {
+      const bgClass = i % 2 === 1 ? "bg-alt" : "bg-panel";
+      const borderRight = i < 3 ? "border-r-game" : "";
+      const list = items.length
+        ? items.map(it => `<div class="clue-row"><span class="clue-round">R${it.r + 1}</span><span class="clue-text">${escapeHtml(it.text)}</span></div>`).join("")
+        : `<div class="text-xs font-semibold text-muted opacity-60 pt-1">No clues yet</div>`;
       return `
         <div class="flex flex-col ${bgClass} ${borderRight}">
            <div class="flex h-7 border-b-game bg-panel">
@@ -528,11 +670,9 @@
                  ${i + 1}
               </div>
               <div class="w-4 ${bgClass} slant-right border-r-game -ml-[1px]"></div>
-              <div class="flex-1 bg-panel"></div>
+              <div class="flex-1 bg-panel flex items-center justify-end pr-2 text-[10px] font-bold text-muted">${items.length ? items.length : ""}</div>
            </div>
-           <div class="flex-1 p-2.5">
-              <textarea readonly data-wordcol="${i}" spellcheck="false" class="w-full h-full bg-transparent resize-none outline-none text-sm font-semibold uppercase leading-8 cursor-default" rows="6">${escapeAttr(sideData.words[i])}</textarea>
-           </div>
+           <div class="flex-1 px-3 py-2 min-h-[11rem]">${list}</div>
         </div>
       `;
     }).join("");
@@ -540,60 +680,70 @@
 
   function renderTeamSwitch(){
     const sw = document.getElementById("teamSwitch");
-    sw.classList.toggle("chosen", !!state.myTeam);
+    const locked = !!state.myTeam;
+    sw.classList.toggle("chosen", locked);
+    sw.classList.toggle("locked", locked);
     sw.classList.toggle("pos-black", state.myTeam === "black");
-    document.getElementById("pickWhiteBtn").classList.toggle("selected", state.myTeam === "white");
-    document.getElementById("pickBlackBtn").classList.toggle("selected", state.myTeam === "black");
+    ["white", "black"].forEach(t => {
+      const btn = document.getElementById(t === "white" ? "pickWhiteBtn" : "pickBlackBtn");
+      btn.classList.toggle("selected", state.myTeam === t);
+      btn.setAttribute("aria-disabled", locked ? "true" : "false");
+      btn.setAttribute("aria-pressed", state.myTeam === t ? "true" : "false");
+      btn.title = locked ? "Team is locked in — use the Locked button to change" : `Lock in ${t === "white" ? "White" : "Black"} as your team`;
+    });
+    document.getElementById("lockBtn").hidden = !locked;
   }
 
   function renderSideChrome(){
-    const isBlack = state.activeSide === "black";
-    document.body.classList.toggle("side-black", isBlack);
-    const sideLabelBadge = document.getElementById("sideBadge");
-    sideLabelBadge.textContent = isBlack ? "SIDE · BLACK" : "SIDE · WHITE";
+    const side = state.activeSide;
+    document.body.classList.toggle("side-black", side === "black");
+    document.getElementById("sideBadge").textContent = side === "black" ? "SIDE · BLACK" : "SIDE · WHITE";
+    document.getElementById("flipLabel").textContent = "Flip to " + (otherSide(side) === "white" ? "White" : "Black");
 
     const banner = document.getElementById("teamContextBanner");
-
     if(!state.myTeam){
-      banner.innerHTML = `👆 Choose your team's colour above so this sheet knows when to track Miscommunication vs Interception.`;
+      banner.innerHTML = `👆 Pick your team's colour to lock it in — the sheet then knows which side counts Miscommunications and which counts Interceptions.`;
+    } else if(side === state.myTeam){
+      banner.innerHTML = `🤝 <strong class="text-main">Your team's side</strong> · your clues · <strong class="text-main">?</strong> = your team's guess · 💾 = the real code`;
     } else {
-      const role = sideRole(state.activeSide);
-      banner.innerHTML = role === "mine"
-        ? `🤝 <strong>My Team</strong> side sheet`
-        : `🕵️ <strong>Opponent's</strong> side sheet`;
+      banner.innerHTML = `🕵️ <strong class="text-main">Opponent's side</strong> · their clues · <strong class="text-main">?</strong> = your interception guess · 💾 = their real code`;
     }
   }
 
-  function renderPips(containerId, count, iconUrl){
-    const el = document.getElementById(containerId);
-    let pips = "";
+  function renderPips(containerId, count, kind){
+    const prev = lastTokens[kind];
+    let html = "";
     const total = Math.max(count, 2);
     for(let i = 0; i < total; i++){
-      pips += i < count
-        ? `<img src="${iconUrl}" class="token-icon-img" alt="token">`
+      html += i < count
+        ? tokenHtml(kind, "token-lg", prev !== null && i >= prev ? "pop" : "")
         : `<span class="token-slot-empty"></span>`;
     }
-    el.innerHTML = pips;
+    document.getElementById(containerId).innerHTML = html;
+    lastTokens[kind] = count;
   }
 
   function renderTokenPanel(){
     let miscomm = 0, intercept = 0;
-    const mine = myTeamKey(), other = otherTeamKey();
-    for(let r = 0; r < ROUNDS; r++){
-      const mineOut = roundOutcomeForSide(mine, r);
-      if(mineOut.codeSet && mineOut.guessSet && !mineOut.match) miscomm++;
-      const otherOut = roundOutcomeForSide(other, r);
-      if(otherOut.codeSet && otherOut.guessSet && otherOut.match) intercept++;
+    if(state.myTeam){
+      const mine = state.myTeam, other = otherSide(mine);
+      for(let r = 0; r < ROUNDS; r++){
+        const m = roundOutcome(mine, r);
+        if(m.codeOk && m.guessOk && !m.match) miscomm++;
+        const o = roundOutcome(other, r);
+        if(o.match) intercept++;
+      }
     }
-    renderPips("miscommPips", miscomm, MISCOMM_ICON);
-    renderPips("interceptPips", intercept, INTERCEPT_ICON);
+    if(lastTokens.miscomm !== miscomm) renderPips("miscommPips", miscomm, "miscomm");
+    if(lastTokens.intercept !== intercept) renderPips("interceptPips", intercept, "intercept");
     document.getElementById("miscommWarning").classList.toggle("hidden", miscomm < 2);
     document.getElementById("interceptWarning").classList.toggle("hidden", intercept < 2);
+    document.getElementById("tokensPanel").classList.toggle("inactive", !state.myTeam);
+    document.getElementById("tokensHint").textContent = state.myTeam ? "" : "Pick your team to start counting";
   }
 
   function render(){
     document.getElementById("teamName").value = state.teamName;
-    updateDerivedWords();
     renderRounds();
     renderCodesSection();
     renderSideChrome();
@@ -601,54 +751,126 @@
     renderTokenPanel();
   }
 
-  function flipSide(){
-    const content = document.getElementById("sheetContent");
-    content.classList.add("flipping");
-    setTimeout(() => {
-      state.activeSide = state.activeSide === "white" ? "black" : "white";
-      persist();
-      render();
-      content.classList.remove("flipping");
-    }, 160);
+  function scrollToCurrent(){
+    if(!mobileQuery.matches) return;
+    const wrap = document.getElementById("roundsWrap");
+    const panel = wrap.querySelector(".current-round") || wrap.firstElementChild;
+    if(panel) wrap.scrollLeft = panel.offsetLeft - 12;
   }
 
-  /* ---- EVENTS ---- */
+  /* ---------- PAPER FLIP ---------- */
 
-  document.getElementById("roundsWrap").addEventListener("input", function(e){
-    const el = e.target;
-    if(el.dataset.field !== 'a' && el.dataset.field !== 'b') return;
-    el.value = el.value.replace(/[^1-4]/g, "").slice(0,1);
+  function flipAnimate(apply){
+    const paper = document.getElementById("paper");
+    if(isFlipping) return;
+    if(reduceMotion.matches || typeof paper.animate !== "function"){ apply(); return; }
 
-    const rIdx = parseInt(el.dataset.round, 10);
-    const li = parseInt(el.dataset.line, 10);
-    currentSideData().rounds[rIdx].lines[li][el.dataset.field] = el.value;
+    isFlipping = true;
+    paper.classList.add("is-flipping");
+    const shade = paper.querySelector(".paper-shade");
+    const dir = state.activeSide === "white" ? 1 : -1;
+    const P = "perspective(2200px)";
 
-    if(el.value && el.dataset.field === 'a'){
-      const next = document.querySelector(`[data-round="${rIdx}"][data-line="${li}"][data-field="b"]`);
-      if(next) next.focus();
+    const lift = paper.animate([
+      { transform: `${P} rotateY(0deg) scale(1)` },
+      { transform: `${P} rotateY(${-90 * dir}deg) scale(0.95)` }
+    ], { duration: 260, easing: "cubic-bezier(.55,0,.8,.4)", fill: "forwards" });
+    const shadeIn = shade.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, easing: "ease-in", fill: "forwards" });
+
+    const finish = () => {
+      paper.classList.remove("is-flipping");
+      isFlipping = false;
+    };
+
+    lift.finished.then(() => {
+      apply();
+      const land = paper.animate([
+        { transform: `${P} rotateY(${90 * dir}deg) scale(0.95)` },
+        { transform: `${P} rotateY(${-6 * dir}deg) scale(1)`, offset: 0.8 },
+        { transform: `${P} rotateY(0deg) scale(1)` }
+      ], { duration: 380, easing: "cubic-bezier(.2,.7,.3,1)" });
+      const shadeOut = shade.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 380, easing: "ease-out" });
+      lift.cancel();
+      shadeIn.cancel();
+      land.finished.then(finish, finish);
+    }).catch(() => { apply(); finish(); });
+  }
+
+  function flipSide(){
+    if(isFlipping) return;
+    flipAnimate(() => {
+      state.activeSide = otherSide(state.activeSide);
+      persist();
+      render();
+      scrollToCurrent();
+    });
+  }
+
+  /* ---------- FOCUS FLOW ---------- */
+  /* Digits move down the "?" column first, then down the code column. */
+
+  function focusStep(rIdx, field, li, dir){
+    const idx = FOCUS_ORDER.findIndex(([f, l]) => f === field && l === li);
+    for(let i = idx + dir; i >= 0 && i < FOCUS_ORDER.length; i += dir){
+      const [f, l] = FOCUS_ORDER[i];
+      const inp = document.querySelector(`[data-round="${rIdx}"][data-line="${l}"][data-field="${f}"]`);
+      if(inp && !inp.disabled){ inp.focus(); inp.select(); return true; }
     }
+    return false;
+  }
 
-    const panel = document.querySelectorAll('#roundsWrap > div')[rIdx];
-    if(panel){
-      const badgeRow = panel.querySelector('.round-badge-row');
-      if(badgeRow) badgeRow.innerHTML = badgeHtml(rIdx);
-    }
-    if(el.dataset.field === 'b'){
-      updateDerivedWords();
-      renderCodesSection();
-    }
-    renderTokenPanel();
-  });
+  /* ---------- EVENTS ---------- */
 
-  document.getElementById("roundsWrap").addEventListener("change", function(e){
+  const roundsWrap = document.getElementById("roundsWrap");
+
+  roundsWrap.addEventListener("input", function(e){
     const el = e.target;
     if(el.dataset.round === undefined) return;
-    const rIdx = parseInt(el.dataset.round, 10);
+    const rIdx = +el.dataset.round, li = +el.dataset.line, field = el.dataset.field;
+    const line = currentSideData().rounds[rIdx].lines[li];
 
-    if(el.dataset.line !== undefined && el.dataset.field !== undefined){
-      const li = parseInt(el.dataset.line, 10);
-      currentSideData().rounds[rIdx].lines[li][el.dataset.field] = el.value;
-      commit();
+    if(field === "text"){
+      line.text = el.value;
+      persist();
+      renderCodesSection();
+      return;
+    }
+
+    el.value = el.value.replace(/[^1-4]/g, "").slice(0, 1);
+    line[field] = el.value;
+    persist();
+
+    refreshRound(rIdx);
+    refreshCurrentMarker();
+    if(field === "b") renderCodesSection();
+    renderTokenPanel();
+
+    if(el.value) focusStep(rIdx, field, li, 1);
+  });
+
+  roundsWrap.addEventListener("change", function(e){
+    if(e.target.dataset.round !== undefined) commit();
+  });
+
+  roundsWrap.addEventListener("focusin", function(e){
+    if(e.target.classList.contains("sq-input")) e.target.select();
+  });
+
+  roundsWrap.addEventListener("keydown", function(e){
+    const el = e.target;
+    if(el.dataset.round === undefined) return;
+    const rIdx = +el.dataset.round, li = +el.dataset.line, field = el.dataset.field;
+
+    if(field !== "text" && e.key === "Backspace" && !el.value){
+      e.preventDefault();
+      focusStep(rIdx, field, li, -1);
+    } else if(field === "text" && e.key === "Enter"){
+      e.preventDefault();
+      const next = li < 2
+        ? document.querySelector(`[data-round="${rIdx}"][data-line="${li + 1}"][data-field="text"]`)
+        : null;
+      if(next) next.focus();
+      else focusStep(rIdx, "a", -1, 1) || el.blur();
     }
   });
 
@@ -657,36 +879,81 @@
     commit();
   });
 
+  function nudge(id){
+    const el = document.getElementById(id);
+    el.classList.remove("shake");
+    void el.offsetWidth;
+    el.classList.add("shake");
+    setTimeout(() => el.classList.remove("shake"), 400);
+  }
+
   document.getElementById("teamSwitch").addEventListener("click", function(e){
     const btn = e.target.closest("[data-team]");
-    if(!btn) return;
+    if(!btn || isFlipping) return;
+    if(state.myTeam){
+      if(btn.dataset.team !== state.myTeam){ nudge("teamSwitch"); nudge("lockBtn"); }
+      return;
+    }
     state.myTeam = btn.dataset.team;
-    renderTeamSwitch();
-    renderSideChrome();
-    renderRounds();
-    renderTokenPanel();
-    commit();
+    lastTokens = { miscomm: null, intercept: null };
+    persist();
+    render();
+
+    const sw = document.getElementById("teamSwitch");
+    sw.classList.add("just-locked");
+    setTimeout(() => sw.classList.remove("just-locked"), 500);
+
+    if(state.activeSide !== state.myTeam){
+      setTimeout(() => flipAnimate(() => {
+        state.activeSide = state.myTeam;
+        persist();
+        render();
+        scrollToCurrent();
+      }), 350);
+    }
+  });
+
+  document.getElementById("lockBtn").addEventListener("click", function(){
+    if(confirm("Unlock your team colour? Your clues and codes stay — only the team choice is cleared.")){
+      state.myTeam = null;
+      lastTokens = { miscomm: null, intercept: null };
+      persist();
+      render();
+    }
   });
 
   document.getElementById("flipBtn").addEventListener("click", flipSide);
   document.getElementById("undoBtn").addEventListener("click", undo);
   document.getElementById("redoBtn").addEventListener("click", redo);
   document.getElementById("resetBtn").addEventListener("click", function(){
-    if(confirm("Reset both sides of the sheet and all token progress? This clears everything.")){
+    if(confirm("Start a new game? This clears both sides, all tokens and the team lock.")){
       resetAll();
     }
   });
 
   window.addEventListener("keydown", function(e){
+    const t = e.target;
+    const typing = t && t.matches && t.matches("input, textarea");
     const mod = e.ctrlKey || e.metaKey;
-    if(!mod) return;
-    if(e.key.toLowerCase() === "z" && !e.shiftKey){ e.preventDefault(); undo(); }
-    else if((e.key.toLowerCase() === "z" && e.shiftKey) || e.key.toLowerCase() === "y"){ e.preventDefault(); redo(); }
-    else if(e.key.toLowerCase() === "f"){ e.preventDefault(); flipSide(); }
+    const k = e.key.toLowerCase();
+
+    if(mod && k === "z" && !e.shiftKey){
+      e.preventDefault();
+      if(typing) t.blur(); // commits the edit in progress so it can be undone
+      undo();
+    } else if(mod && ((k === "z" && e.shiftKey) || k === "y")){
+      e.preventDefault();
+      if(typing) t.blur();
+      redo();
+    } else if(!mod && !e.altKey && !typing && k === "f"){
+      e.preventDefault();
+      flipSide();
+    }
   });
 
   render();
   updateToolbar();
+  requestAnimationFrame(scrollToCurrent);
 })();
 </script>
 </body>
