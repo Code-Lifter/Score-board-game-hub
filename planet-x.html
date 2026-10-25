@@ -8,9 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:light;--bg:#edf2f8;--panel:#f8fafd;--ink:#16386b;--muted:#4a6491;--faint:#8fa4c4;--line:#cbd8ea;--line-strong:#8ca5c9;--grid-line:rgba(22,56,107,.055);--no:#c4432f;--maybe:#9a6200;--on-ink:#f8fafd;--tint:rgba(22,56,107,.085);--tint-2:rgba(22,56,107,.04);--earth:#16305d;--sky-ico:#dfe8fa;--p-yellow:#f2c230;--p-blue:#3f80e8;--p-red:#e3473b;--p-purple:#9d5ce0;--f:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#153867;--panel:#1a4177;--ink:#eef4ff;--muted:#b1c4e4;--faint:#7d99c4;--line:#38609a;--line-strong:#7896c5;--grid-line:rgba(238,244,255,.05);--no:#ff8e7c;--maybe:#ffd06a;--on-ink:#153867;--tint:rgba(238,244,255,.12);--tint-2:rgba(238,244,255,.055);--earth:#0b1d3b}}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#153867;--panel:#1a4177;--ink:#eef4ff;--muted:#b1c4e4;--faint:#7d99c4;--line:#38609a;--line-strong:#7896c5;--grid-line:rgba(238,244,255,.05);--no:#ff8e7c;--maybe:#ffd06a;--on-ink:#153867;--tint:rgba(238,244,255,.12);--tint-2:rgba(238,244,255,.055);--earth:#0b1d3b}
+:root{color-scheme:light;--bg:#edf2f8;--panel:#f8fafd;--ink:#16386b;--muted:#4a6491;--faint:#8fa4c4;--line:#cbd8ea;--line-strong:#8ca5c9;--grid-line:rgba(22,56,107,.055);--no:#c4432f;--maybe:#9a6200;--on-ink:#f8fafd;--tint:rgba(22,56,107,.085);--tint-2:rgba(22,56,107,.04);--earth:#16305d;--shade:rgba(16,40,82,.13);--rim-dark:#122f5c;--rim-dark-t:#e6eef9;--rim-lit:#e6eef9;--rim-lit-t:#16386b;--rim-sun:#f2c230;--rim-sun-t:#16305d;--sky-ico:#dfe8fa;--p-yellow:#f2c230;--p-blue:#3f80e8;--p-red:#e3473b;--p-purple:#9d5ce0;--f:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#153867;--panel:#1a4177;--ink:#eef4ff;--muted:#b1c4e4;--faint:#7d99c4;--line:#38609a;--line-strong:#7896c5;--grid-line:rgba(238,244,255,.05);--no:#ff8e7c;--maybe:#ffd06a;--on-ink:#153867;--tint:rgba(238,244,255,.12);--tint-2:rgba(238,244,255,.055);--earth:#0b1d3b;--shade:rgba(3,12,32,.38);--rim-dark:#0b1d3b;--rim-dark-t:#b1c4e4;--rim-lit:#dbe6f7;--rim-lit-t:#153867;--rim-sun:#f2c230;--rim-sun-t:#16305d}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#153867;--panel:#1a4177;--ink:#eef4ff;--muted:#b1c4e4;--faint:#7d99c4;--line:#38609a;--line-strong:#7896c5;--grid-line:rgba(238,244,255,.05);--no:#ff8e7c;--maybe:#ffd06a;--on-ink:#153867;--tint:rgba(238,244,255,.12);--tint-2:rgba(238,244,255,.055);--earth:#0b1d3b;--shade:rgba(3,12,32,.38);--rim-dark:#0b1d3b;--rim-dark-t:#b1c4e4;--rim-lit:#dbe6f7;--rim-lit-t:#153867;--rim-sun:#f2c230;--rim-sun-t:#16305d}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;min-height:100vh;color:var(--ink);background-color:var(--bg);background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:24px 24px;font:400 15px/1.45 var(--f);-webkit-font-smoothing:antialiased}
@@ -53,10 +53,9 @@ option{background:var(--panel);color:var(--ink)}
 .wheel{display:block;width:100%;max-width:680px;height:auto;overflow:visible;font-family:var(--f);user-select:none;-webkit-user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .wheel [role=button]{cursor:pointer;outline:none}
 .wheel .base{fill:var(--panel)}
-.wheel .wedge,.wheel .ewedge,.wheel .hit,.mres .hb{fill:transparent;transition:fill .12s}
-.wedge.coln,.ewedge.coln,.pslot.coln .hit,.mres.coln .hb{fill:var(--tint-2)}
-.wedge.colf,.ewedge.colf,.pslot.colf .hit,.mres.colf .hb{fill:var(--tint)}
-@media (hover:hover){.cell:hover .hit{fill:var(--tint-2)}.pslot:hover .hit{fill:var(--tint)}.rim:hover path{fill:var(--muted);stroke:var(--muted)}}
+.wheel .hit,.mres .hb{fill:transparent;transition:fill .12s}
+.shade{fill:transparent;pointer-events:none;transition:fill .35s}.shade.on{fill:var(--shade)}
+@media (hover:hover){.cell:hover .hit{fill:var(--tint-2)}.pslot:hover .hit{fill:var(--tint)}.rim:hover path{filter:brightness(.88)}}
 .wheel .lines{fill:none;pointer-events:none;stroke-linecap:round}
 .wheel .rl{stroke:var(--line);stroke-width:1.5}
 .wheel .sp{stroke:var(--line-strong);stroke-width:1.5;stroke-opacity:.8}
@@ -71,11 +70,14 @@ option{background:var(--panel);color:var(--ink)}
 .cell.s3 .mk{color:var(--on-ink);--icon-bg:var(--ink)}
 .wheel .fring{fill:none;stroke:none}
 .cell:focus-visible .fring,.pslot:focus-visible .hit{stroke:var(--maybe);stroke-width:3.5}
-.rim path{fill:var(--ink);stroke:var(--ink);stroke-width:1;transition:fill .12s,stroke .12s}
-.rim text{fill:var(--on-ink);font-size:26px;font-weight:700;font-stretch:112%;font-variant-numeric:tabular-nums;pointer-events:none}
-.rim.near path{fill:var(--muted);stroke:var(--muted)}
-.rim.focus path{fill:var(--maybe);stroke:var(--maybe)}
-.rim.conflict path{fill:var(--no);stroke:var(--no)}
+.rim path,.hrim path{fill:var(--rim-dark);stroke:var(--rim-dark);stroke-width:1;transition:fill .35s,stroke .35s}
+.rim text,.hrim text{fill:var(--rim-dark-t);transition:fill .35s}
+.rim text{font-size:26px;font-weight:700;font-stretch:112%;font-variant-numeric:tabular-nums;pointer-events:none}
+.rim.near path,.hrim.near path{fill:var(--rim-lit);stroke:var(--line-strong)}
+.rim.near text,.hrim.near text{fill:var(--rim-lit-t)}
+.rim.focus path,.hrim.focus path{fill:var(--rim-sun);stroke:var(--rim-sun)}
+.rim.focus text,.hrim.focus text{fill:var(--rim-sun-t)}
+.rim.conflict path{fill:var(--no);stroke:var(--no)}.rim.conflict text{fill:#fff}
 .rim.focus.conflict path{stroke:var(--maybe);stroke-width:7}
 .rim:focus-visible path{stroke:var(--maybe);stroke-width:5}
 .pawn{pointer-events:none}.pawn .h1{fill:rgba(0,0,0,.28)}.pawn .h2{fill:var(--panel)}.pawn .pc{fill:var(--pc)}
@@ -97,10 +99,19 @@ option{background:var(--panel);color:var(--ink)}
 .eico.conf.done{opacity:.4}
 .key{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;padding:0 16px 14px;font-size:13px;color:var(--muted)}
 .key-h{flex-basis:100%;text-align:center;font-size:12.5px;color:var(--faint)}
+.kwrap{flex-basis:100%;display:flex;justify-content:center;margin-bottom:6px}
+.ktab{border-collapse:collapse;font-size:13.5px;color:var(--ink)}
+.ktab td{padding:5px 12px;border-top:1px solid var(--line);vertical-align:middle}
+.ktab tr:first-child td{border-top:0}
+.ktab .kn{font-weight:600;white-space:nowrap}
+.ktab .kic{display:flex;gap:6px}
+.ktab .kic svg{width:22px;height:22px;flex:none;color:var(--ink);opacity:.2;transition:opacity .2s}
+.ktab .kic svg.got{opacity:1}
+.ktab td.ct{text-align:right;font-size:13px}
 .ki{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .ki svg{width:18px;height:18px;flex:none;color:var(--ink)}
-.ki .ct{font-weight:500;font-variant-numeric:tabular-nums;color:var(--faint)}
-.ki .ct.done{color:var(--ink);font-weight:700}.ki .ct.over{color:var(--no);font-weight:700}
+.key .ct{font-weight:500;font-variant-numeric:tabular-nums;color:var(--faint)}
+.key .ct.done{color:var(--ink);font-weight:700}.key .ct.over{color:var(--no);font-weight:700}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;padding:12px 16px;border-top:1.5px solid var(--line-strong);font-size:13px;color:var(--muted)}
 .lg{display:inline-flex;align-items:center;gap:7px}
 .lg svg{width:22px;height:22px;flex:none}
@@ -133,6 +144,8 @@ option{background:var(--panel);color:var(--ink)}
 .tbl{background:var(--panel);border:1px solid var(--line)}
 .thead,.trow{display:grid}
 .log .thead,.log .trow{grid-template-columns:30px minmax(0,1.25fr) minmax(0,1.6fr) repeat(3,minmax(0,.62fr))}
+.log[data-opp="2"] .thead,.log[data-opp="2"] .trow{grid-template-columns:30px minmax(0,1.25fr) minmax(0,2.3fr) repeat(2,minmax(0,.62fr))}
+.log[data-opp="1"] .thead,.log[data-opp="1"] .trow{grid-template-columns:30px minmax(0,1.25fr) minmax(0,3fr) minmax(0,.7fr)}
 .notes .thead,.notes .trow{grid-template-columns:40px minmax(0,1fr) minmax(0,1fr)}
 .thead{border-bottom:1.5px solid var(--line-strong);font-size:12.5px;color:var(--muted)}
 .thead>*{height:34px;display:flex;align-items:center;min-width:0;padding:0 9px;border-left:1px solid var(--line)}
@@ -159,31 +172,45 @@ option{background:var(--panel);color:var(--ink)}
 .sup i{width:11px;height:11px;border:1.5px solid var(--line-strong);border-radius:2px}
 .sup i.u{background:var(--ink);border-color:var(--ink)}
 .sup i.st{border-style:dashed;border-color:var(--maybe)}
-.hgrid{display:grid;grid-template-columns:40px repeat(12,minmax(0,1fr));background:var(--panel);border:1px solid var(--line)}
-.hgrid>*{min-width:0;min-height:40px;border-left:1px solid var(--line);border-top:1px solid var(--line);display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:3px;padding:3px 1px}
-.hgrid .corner{border:0;min-height:28px}
-.hgrid .hh{min-height:28px;border-top:0;font-size:12px;font-weight:600;color:var(--muted)}
-.hgrid .rlab{border-left:0;flex-direction:column;flex-wrap:nowrap;align-items:center;gap:0;font-size:13px;font-weight:700;color:var(--muted);line-height:1.1}
-.hgrid .rlab svg{width:16px;height:16px}
-.hgrid .rlab small{font-size:9.5px;font-weight:500}
-.hgrid .r3{background:var(--tint-2)}
-.hgrid button{border:0;border-left:1px solid var(--line);border-top:1px solid var(--line);border-radius:0;background:transparent;cursor:pointer}
-.hgrid button:hover{background:var(--tint)}
-.hgrid button:disabled{cursor:default;background:repeating-linear-gradient(45deg,transparent 0 4px,var(--tint-2) 4px 8px)}
-.hgrid button:focus-visible{outline:2px solid var(--maybe);outline-offset:-2px}
-.plan{width:22px;height:22px;border:1.5px dashed var(--maybe);border-radius:50%;display:grid;place-items:center;color:var(--maybe)}
-.plan svg{width:15px;height:15px}
-.tk{position:relative;width:18px;height:18px;flex:none;border-radius:50%;border:2px solid var(--pc);background:var(--panel);display:inline-grid;place-items:center}
-.tk svg{width:12px;height:12px}
-.tk.fd{background:var(--pc)}
-.tk .ck{position:absolute;right:-6px;bottom:-5px;width:12px;height:12px;border-radius:50%;background:var(--ink);color:var(--on-ink);display:grid;place-items:center;box-shadow:0 0 0 1.5px var(--panel)}
-.tk .ck svg{width:9px;height:9px}
-.res{width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--on-ink);--icon-bg:var(--ink);display:grid;place-items:center}
-.res svg{width:15px;height:15px}
-.nope{position:relative;width:15px;height:15px;color:var(--faint)}
-.nope svg{width:15px;height:15px;display:block}
-.nope::after{content:'';position:absolute;left:-1px;right:-1px;top:50%;height:2px;margin-top:-1px;background:var(--no);transform:rotate(-45deg)}
+.hwrap{display:flex;justify-content:center;padding:4px 0 2px}
+.hw{display:block;width:100%;max-width:540px;height:auto;overflow:visible;font-family:var(--f);user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.hw .base{fill:var(--panel)}
+.hw .r3{fill:none;stroke:var(--tint-2)}
+.hw .lines{fill:none;pointer-events:none}
+.hw .rl{stroke:var(--line);stroke-width:1.2}
+.hw .rs{stroke:var(--line-strong);stroke-width:2}
+.hw .sp{stroke:var(--line-strong);stroke-width:1.2;stroke-opacity:.8}
+.hw .hrim text{font-size:17px;font-weight:700;font-stretch:112%;font-variant-numeric:tabular-nums}
+.hw .hatch{fill:var(--tint)}
+.stg{cursor:pointer;outline:none}
+.stg .hit{fill:transparent;transition:fill .12s}
+@media (hover:hover){.stg:not(.off):hover .hit{fill:var(--tint)}}
+.stg.off{cursor:default}.stg.off .hit{fill:url(#h-hatch)}
+.stg:focus-visible .hit{stroke:var(--maybe);stroke-width:3}
+.hk{color:var(--ink);pointer-events:auto}
+.hk .hkr{fill:var(--panel);stroke:var(--pc);stroke-width:2.6}
+.hk.fd .hkr{fill:var(--pc)}
+.hk .hck{color:var(--on-ink)}.hk .hck circle{fill:var(--ink);stroke:var(--panel);stroke-width:1.5}
+.hplan{color:var(--maybe)}.hplan circle{fill:var(--panel);stroke:var(--maybe);stroke-width:1.8;stroke-dasharray:3.2 2.6}
+.hres{color:var(--on-ink);--icon-bg:var(--ink)}.hres circle{fill:var(--ink)}
+.hplus{color:var(--line-strong);pointer-events:none}
+.hno{color:var(--faint)}.hno path{stroke:var(--no);stroke-width:2;stroke-linecap:round}
+.hw .sun{fill:url(#g-sun)}
+.hkey{padding:6px 0 0}.hkey .ki b{width:18px;text-align:center;color:var(--ink);font-weight:800}
 .htip{margin:8px 0 0;font-size:12.5px;color:var(--faint)}
+.start .trow{grid-template-columns:30px minmax(0,1fr) auto minmax(0,1.4fr) 32px}
+.start .tcell{color:var(--muted)}
+.start .hact{margin-top:10px}
+.hact[hidden]{display:none}
+.btn.primary.armed{background:var(--no);border-color:var(--no);color:#fff}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.fact{display:inline-flex;align-items:center;gap:6px;padding:5px 11px 5px 8px;border:1.5px solid var(--line-strong);border-radius:999px;background:var(--panel);font-size:13.5px;color:var(--muted)}
+.fact svg{width:16px;height:16px;flex:none;color:var(--ink)}
+.fact b{color:var(--ink);font-weight:700}
+.sec h2 #start-status.done{color:var(--ink);font-weight:600}
+.wheel .cell.lk{cursor:not-allowed}
+.lki{color:var(--ink)}.lki circle{fill:var(--panel);stroke:var(--line-strong);stroke-width:1.5}
+.cell.s1 .mk .lki use{opacity:1}
 .hact{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .tlog{margin-top:14px}
 .tlog summary{cursor:pointer;font-weight:600;font-size:14px;padding:4px 0;color:var(--muted)}
@@ -270,7 +297,6 @@ input.dsel{cursor:text;font-weight:500}
   .plate{margin:4px;outline-offset:3px}.plate-h{padding:12px}.players{padding:12px}
   .wheel-wrap{padding:12px 4px 10px}.key{padding:0 12px 12px;gap:6px 12px}.legend{padding:12px}
   .rules{grid-template-columns:1fr;padding:4px 4px 10px}
-  .hgrid{grid-template-columns:32px repeat(12,minmax(0,1fr))}.hgrid .hh{font-size:10.5px}
   .slot{grid-template-columns:1fr 1fr}.slot>.wh{grid-column:1/-1}
   .rv{grid-template-columns:70px minmax(0,1fr)}.rv .toks{grid-column:1/-1}
 }
@@ -291,16 +317,17 @@ input.dsel{cursor:text;font-weight:500}
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-comet" viewBox="-12 -12 24 24"><path d="M-7.2 1.4 L10 -10 L-1.2 7.4 Z" fill="currentColor" fill-opacity=".3"/><circle cx="-4.2" cy="4.4" r="4" fill="currentColor"/></symbol>
-  <symbol id="i-asteroid" viewBox="-12 -12 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M-8 -2.5 L-3.5 -8 L4 -7.5 L8.5 -2 L6.5 6 L-1 8.5 L-7.5 4.5 Z"/><path d="M-3.5 -8 L-1 -1.5 L8.5 -2 M-1 -1.5 L-1 8.5 M-1 -1.5 L-8 -2.5" stroke-opacity=".5"/></g></symbol>
+  <symbol id="i-asteroid" viewBox="-12 -12 24 24"><g stroke="currentColor" stroke-linejoin="round"><path d="M-7.8 -3.6C-7 -7.2-2.8-8.8 .4-7.8 2.6-9.1 6.6-7.6 7.8-4.4 9.5-1.6 8.9 2.8 6.6 4.8 5.3 7.6 1.3 8.9-1.7 7.9-4.7 8.5-8.5 5.6-8.5 1.9-9.4-.3-8.7-2.3-7.8-3.6Z" fill="currentColor" fill-opacity=".14" stroke-width="1.8"/><g fill="none" stroke-width="1.4"><circle cx="-2.6" cy="-2.5" r="2.3"/><circle cx="3.6" cy="1.6" r="1.7"/></g><circle cx="-2.2" cy="4.4" r=".9" fill="currentColor" stroke="none"/><circle cx="3.4" cy="-4.4" r=".7" fill="currentColor" stroke="none"/></g></symbol>
   <symbol id="i-dwarf" viewBox="-12 -12 24 24"><circle r="7.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M0 -7.5 A7.5 7.5 0 0 1 0 7.5 A3.6 7.5 0 0 0 0 -7.5 Z" fill="currentColor"/></symbol>
   <symbol id="i-cloud" viewBox="-12 -12 24 24"><path d="M-6.5 5.5 H6.5 A3.8 3.8 0 0 0 6 -2 A5.2 5.2 0 1 0 -4 -2.6 A4.2 4.2 0 0 0 -6.5 5.5 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
   <symbol id="i-planetx" viewBox="-12 -12 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" transform="rotate(-20)"><path d="M-10.5 0 A10.5 3.4 0 0 1 10.5 0" stroke-opacity=".55"/><circle r="5.4" style="fill:var(--icon-bg,var(--panel))"/><path d="M-10.5 0 A10.5 3.4 0 0 0 10.5 0"/></g></symbol>
-  <symbol id="i-empty" viewBox="-12 -12 24 24"><circle r="7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.9 2.336"/></symbol>
+  <symbol id="i-empty" viewBox="-12 -12 24 24"><rect x="-7" y="-7" width="14" height="14" rx=".6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.8 2.8" stroke-dashoffset="1.4"/></symbol>
   <symbol id="i-theory" viewBox="-12 -12 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M-6.5 -9.5H2.5L6.5 -5.5V9.5H-6.5Z"/><path d="M2.5 -9.5V-5.5H6.5"/><path d="M-3.5 -1.5H3.5M-3.5 2H3.5M-3.5 5.5H1"/></g></symbol>
   <symbol id="i-conf" viewBox="-12 -12 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="-2" cy="-1" r="7.5"/><path d="M-5.2 -4.2L1.2 2.2M1.2 -4.2L-5.2 2.2"/><path d="M7.6 2.5V10" stroke-width="2.2"/></g></symbol>
   <symbol id="i-review" viewBox="-12 -12 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M-7.5 -1A7.5 7.5 0 0 1 6 -4.5"/><path d="M6.6 -9.2L6 -4.5L1.4 -5.4"/><path d="M7.5 1A7.5 7.5 0 0 1 -6 4.5"/><path d="M-6.6 9.2L-6 4.5L-1.4 5.4"/></g></symbol>
   <symbol id="i-check" viewBox="-12 -12 24 24"><path d="M-7 0.5L-2 5.5L7.5 -5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-cross" viewBox="-12 -12 24 24"><path d="M-6 -6L6 6M6 -6L-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-lock" viewBox="-12 -12 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="-6.5" y="-2" width="13" height="10" rx="1.8" fill="currentColor" fill-opacity=".18"/><path d="M-3.8 -2V-5a3.8 3.8 0 0 1 7.6 0V-2"/></g></symbol>
   <symbol id="i-plus" viewBox="-12 -12 24 24"><path d="M0 -7V7M-7 0H7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
 </svg>
 
@@ -367,15 +394,20 @@ input.dsel{cursor:text;font-weight:500}
     </div>
 
     <div class="col">
+      <section class="sec start" aria-labelledby="h-start">
+        <h2 id="h-start">Starting info <span id="start-status"></span></h2>
+        <div id="start-body"></div>
+        <div class="hact" id="start-act">
+          <button class="btn" id="start-add" type="button">Add a fact</button>
+          <button class="btn primary" id="start-lock" type="button">Lock in</button>
+        </div>
+        <p class="htip" id="start-tip"></p>
+      </section>
+
       <section class="sec log" aria-labelledby="h-log">
         <h2 id="h-log">Action log <span id="target-count">Target used 0 of 2</span></h2>
         <div class="tbl">
-          <div class="thead">
-            <span>#</span><span>Action</span><span>Result</span>
-            <span><input data-field="pname-1" placeholder="P1" aria-label="Player column 1 name" autocomplete="off"></span>
-            <span><input data-field="pname-2" placeholder="P2" aria-label="Player column 2 name" autocomplete="off"></span>
-            <span><input data-field="pname-3" placeholder="P3" aria-label="Player column 3 name" autocomplete="off"></span>
-          </div>
+          <div class="thead" id="log-head"></div>
           <div id="log-rows"></div>
         </div>
         <button class="btn add" id="add-row" type="button">Add a row</button>
@@ -395,8 +427,9 @@ input.dsel{cursor:text;font-weight:500}
           <label class="you">You are <select id="me" aria-label="Your player colour"></select></label>
           <div class="supply" id="supply" aria-label="Your theory tokens"></div>
         </div>
-        <div class="hgrid" id="hgrid"></div>
-        <p class="htip">Tap a square in the + row to plan your next theory (one at a time); tap again to change the object. The next theory phase starts with it filled in.</p>
+        <div class="hwrap"><svg class="hw" id="hgrid" viewBox="-304 -304 608 608" role="group" aria-label="Hypotheses wheel"></svg></div>
+        <div class="key hkey" id="hkey"></div>
+        <p class="htip">Tap a sector in the outer + ring to plan your next theory (one at a time); tap again to change the object. The next theory phase starts with it filled in. Theories move inward one ring per phase until peer review.</p>
         <div class="hact">
           <button class="btn" id="h-phase" type="button">Theory phase</button>
           <button class="btn" id="h-review" type="button">Peer review</button>
@@ -468,7 +501,9 @@ input.dsel{cursor:text;font-weight:500}
   /* ---------- state ---------- */
   const blankPlayers = () => ({ count:4, colors:COLOURS.slice(), abs:[1,1,1,1], t:[1,2,3,4], clock:4, active:0, me:0 });
   const blank = () => ({ grid:OBJECTS.map(() => Array(N).fill(0)), f:{}, rows:11, players:blankPlayers(),
-    earth:{ abs:1, conf:false }, th:[], phaseNo:0, stage:null, theme:null });
+    earth:{ abs:1, conf:false }, th:[], phaseNo:0, stage:null, theme:null, start:blankStart() });
+  // Starting info from the app. Once locked it stays out of undo/redo and only Reset clears it
+  const blankStart = () => ({ locked:false, facts:range(4).map(() => ({ s:'', k:'' })) });
 
   function normalize(d) {
     if (!d || typeof d !== 'object') return null;
@@ -499,6 +534,13 @@ input.dsel{cursor:text;font-weight:500}
     const st = d.stage;
     if (st && isInt(st.s) && st.s >= 1 && st.s <= N && TH_TYPES.includes(st.k)) b.stage = { s:st.s, k:st.k };
     if (d.theme === 'light' || d.theme === 'dark') b.theme = d.theme;
+    const sd = d.start;
+    if (sd && typeof sd === 'object' && Array.isArray(sd.facts)) {
+      b.start = { locked:!!sd.locked, facts:sd.facts.filter(x => x && typeof x === 'object').slice(0, 24)
+        .map(x => ({ s:isInt(x.s) && x.s >= 1 && x.s <= N ? x.s : '', k:x.k in OI ? x.k : '' })) };
+      if (b.start.locked) b.start.facts = b.start.facts.filter(x => x.s && x.k && allowed(obj(x.k), x.s));
+    }
+    b.start.facts.forEach(x => { if (b.start.locked) b.grid[OI[x.k]][x.s - 1] = 1; });
     return b;
   }
   function load() { try { return normalize(JSON.parse(localStorage.getItem(KEY))) || blank(); } catch (e) { return blank(); } }
@@ -516,7 +558,7 @@ input.dsel{cursor:text;font-weight:500}
   function push(s) { past.push(s); if (past.length > 300) past.shift(); future.length = 0; histUI(); }
   function change(fn) { push(snap()); fn(); if (pending !== null) pending = snap(); save(); }
   function restore(str) {
-    const d = normalize(Object.assign(JSON.parse(str), { theme:S.theme }));
+    const d = normalize(Object.assign(JSON.parse(str), { theme:S.theme, start:S.start }));
     if (!d) return;
     S = d; queue = []; earthGoal = null; save(); refreshAll();
     if (pending !== null) pending = snap();
@@ -559,6 +601,8 @@ input.dsel{cursor:text;font-weight:500}
   };
   const use = (name, z) => `<use href="#i-${name}" x="${-z / 2}" y="${-z / 2}" width="${z}" height="${z}"/>`;
   const XMARK = '<path class="x1" d="M-14 -14L14 14M14 -14L-14 14"/>';
+  const isLocked = (r, s) => S.start.locked && S.start.facts.some(x => OI[x.k] === r && x.s === s);
+  const LOCK = `<g class="lki" transform="translate(16 -16)"><circle r="9"/>${use('lock', 12)}</g>`;
   function mark(o, v) {
     if (v === 3) return `<circle class="disc3" r="21"/>${use(o.icon, G.ico)}`;
     if (v === 2) return `<circle class="ring2" r="21"/>${use(o.icon, G.ico)}`;
@@ -574,10 +618,10 @@ input.dsel{cursor:text;font-weight:500}
       <radialGradient id="g-earth" gradientUnits="userSpaceOnUse" cx="-2" cy="-2.5" r="8"><stop offset="0" stop-color="#a8ddff"/><stop offset=".55" stop-color="#3f8fe0"/><stop offset="1" stop-color="#17489a"/></radialGradient>
     </defs>`;
     h += `<circle class="base" r="${G.rimIn}"/>`;
-    for (let s = 1; s <= N; s++) h += `<path class="wedge" d="${seg(G.faceIn, G.trackIn, s)}"/>`;
+    // The far side of the sun, outside the visible sky, is shaded
+    for (let s = 1; s <= N; s++) h += `<path class="shade" d="${seg(G.resIn, G.rimIn, s)}"/>`;
     for (let s = 1; s <= N; s++)
       h += `<g class="mres"><path class="hb" d="${seg(G.resIn, G.faceIn, s)}"/><g class="mk" transform="translate(${xy(G.res, mid(s))})"></g><title></title></g>`;
-    for (let s = 1; s <= N; s++) h += `<path class="ewedge" d="${seg(G.earthIn, G.resIn, s)}"/>`;
     h += '<g class="lines">';
     for (let s = 0; s < N; s++) h += `<path class="esp" d="M${xy(G.earthIn, s / N * TAU)}L${xy(G.resIn, s / N * TAU)}"/>`;
     h += '</g>';
@@ -614,12 +658,15 @@ input.dsel{cursor:text;font-weight:500}
     wheel.innerHTML = h;
   }
   const q = sel => [...wheel.querySelectorAll(sel)];
-  const wedges = q('.wedge'), ewedges = q('.ewedge'), mres = q('.mres'), pslots = q('.pslot'), rims = q('.rim'), cellEls = q('.cell'), eicos = q('.eico');
+  const shades = q('.shade'), mres = q('.mres'), pslots = q('.pslot'), rims = q('.rim'), cellEls = q('.cell'), eicos = q('.eico');
   const earthG = $('earth');
 
   const keyEl = $('key');
-  keyEl.innerHTML = '<span class="key-h">Rings, from the rim inward</span>' +
-    RINGS.map(r => `<span class="ki">${icon(OBJECTS[r].icon)}${OBJECTS[r].name}<b class="ct" data-r="${r}"></b></span>`).join('') +
+  // One faded icon per object to find; each confirmed one lights up
+  keyEl.innerHTML = '<span class="key-h">Rings, from the rim inward, and how many you’ve found</span>' +
+    '<div class="kwrap"><table class="ktab"><tbody>' + RINGS.map(r => { const o = OBJECTS[r];
+      return `<tr><td class="kn">${o.name}</td><td><span class="kic" data-r="${r}">${icon(o.icon).repeat(o.n)}</span></td><td class="ct" data-r="${r}"></td></tr>`; }).join('') +
+    '</tbody></table></div>' +
     '<span class="ki" title="The object each sector must hold, or how many objects it could still hold">Result ring</span>' +
     `<span class="ki">${icon('theory')}Theory phase</span><span class="ki">${icon('conf')}X₁ conference</span>` +
     '<span class="ki"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4L20 19H4Z" fill="#f2c230" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>Earth board arrow</span>';
@@ -661,7 +708,7 @@ input.dsel{cursor:text;font-weight:500}
       rim.classList.toggle('near', isN);
       rim.classList.toggle('conflict', info.bad);
       rim.setAttribute('aria-label', `Sector ${s}${isF ? ', where the earth board arrow points' : ''}: turn the earth board here`);
-      for (const e of [wedges[i], ewedges[i], pslots[i], mres[i]]) { e.classList.toggle('colf', isF); e.classList.toggle('coln', isN); }
+      shades[i].classList.toggle('on', !isF && !isN);
       const m = mres[i], mk = m.querySelector('.mk');
       m.classList.remove('known', 'forced', 'bad');
       let tip;
@@ -681,16 +728,17 @@ input.dsel{cursor:text;font-weight:500}
       m.querySelector('title').textContent = tip;
     }
     for (const c of cellEls) {
-      const r = +c.dataset.r, s = +c.dataset.s, o = OBJECTS[r], v = S.grid[r][s - 1];
-      const txt = `${o.name} in sector ${s}: ${MARKS[v]}`;
-      c.setAttribute('class', `cell s${v}`);
+      const r = +c.dataset.r, s = +c.dataset.s, o = OBJECTS[r], v = S.grid[r][s - 1], lk = isLocked(r, s);
+      const txt = `${o.name} in sector ${s}: ${MARKS[v]}${lk ? ' (starting info, locked)' : ''}`;
+      c.setAttribute('class', `cell s${v}${lk ? ' lk' : ''}`);
       c.setAttribute('aria-label', txt);
-      c.querySelector('.mk').innerHTML = mark(o, v);
+      c.querySelector('.mk').innerHTML = mark(o, v) + (lk ? LOCK : '');
       c.querySelector('title').textContent = txt;
     }
     OBJECTS.forEach((o, r) => {
       const n = S.grid[r].filter((v, i) => v === 3 && allowed(o, i + 1)).length, ct = counts[r];
       ct.textContent = `${n}/${o.n}`;
+      keyEl.querySelectorAll(`.kic[data-r="${r}"] svg`).forEach((ic, i) => ic.classList.toggle('got', i < n));
       ct.classList.toggle('done', n === o.n);
       ct.classList.toggle('over', n > o.n);
     });
@@ -718,6 +766,7 @@ input.dsel{cursor:text;font-weight:500}
   });
   function step(c, d) {
     const r = +c.dataset.r, i = +c.dataset.s - 1;
+    if (isLocked(r, i + 1)) return;
     change(() => { S.grid[r][i] = (S.grid[r][i] + d + 4) % 4; });
     render();
   }
@@ -778,6 +827,7 @@ input.dsel{cursor:text;font-weight:500}
   $('pcount').addEventListener('change', e => {
     const n = +e.target.value;
     change(() => { const P = S.players; P.count = n; if (P.active >= n) P.active = 0; if (P.me >= n) P.me = 0; });
+    buildLog(); hydrate(); updateTarget();
     renderPlayers(); render(); renderHyp();
   });
   $('pmoves').addEventListener('click', e => { const b = e.target.closest('button[data-n]'); if (b) movePawn(S.players.active, +b.dataset.n); });
@@ -815,9 +865,71 @@ input.dsel{cursor:text;font-weight:500}
   const rules = $('rules');
   OBJECTS.forEach(o => rules.appendChild(el('li', null, `${icon(o.icon)}<div><b>${o.name}</b> <span class="q">(${o.n})</span><p>${o.rule}</p></div>`)));
 
+  /* ---------- starting info ---------- */
+  const startBody = $('start-body');
+  let lockArmed = null;
+  function renderStart() {
+    const st = S.start, done = st.locked;
+    $('start-status').textContent = done ? `Locked · ${st.facts.length} fact${st.facts.length === 1 ? '' : 's'}` : 'Not locked yet';
+    $('start-status').classList.toggle('done', done);
+    $('start-act').hidden = done;
+    $('start-tip').textContent = done
+      ? 'These are ruled out on the wheel and can’t be changed or undone. Reset clears them for a new game.'
+      : 'Enter the starting information from the app (for example, sector 1 has no dwarf planet), then lock it in. Locked facts are ruled out on the wheel for good; Undo won’t touch them.';
+    if (done) {
+      startBody.innerHTML = '<div class="facts">' + st.facts.map(x => { const o = obj(x.k);
+        return `<span class="fact">${icon('lock')}<b>Sector ${x.s}</b> has no ${icon(o.icon)}${o.key === 'E' ? 'truly empty sector' : o.one}</span>`; }).join('') + '</div>';
+      return;
+    }
+    startBody.innerHTML = '<div class="tbl">' + st.facts.map((x, i) =>
+      `<div class="trow" data-i="${i}"><span class="idx">${i + 1}</span>` +
+      `<select class="tsel" data-key="s" aria-label="Sector, fact ${i + 1}"><option value="">Sector</option>${range(N).map(s => `<option value="${s}"${s === x.s ? ' selected' : ''}>Sector ${s}</option>`).join('')}</select>` +
+      '<span class="tcell">has no</span>' +
+      `<select class="tsel" data-key="k" aria-label="Object, fact ${i + 1}"><option value="">Object</option>${OBJECTS.map(o =>
+        `<option value="${o.key}"${o.key === x.k ? ' selected' : ''}${x.s && !allowed(o, x.s) ? ' disabled' : ''}>${o.name}</option>`).join('')}</select>` +
+      `<button type="button" class="tdel" aria-label="Remove fact ${i + 1}" title="Remove">×</button></div>`).join('') + '</div>';
+    $('start-lock').disabled = !st.facts.some(x => x.s && x.k);
+  }
+  const disarmLock = () => { clearTimeout(lockArmed); lockArmed = null; const b = $('start-lock'); b.textContent = 'Lock in'; b.classList.remove('armed'); };
+  startBody.addEventListener('change', e => {
+    const sel = e.target.closest('.tsel');
+    if (!sel || S.start.locked) return;
+    const x = S.start.facts[+sel.closest('.trow').dataset.i];
+    if (sel.dataset.key === 's') { x.s = sel.value ? +sel.value : ''; if (x.k && x.s && !allowed(obj(x.k), x.s)) x.k = ''; }
+    else x.k = sel.value;
+    save(); renderStart();
+  });
+  startBody.addEventListener('click', e => {
+    const b = e.target.closest('.tdel');
+    if (!b || S.start.locked) return;
+    S.start.facts.splice(+b.closest('.trow').dataset.i, 1);
+    save(); renderStart();
+  });
+  $('start-add').addEventListener('click', () => {
+    if (S.start.facts.length >= 24) return;
+    S.start.facts.push({ s:'', k:'' });
+    save(); renderStart();
+    startBody.querySelector('.trow:last-child select').focus();
+  });
+  $('start-lock').addEventListener('click', () => {
+    const b = $('start-lock');
+    if (!lockArmed) { b.textContent = 'Tap again to lock'; b.classList.add('armed'); lockArmed = setTimeout(disarmLock, 3000); return; }
+    disarmLock();
+    const seen = new Set();
+    S.start.facts = S.start.facts.filter(x => x.s && x.k && allowed(obj(x.k), x.s) && !seen.has(x.s + x.k) && seen.add(x.s + x.k));
+    S.start.locked = true;
+    S.start.facts.forEach(x => { S.grid[OI[x.k]][x.s - 1] = 1; });
+    save(); renderStart(); render();
+  });
+
   /* ---------- action log ---------- */
   const logRows = $('log-rows');
+  // One column per other player; fewer players leaves more room for the Result notes
   function buildLog() {
+    const opp = range(S.players.count - 1);
+    logRows.closest('.log').dataset.opp = opp.length;
+    $('log-head').innerHTML = '<span>#</span><span>Action</span><span>Result</span>' +
+      opp.map(p => `<span><input data-field="pname-${p}" placeholder="P${p}" aria-label="Player column ${p} name" autocomplete="off"></span>`).join('');
     logRows.innerHTML = '';
     for (let i = 0; i < S.rows; i++) {
       const n = i + 1;
@@ -825,7 +937,7 @@ input.dsel{cursor:text;font-weight:500}
         `<span class="idx">${n}</span>` +
         `<input class="ti" data-field="log-${i}-a" list="actions" aria-label="Action, row ${n}" autocomplete="off">` +
         `<input class="ti" data-field="log-${i}-r" aria-label="Result, row ${n}" autocomplete="off">` +
-        [1, 2, 3].map(p => `<input class="ti c" data-field="log-${i}-p${p}" aria-label="Player column ${p}, row ${n}" autocomplete="off">`).join('')));
+        opp.map(p => `<input class="ti c" data-field="log-${i}-p${p}" aria-label="Player column ${p}, row ${n}" autocomplete="off">`).join('')));
     }
   }
   $('add-row').addEventListener('click', () => {
@@ -874,7 +986,7 @@ input.dsel{cursor:text;font-weight:500}
     const known = conf.length === 1 ? conf[0] : (conf.length === 0 && cand.length === 1 ? cand[0] : -1);
     return { conf, cand, known, bad:conf.length > 1 || cand.length === 0 };
   }
-  function wheelConfirm(k, s) { const r = OI[k]; OBJECTS.forEach((o, j) => { if (allowed(o, s)) S.grid[j][s - 1] = j === r ? 3 : 1; }); }
+  function wheelConfirm(k, s) { const r = OI[k]; OBJECTS.forEach((o, j) => { if (allowed(o, s)) S.grid[j][s - 1] = j === r && !isLocked(j, s) ? 3 : 1; }); }
   function wheelRuleOut(k, s) { const r = OI[k]; if (allowed(OBJECTS[r], s)) S.grid[r][s - 1] = 1; }
 
   function stageOptions(s) {
@@ -890,11 +1002,39 @@ input.dsel{cursor:text;font-weight:500}
     change(() => { S.stage = i >= 0 && i < opts.length ? { s, k:opts[i] } : null; });
     renderHyp();
   }
-  function chip(t) {
+  // Hypotheses wheel: rings from the rim inward are +, 1, 2, peer review, result
+  const HB = [[230, 272], [190, 230], [148, 190], [100, 148], [60, 100]], HRIM = 272, HOUT = 300;
+  // Spread n marks across one cell, shrinking them when they don't fit
+  function spread(n, [r0, r1], s, size) {
+    const a = mid(s), rm = (r0 + r1) / 2, arc = rm * TAU / N * .86, band = (r1 - r0) * .92;
+    let sp = size, cols, rows;
+    for (;;) {
+      cols = Math.max(1, Math.min(n, Math.floor(arc / sp))); rows = Math.ceil(n / cols);
+      if (rows * sp <= band || sp <= size / 2) break;
+      sp -= 2;
+    }
+    return { k:Math.min(1, sp / (size * .85)), pts:range(n).map(i => {
+      const row = Math.floor((i - 1) / cols), inRow = row === rows - 1 ? n - row * cols : cols;
+      const t = ((i - 1) % cols - (inRow - 1) / 2) * sp, [x, y] = pt(rm + ((rows - 1) / 2 - row) * sp, a);
+      return `${(x + t * Math.cos(a)).toFixed(1)} ${(y + t * Math.sin(a)).toFixed(1)}`;
+    }) };
+  }
+  function chip(t, at, k) {
     const c = pcol(t.p), mine = t.p === S.players.me, o = t.k ? obj(t.k) : null;
     const tip = `${CNAME[c]}${mine ? ' (you)' : ''}: ${o ? o.one : 'face down'} in sector ${t.s}${t.st === 'c' ? ', correct' : ''}`;
-    return `<span class="tk${o ? '' : ' fd'}" style="--pc:var(--p-${c})" title="${tip}">${o ? icon(o.icon) : ''}${t.st === 'c' ? `<b class="ck">${icon('check')}</b>` : ''}</span>`;
+    return `<g class="hk${o ? '' : ' fd'}" style="--pc:var(--p-${c})" transform="translate(${at}) scale(${k})"><circle class="hkr" r="13"/>${o ? use(o.icon, 19) : ''}` +
+      `${t.st === 'c' ? `<g class="hck" transform="translate(10 10)"><circle r="7"/>${use('check', 11)}</g>` : ''}<title>${tip}</title></g>`;
   }
+  function chips(list, ring, s) {
+    const { k, pts } = spread(list.length, HB[ring], s, 31);
+    return list.map((t, i) => t.plan
+      ? `<g class="hplan" transform="translate(${pts[i]}) scale(${k})"><circle r="13.5"/>${use(obj(t.k).icon, 19)}</g>`
+      : chip(t, pts[i], k)).join('');
+  }
+  $('hkey').innerHTML = '<span class="key-h">Rings, from the rim inward</span>' +
+    `<span class="ki">${icon('plus')}Planned (max 1)</span><span class="ki"><b>1</b>First space</span><span class="ki"><b>2</b>Second space</span>` +
+    `<span class="ki">${icon('review')}Peer review</span><span class="ki">${icon('check')}Result</span>`;
+
   function renderHyp() {
     const P = S.players, me = P.me;
     $('me').innerHTML = range(P.count).map(i => `<option value="${i - 1}"${i - 1 === me ? ' selected' : ''}>${CNAME[P.colors[i - 1]]}</option>`).join('');
@@ -904,32 +1044,44 @@ input.dsel{cursor:text;font-weight:500}
         range(TOKENS[k]).map(i => `<i class="${i <= u ? 'u' : i <= u + st ? 'st' : ''}"></i>`).join('') + '</span>';
     }).join('');
     const fe = document.activeElement, fs = fe && fe.closest && fe.closest('#hgrid') ? fe.dataset.s : null;
-    let h = '<span class="corner"></span>' + range(N).map(s => `<span class="hh">S${s}</span>`).join('');
-    h += `<span class="rlab" title="Your planned theory, one at a time">${icon('plus')}<small>max 1</small></span>`;
+    const f = wrapS(S.earth.abs), sky = range(SKY).map(k => wrapS(f + k - 1));
+    let h = '<defs><pattern id="h-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="hatch" width="3" height="8"/></pattern></defs>';
+    h += `<circle class="base" r="${HRIM}"/>`;
+    for (let s = 1; s <= N; s++) h += `<path class="shade${sky.includes(s) ? '' : ' on'}" d="${seg(HB[4][0], HRIM, s)}"/>`;
+    h += `<circle class="r3" r="${(HB[3][0] + HB[3][1]) / 2}" stroke-width="${HB[3][1] - HB[3][0]}"/>`;
     for (let s = 1; s <= N; s++) {
       const conf = confirmedIn(s), st = S.stage && S.stage.s === s ? S.stage : null;
       const outer = S.th.filter(t => t.s === s && t.pos === 0 && t.st !== 'w');
       const label = conf ? `Sector ${s} is confirmed` : st ? `Planned: ${obj(st.k).one} in sector ${s}. Tap to change` : `Plan a theory for sector ${s}`;
       const off = !!conf || (!st && !stageOptions(s).length);
-      h += `<button type="button" class="stg" data-s="${s}" aria-label="${label}" title="${label}"${off ? ' disabled' : ''}>${st ? `<span class="plan">${icon(obj(st.k).icon)}</span>` : ''}${outer.map(chip).join('')}</button>`;
+      h += `<g class="stg${off ? ' off' : ''}" role="button" data-s="${s}" aria-label="${label}"${off ? ' aria-disabled="true"' : ' tabindex="0"'}><path class="hit" d="${seg(HB[0][0], HB[0][1], s)}"/>` +
+        (st || outer.length || off ? '' : `<g class="hplus" transform="translate(${xy((HB[0][0] + HB[0][1]) / 2, mid(s))})">${use('plus', 14)}</g>`) +
+        chips((st ? [{ plan:true, k:st.k }] : []).concat(outer), 0, s) + `<title>${label}</title></g>`;
     }
     [1, 2, 3].forEach(pos => {
-      h += pos === 3 ? `<span class="rlab r3">${icon('review')}<small>review</small></span>` : `<span class="rlab">${pos}</span>`;
-      for (let s = 1; s <= N; s++) h += `<span${pos === 3 ? ' class="r3"' : ''}>${S.th.filter(t => t.s === s && t.pos === pos && t.st !== 'w').map(chip).join('')}</span>`;
+      for (let s = 1; s <= N; s++) h += chips(S.th.filter(t => t.s === s && t.pos === pos && t.st !== 'w'), pos, s);
     });
-    h += `<span class="rlab">${icon('check')}<small>result</small></span>`;
     for (let s = 1; s <= N; s++) {
       const c = confirmedIn(s);
       if (c) {
         const o = c !== '?' ? obj(c) : null;
-        h += `<span><span class="res" title="Sector ${s}: ${o ? o.one : 'object'} confirmed by peer review">${icon(o ? o.icon : 'check')}</span></span>`;
+        h += `<g class="hres" transform="translate(${xy((HB[4][0] + HB[4][1]) / 2, mid(s))})"><circle r="16"/>${use(o ? o.icon : 'check', 21)}<title>Sector ${s}: ${o ? o.one : 'object'} confirmed by peer review</title></g>`;
         continue;
       }
-      const no = [...new Set(S.th.filter(t => t.s === s && t.st === 'w' && t.k).map(t => t.k))];
-      h += `<span>${no.map(k => `<span class="nope" title="Sector ${s}: not ${obj(k).a}">${icon(obj(k).icon)}</span>`).join('')}</span>`;
+      const no = [...new Set(S.th.filter(t => t.s === s && t.st === 'w' && t.k).map(t => t.k))], { k, pts } = spread(no.length, HB[4], s, 19);
+      h += no.map((x, i) => `<g class="hno" transform="translate(${pts[i]}) scale(${k})">${use(obj(x).icon, 16)}<path d="M-8 8L8 -8"/><title>Sector ${s}: not ${obj(x).a}</title></g>`).join('');
     }
+    h += '<g class="lines">';
+    for (let s = 0; s < N; s++) h += `<path class="sp" d="M${xy(HB[4][0], s / N * TAU)}L${xy(HRIM, s / N * TAU)}"/>`;
+    for (let i = 1; i < HB.length; i++) h += `<circle class="rl" r="${HB[i][1]}"/>`;
+    h += `<circle class="rs" r="${HB[4][0]}"/><circle class="rs" r="${HRIM}"/></g>`;
+    for (let s = 1; s <= N; s++) {
+      const [x, y] = pt((HRIM + HOUT) / 2, mid(s));
+      h += `<g class="hrim${s === f ? ' focus' : sky.includes(s) ? ' near' : ''}"><path d="${seg(HRIM, HOUT, s)}"/><text x="${x}" y="${y}" dy=".35em" text-anchor="middle">${s}</text></g>`;
+    }
+    h += `<circle class="sun" r="${HB[4][0] - 12}"/>`;
     $('hgrid').innerHTML = h;
-    if (fs) { const b = $('hgrid').querySelector(`button[data-s="${fs}"]`); if (b && !b.disabled) b.focus(); }
+    if (fs) { const b = $('hgrid').querySelector(`.stg[data-s="${fs}"]`); if (b && !b.classList.contains('off')) b.focus(); }
     $('hyp-status').textContent = `${S.phaseNo} theory phase${S.phaseNo === 1 ? '' : 's'} so far · next at sector ${nextTheory()}`;
     const rs = reviewSectors(), rb = $('h-review');
     rb.disabled = !rs.length;
@@ -943,8 +1095,14 @@ input.dsel{cursor:text;font-weight:500}
       `<select class="tsel" data-key="st" aria-label="Status">${[['p', 'Waiting'], ['c', 'Correct'], ['w', 'Wrong']].map(([v, l]) => `<option value="${v}"${v === t.st ? ' selected' : ''}>${l}</option>`).join('')}</select>` +
       `<button type="button" class="tdel" aria-label="Remove this theory" title="Remove">×</button></div>`).join('');
   }
-  $('hgrid').addEventListener('click', e => { const b = e.target.closest('button.stg'); if (b && !b.disabled) cycleStage(+b.dataset.s, e.shiftKey ? -1 : 1); });
-  $('hgrid').addEventListener('contextmenu', e => { const b = e.target.closest('button.stg'); if (!b || b.disabled) return; e.preventDefault(); cycleStage(+b.dataset.s, -1); });
+  const stgAt = t => { const b = t.closest('.stg'); return b && !b.classList.contains('off') ? b : null; };
+  $('hgrid').addEventListener('click', e => { const b = stgAt(e.target); if (b) cycleStage(+b.dataset.s, e.shiftKey ? -1 : 1); });
+  $('hgrid').addEventListener('contextmenu', e => { const b = stgAt(e.target); if (!b) return; e.preventDefault(); cycleStage(+b.dataset.s, -1); });
+  $('hgrid').addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const b = stgAt(e.target);
+    if (b) { e.preventDefault(); cycleStage(+b.dataset.s, e.shiftKey ? -1 : 1); }
+  });
   $('me').addEventListener('change', e => { change(() => { S.players.me = +e.target.value; S.stage = null; }); renderHyp(); });
   $('tlog-rows').addEventListener('change', e => {
     const sel = e.target.closest('.tsel');
@@ -1374,7 +1532,7 @@ input.dsel{cursor:text;font-weight:500}
     btn._t = setTimeout(() => { btn.textContent = btn.dataset.label; btn.classList.remove('armed'); }, 1800);
   }
   $('save-json').addEventListener('click', () => {
-    const data = { app:'survey-log', version:2, savedAt:new Date().toISOString(), state:JSON.parse(snap()) };
+    const data = { app:'survey-log', version:2, savedAt:new Date().toISOString(), state:Object.assign(JSON.parse(snap()), { start:S.start }) };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
     const d = new Date();
     const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -1423,7 +1581,7 @@ input.dsel{cursor:text;font-weight:500}
   });
 
   /* ---------- go ---------- */
-  function refreshAll() { buildLog(); hydrate(); renderPlayers(); render(); renderHyp(); updateScore(); updateTarget(); }
+  function refreshAll() { renderStart(); buildLog(); hydrate(); renderPlayers(); render(); renderHyp(); updateScore(); updateTarget(); }
   refreshAll();
   histUI();
 })();
