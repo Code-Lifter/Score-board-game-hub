@@ -489,9 +489,9 @@ input.dsel{cursor:text;font-weight:500}
   const THEORY_AT = [3, 6, 9, 12], CONF_AT = 10, COMET_S = [2, 3, 5, 7, 11];
   const OBJECTS = [
     { key:'C', name:'Comets',       one:'comet',        a:'a comet',          n:2, icon:'comet',    only:COMET_S, rule:'Only ever in sectors 2, 3, 5, 7 or 11.' },
-    { key:'A', name:'Asteroids',    one:'asteroid',     a:'an asteroid',      n:4, icon:'asteroid', rule:'Every asteroid has at least one other asteroid beside it.' },
-    { key:'D', name:'Dwarf planet', one:'dwarf planet', a:'the dwarf planet', n:1, icon:'dwarf',    rule:'Never beside Planet X.' },
-    { key:'G', name:'Gas clouds',   one:'gas cloud',    a:'a gas cloud',      n:2, icon:'cloud',    rule:'Each has at least one truly empty sector beside it.' },
+    { key:'A', name:'Asteroids',    one:'asteroid',     a:'an asteroid',      n:4, icon:'asteroid', rule:'Each asteroid has another 1 next door to it, either 2 pairs or 4 groups.' },
+    { key:'D', name:'Dwarf planet', one:'dwarf planet', a:'the dwarf planet', n:1, icon:'dwarf',    rule:'Never next door to Planet X.' },
+    { key:'G', name:'Gas clouds',   one:'gas cloud',    a:'a gas cloud',      n:2, icon:'cloud',    rule:'Each has at least 1 truly empty sector beside it.' },
     { key:'X', name:'Planet X',     one:'Planet X',     a:'Planet X',         n:1, icon:'planetx',  rule:'Never beside the dwarf planet. Shows up as empty when surveyed.' },
     { key:'E', name:'Truly empty',  one:'truly empty',  a:'nothing',          n:2, icon:'empty',    rule:'A survey for empty sectors also counts Planet X.' },
   ];
