@@ -8,19 +8,53 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:light;--bg:#edf2f8;--panel:#f8fafd;--ink:#16386b;--muted:#4a6491;--faint:#8fa4c4;--line:#cbd8ea;--line-strong:#8ca5c9;--grid-line:rgba(22,56,107,.055);--no:#c4432f;--maybe:#9a6200;--on-ink:#f8fafd;--tint:rgba(22,56,107,.085);--tint-2:rgba(22,56,107,.04);--earth:#16305d;--shade:rgba(16,40,82,.13);--rim-dark:#122f5c;--rim-dark-t:#e6eef9;--rim-lit:#e6eef9;--rim-lit-t:#16386b;--rim-sun:#f2c230;--rim-sun-t:#16305d;--sky-ico:#dfe8fa;--p-yellow:#f2c230;--p-blue:#3f80e8;--p-red:#e3473b;--p-purple:#9d5ce0;--f:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#153867;--panel:#1a4177;--ink:#eef4ff;--muted:#b1c4e4;--faint:#7d99c4;--line:#38609a;--line-strong:#7896c5;--grid-line:rgba(238,244,255,.05);--no:#ff8e7c;--maybe:#ffd06a;--on-ink:#153867;--tint:rgba(238,244,255,.12);--tint-2:rgba(238,244,255,.055);--earth:#0b1d3b;--shade:rgba(3,12,32,.38);--rim-dark:#0b1d3b;--rim-dark-t:#b1c4e4;--rim-lit:#dbe6f7;--rim-lit-t:#153867;--rim-sun:#f2c230;--rim-sun-t:#16305d}}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#153867;--panel:#1a4177;--ink:#eef4ff;--muted:#b1c4e4;--faint:#7d99c4;--line:#38609a;--line-strong:#7896c5;--grid-line:rgba(238,244,255,.05);--no:#ff8e7c;--maybe:#ffd06a;--on-ink:#153867;--tint:rgba(238,244,255,.12);--tint-2:rgba(238,244,255,.055);--earth:#0b1d3b;--shade:rgba(3,12,32,.38);--rim-dark:#0b1d3b;--rim-dark-t:#b1c4e4;--rim-lit:#dbe6f7;--rim-lit-t:#153867;--rim-sun:#f2c230;--rim-sun-t:#16305d}
+:root{color-scheme:dark;--bg:#050816;--panel:#0e1532;--card:rgba(12,19,46,.95);--ink:#e9eeff;--muted:#aab6dc;--faint:#6f7eac;--line:#24315c;--line-strong:#46588e;--grid-line:transparent;--no:#ff7a6b;--maybe:#ffcf5c;--on-ink:#0b1230;--tint:rgba(170,190,255,.13);--tint-2:rgba(170,190,255,.06);--earth:#040817;--shade:rgba(0,3,16,.5);--rim-dark:#070c22;--rim-dark-t:#8392c2;--rim-lit:#d9e2fb;--rim-lit-t:#0e1532;--rim-sun:#ffc53d;--rim-sun-t:#1b1405;--sky-ico:#28365f;--glow:rgba(110,130,255,.16);--sunlit:rgba(255,200,110,.07);--p-yellow:#f2c230;--p-blue:#4d8cff;--p-red:#ff5446;--p-purple:#b06cff;--f:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+:root[data-theme="light"]{color-scheme:light;--bg:#edf2f8;--panel:#f8fafd;--ink:#16386b;--muted:#4a6491;--faint:#8fa4c4;--line:#cbd8ea;--line-strong:#8ca5c9;--grid-line:rgba(22,56,107,.055);--no:#c4432f;--maybe:#9a6200;--on-ink:#f8fafd;--tint:rgba(22,56,107,.085);--tint-2:rgba(22,56,107,.04);--earth:#16305d;--shade:rgba(16,40,82,.13);--rim-dark:#122f5c;--rim-dark-t:#e6eef9;--rim-lit:#e6eef9;--rim-lit-t:#16386b;--rim-sun:#f2c230;--rim-sun-t:#16305d;--sky-ico:#dfe8fa;--p-yellow:#f2c230;--p-blue:#3f80e8;--p-red:#e3473b;--p-purple:#9d5ce0;--card:var(--panel);--glow:transparent;--sunlit:transparent}
+
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;min-height:100vh;color:var(--ink);background-color:var(--bg);background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:24px 24px;font:400 15px/1.45 var(--f);-webkit-font-smoothing:antialiased}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;color:var(--ink);font:400 15px/1.45 var(--f);-webkit-font-smoothing:antialiased}
+/* Outer space: nebula glow behind a fixed starfield */
+body::before,body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none}
+body::before{background:
+  radial-gradient(ellipse 60% 45% at 12% 8%,rgba(124,77,255,.34),transparent 70%),
+  radial-gradient(ellipse 50% 40% at 92% 24%,rgba(30,136,255,.28),transparent 70%),
+  radial-gradient(ellipse 70% 45% at 70% 100%,rgba(255,70,160,.2),transparent 70%),
+  radial-gradient(ellipse 40% 30% at 30% 70%,rgba(0,200,255,.12),transparent 70%)}
+body::after{opacity:.9;background-image:
+  radial-gradient(2.1px 2.1px at 37px 61px,#fff 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 121px 23px,#cfd8ff 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 173px 139px,#fff 50%,transparent 51%),
+  radial-gradient(2.7px 2.7px at 211px 87px,#ffe9b8 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 79px 187px,#fff 50%,transparent 51%),
+  radial-gradient(1.8px 1.8px at 251px 211px,#bcd0ff 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 19px 239px,#fff 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 143px 263px,#fff 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 67px 113px,rgba(255,255,255,.6) 50%,transparent 51%),
+  radial-gradient(3px 3px at 331px 47px,#fff 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 389px 173px,#dfe6ff 50%,transparent 51%),
+  radial-gradient(1.95px 1.95px at 293px 311px,#fff 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 431px 283px,rgba(255,255,255,.7) 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 197px 401px,#fff 50%,transparent 51%),
+  radial-gradient(2.4px 2.4px at 457px 419px,#ffd9a8 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 101px 443px,#fff 50%,transparent 51%);
+  background-size:280px 280px,280px 280px,280px 280px,280px 280px,280px 280px,280px 280px,280px 280px,280px 280px,280px 280px,
+    480px 480px,480px 480px,480px 480px,480px 480px,480px 480px,480px 480px,480px 480px;
+  animation:twinkle 7s ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:.95}to{opacity:.6}}
+:root[data-theme="light"] body::before,:root[data-theme="light"] body::after{display:none}
+:root[data-theme="light"] body{background-image:linear-gradient(rgba(22,56,107,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(22,56,107,.055) 1px,transparent 1px);background-size:24px 24px}
+@media (prefers-reduced-motion:reduce){body::after{animation:none}}
 button,input,select{font:inherit;color:inherit}
 option{background:var(--panel);color:var(--ink)}
 .wrap{max-width:1320px;margin:0 auto;padding:28px 16px 64px}
 .top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 32px;margin-bottom:30px}
 .brand{display:flex;align-items:center;gap:14px}
 .mark{width:48px;height:48px;flex:none}
-.brand h1{margin:0;font-weight:800;font-stretch:125%;font-size:clamp(28px,4vw,38px);line-height:1;letter-spacing:-.015em}
+.brand h1{margin:0;font-weight:800;font-stretch:125%;font-size:clamp(28px,4vw,38px);line-height:1;letter-spacing:-.015em;background:linear-gradient(95deg,#fff 0%,#c9d3ff 55%,#ffcf5c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(140,160,255,.35))}
+:root[data-theme="light"] .brand h1{background:none;color:var(--ink);filter:none}
+.mark{filter:drop-shadow(0 0 8px var(--glow))}
 .brand p{margin:7px 0 0;color:var(--muted);font-size:14px}
 .meta{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 20px}
 .fld{display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -44,7 +78,7 @@ option{background:var(--panel);color:var(--ink)}
 .layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px;align-items:start}
 @media (max-width:1060px){.layout{grid-template-columns:minmax(0,1fr)}}
 .col{display:flex;flex-direction:column;gap:34px;min-width:0}
-.plate{margin:6px;background:var(--panel);border:1.5px solid var(--line-strong);outline:1px solid var(--line);outline-offset:5px}
+.plate{margin:6px;background:var(--card);border:1.5px solid var(--line-strong);outline:1px solid var(--line);outline-offset:5px;box-shadow:0 0 60px var(--glow);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .plate-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px;padding:14px 16px 12px;border-bottom:1.5px solid var(--line-strong)}
 .plate-h h2{margin:0;font-size:18px;font-weight:700;font-stretch:115%}
 .plate-h span{font-size:13px;color:var(--muted)}
@@ -54,7 +88,7 @@ option{background:var(--panel);color:var(--ink)}
 .wheel [role=button]{cursor:pointer;outline:none}
 .wheel .base{fill:var(--panel)}
 .wheel .hit,.mres .hb{fill:transparent;transition:fill .12s}
-.shade{fill:transparent;pointer-events:none;transition:fill .35s}.shade.on{fill:var(--shade)}
+.shade{fill:var(--sunlit);pointer-events:none;transition:fill .35s}.shade.on{fill:var(--shade)}
 @media (hover:hover){.cell:hover .hit{fill:var(--tint-2)}.pslot:hover .hit{fill:var(--tint)}.rim:hover path{filter:brightness(.88)}}
 .wheel .lines{fill:none;pointer-events:none;stroke-linecap:round}
 .wheel .rl{stroke:var(--line);stroke-width:1.5}
@@ -141,7 +175,7 @@ option{background:var(--panel);color:var(--ink)}
 .sec h2{margin:0 0 12px;padding-bottom:8px;border-bottom:1.5px solid var(--line-strong);display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:18px;font-weight:700;font-stretch:115%}
 .sec h2 span{font-size:13px;font-weight:400;font-stretch:100%;color:var(--muted);text-align:right}
 .sec h2 .btn{align-self:center}
-.tbl{background:var(--panel);border:1px solid var(--line)}
+.tbl{background:var(--card);border:1px solid var(--line);box-shadow:0 0 40px var(--glow)}
 .thead,.trow{display:grid}
 .log .thead,.log .trow{grid-template-columns:30px minmax(0,1.25fr) minmax(0,1.6fr) repeat(3,minmax(0,.62fr))}
 .log[data-opp="2"] .thead,.log[data-opp="2"] .trow{grid-template-columns:30px minmax(0,1.25fr) minmax(0,2.3fr) repeat(2,minmax(0,.62fr))}
@@ -213,7 +247,7 @@ option{background:var(--panel);color:var(--ink)}
 .tdel:hover{color:var(--no)}
 .tempty{padding:12px;color:var(--faint);font-size:13.5px}
 .wh{display:inline-flex;align-items:center;gap:6px;font-weight:600;min-width:0}
-.score{background:var(--panel);border:1.5px solid var(--line-strong)}
+.score{background:var(--card);border:1.5px solid var(--line-strong);box-shadow:0 0 40px var(--glow)}
 .srow{display:grid;grid-template-columns:24px minmax(0,1fr) auto 40px;align-items:center;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line)}
 #score-rows .srow:last-child{border-bottom:0}
 .sic{display:grid;place-items:center}.sic svg{width:20px;height:20px}
@@ -234,8 +268,8 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 .total{display:flex;justify-content:space-between;align-items:center;padding:12px 12px 14px;border-top:1.5px solid var(--line-strong)}
 .total span{font-size:16px;font-weight:700;font-stretch:115%}
 .total output{font-size:44px;font-weight:800;font-stretch:125%;line-height:1;font-variant-numeric:tabular-nums}
-.dlg{width:min(580px,calc(100vw - 20px));max-height:calc(100vh - 24px);padding:0;border:1.5px solid var(--line-strong);border-radius:4px;background:var(--panel);color:var(--ink);box-shadow:0 24px 60px rgba(8,20,45,.35);overflow:auto}
-.dlg::backdrop{background:rgba(8,22,48,.5)}
+.dlg{width:min(580px,calc(100vw - 20px));max-height:calc(100vh - 24px);padding:0;border:1.5px solid var(--line-strong);border-radius:4px;background:var(--panel);color:var(--ink);box-shadow:0 24px 60px rgba(0,0,0,.45),0 0 60px var(--glow);overflow:auto}
+.dlg::backdrop{background:rgba(3,6,20,.65);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .dh{display:flex;align-items:center;gap:12px;padding:16px 18px 12px;border-bottom:1.5px solid var(--line-strong)}
 .dh>svg{width:30px;height:30px;flex:none}
 .dh h3{margin:0;font-size:19px;font-weight:700;font-stretch:115%;line-height:1.15}
@@ -345,7 +379,7 @@ input.dsel{cursor:text;font-weight:500}
         <button class="btn" id="save-json" type="button" title="Download this game as a JSON file">Save</button>
         <button class="btn" id="load-json" type="button" title="Open a game saved as a JSON file">Load</button>
         <input type="file" id="file" accept=".json,application/json" hidden>
-        <button class="btn btn-icon" id="theme" type="button" aria-label="Switch light or dark theme" title="Switch light or dark theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button>
+        <button class="btn btn-icon" id="theme" type="button" aria-label="Switch between space and light theme" title="Switch between space and light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button>
         <button class="btn" id="reset" type="button">Reset</button>
       </div>
     </div>
@@ -572,8 +606,7 @@ input.dsel{cursor:text;font-weight:500}
   const applyTheme = () => S.theme ? root.setAttribute('data-theme', S.theme) : root.removeAttribute('data-theme');
   applyTheme();
   $('theme').addEventListener('click', () => {
-    const dark = S.theme ? S.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-    S.theme = dark ? 'light' : 'dark';
+    S.theme = S.theme === 'light' ? 'dark' : 'light';
     applyTheme(); save();
   });
 
