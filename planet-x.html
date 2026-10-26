@@ -50,7 +50,7 @@ option{background:var(--panel);color:var(--ink)}
 .plate-h span{font-size:13px;color:var(--muted)}
 .plate-h b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
 .wheel-wrap{display:flex;justify-content:center;padding:22px 16px 16px}
-.wheel{display:block;width:100%;max-width:680px;height:auto;overflow:visible;font-family:var(--f);user-select:none;-webkit-user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.wheel{display:block;width:100%;max-width:860px;height:auto;overflow:visible;font-family:var(--f);user-select:none;-webkit-user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .wheel [role=button]{cursor:pointer;outline:none}
 .wheel .base{fill:var(--panel)}
 .wheel .hit,.mres .hb{fill:transparent;transition:fill .12s}
@@ -172,16 +172,10 @@ option{background:var(--panel);color:var(--ink)}
 .sup i{width:11px;height:11px;border:1.5px solid var(--line-strong);border-radius:2px}
 .sup i.u{background:var(--ink);border-color:var(--ink)}
 .sup i.st{border-style:dashed;border-color:var(--maybe)}
-.hwrap{display:flex;justify-content:center;padding:4px 0 2px}
-.hw{display:block;width:100%;max-width:540px;height:auto;overflow:visible;font-family:var(--f);user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
-.hw .base{fill:var(--panel)}
-.hw .r3{fill:none;stroke:var(--tint-2)}
-.hw .lines{fill:none;pointer-events:none}
-.hw .rl{stroke:var(--line);stroke-width:1.2}
-.hw .rs{stroke:var(--line-strong);stroke-width:2}
-.hw .sp{stroke:var(--line-strong);stroke-width:1.2;stroke-opacity:.8}
-.hw .hrim text{font-size:17px;font-weight:700;font-stretch:112%;font-variant-numeric:tabular-nums}
-.hw .hatch{fill:var(--tint)}
+.theo .tbase{fill:none;stroke:var(--panel)}
+.theo .r3{fill:none;stroke:var(--tint-2)}
+.theo .rl{stroke:var(--line);stroke-width:1.2}
+.theo .hatch{fill:var(--tint)}
 .stg{cursor:pointer;outline:none}
 .stg .hit{fill:transparent;transition:fill .12s}
 @media (hover:hover){.stg:not(.off):hover .hit{fill:var(--tint)}}
@@ -192,11 +186,8 @@ option{background:var(--panel);color:var(--ink)}
 .hk.fd .hkr{fill:var(--pc)}
 .hk .hck{color:var(--on-ink)}.hk .hck circle{fill:var(--ink);stroke:var(--panel);stroke-width:1.5}
 .hplan{color:var(--maybe)}.hplan circle{fill:var(--panel);stroke:var(--maybe);stroke-width:1.8;stroke-dasharray:3.2 2.6}
-.hres{color:var(--on-ink);--icon-bg:var(--ink)}.hres circle{fill:var(--ink)}
 .hplus{color:var(--line-strong);pointer-events:none}
-.hno{color:var(--faint)}.hno path{stroke:var(--no);stroke-width:2;stroke-linecap:round}
-.hw .sun{fill:url(#g-sun)}
-.hkey{padding:6px 0 0}.hkey .ki b{width:18px;text-align:center;color:var(--ink);font-weight:800}
+.key .ki b{width:18px;text-align:center;color:var(--ink);font-weight:800}
 .htip{margin:8px 0 0;font-size:12.5px;color:var(--faint)}
 .start .trow{grid-template-columns:30px minmax(0,1fr) auto minmax(0,1.4fr) 32px}
 .start .tcell{color:var(--muted)}
@@ -209,8 +200,7 @@ option{background:var(--panel);color:var(--ink)}
 .fact b{color:var(--ink);font-weight:700}
 .sec h2 #start-status.done{color:var(--ink);font-weight:600}
 .wheel .cell.lk{cursor:not-allowed}
-.lki{color:var(--ink)}.lki circle{fill:var(--panel);stroke:var(--line-strong);stroke-width:1.5}
-.cell.s1 .mk .lki use{opacity:1}
+
 .hact{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .tlog{margin-top:14px}
 .tlog summary{cursor:pointer;font-weight:600;font-size:14px;padding:4px 0;color:var(--muted)}
@@ -380,7 +370,7 @@ input.dsel{cursor:text;font-weight:500}
           </div>
           <span class="ptip">Pick a pawn, then use an action button or tap a sector on the pawn track (the light ring just inside the numbers). Tapping a sector a little behind a pawn moves it back to fix a slip. The pawn farthest back plays next, and the earth board turns to follow it, stopping for theory phases and the Planet X conference.</span>
         </div>
-        <div class="wheel-wrap"><svg class="wheel" id="wheel" viewBox="-504 -504 1008 1008" role="group" aria-label="Sector wheel"></svg></div>
+        <div class="wheel-wrap"><svg class="wheel" id="wheel" viewBox="-668 -668 1336 1336" role="group" aria-label="Sector wheel"></svg></div>
         <div class="key" id="key"></div>
         <div class="legend">
           <span class="lg"><svg viewBox="-16 -16 32 32" aria-hidden="true"><path class="x1" d="M-9 -9L9 9M9 -9L-9 9"/></svg>Ruled out</span>
@@ -427,9 +417,7 @@ input.dsel{cursor:text;font-weight:500}
           <label class="you">You are <select id="me" aria-label="Your player colour"></select></label>
           <div class="supply" id="supply" aria-label="Your theory tokens"></div>
         </div>
-        <div class="hwrap"><svg class="hw" id="hgrid" viewBox="-304 -304 608 608" role="group" aria-label="Hypotheses wheel"></svg></div>
-        <div class="key hkey" id="hkey"></div>
-        <p class="htip">Tap a sector in the outer + ring to plan your next theory (one at a time); tap again to change the object. The next theory phase starts with it filled in. Theories move inward one ring per phase until peer review.</p>
+        <p class="htip">Theories sit on the Sector wheel, in the rings outside the numbers. Tap a sector in the outermost + ring to plan your next theory (one at a time); tap again to change the object. The next theory phase starts with it filled in. Theories move one ring toward the numbers each phase until peer review.</p>
         <div class="hact">
           <button class="btn" id="h-phase" type="button">Theory phase</button>
           <button class="btn" id="h-review" type="button">Peer review</button>
@@ -540,6 +528,8 @@ input.dsel{cursor:text;font-weight:500}
         .map(x => ({ s:isInt(x.s) && x.s >= 1 && x.s <= N ? x.s : '', k:x.k in OI ? x.k : '' })) };
       if (b.start.locked) b.start.facts = b.start.facts.filter(x => x.s && x.k && allowed(obj(x.k), x.s));
     }
+    // Sectors confirmed by peer review keep their marks: the object confirmed, everything else ruled out
+    b.th.forEach(t => { if (t.st === 'c' && t.k) OBJECTS.forEach((o, j) => { if (allowed(o, t.s)) b.grid[j][t.s - 1] = j === OI[t.k] ? 3 : 1; }); });
     b.start.facts.forEach(x => { if (b.start.locked) b.grid[OI[x.k]][x.s - 1] = 1; });
     return b;
   }
@@ -601,8 +591,9 @@ input.dsel{cursor:text;font-weight:500}
   };
   const use = (name, z) => `<use href="#i-${name}" x="${-z / 2}" y="${-z / 2}" width="${z}" height="${z}"/>`;
   const XMARK = '<path class="x1" d="M-14 -14L14 14M14 -14L-14 14"/>';
-  const isLocked = (r, s) => S.start.locked && S.start.facts.some(x => OI[x.k] === r && x.s === s);
-  const LOCK = `<g class="lki" transform="translate(16 -16)"><circle r="9"/>${use('lock', 12)}</g>`;
+  const startLocked = (r, s) => S.start.locked && S.start.facts.some(x => OI[x.k] === r && x.s === s);
+  const reviewLocked = s => S.th.some(t => t.s === s && t.st === 'c' && t.k);
+  const isLocked = (r, s) => startLocked(r, s) || reviewLocked(s);
   function mark(o, v) {
     if (v === 3) return `<circle class="disc3" r="21"/>${use(o.icon, G.ico)}`;
     if (v === 2) return `<circle class="ring2" r="21"/>${use(o.icon, G.ico)}`;
@@ -655,6 +646,8 @@ input.dsel{cursor:text;font-weight:500}
       const [x, y] = pt(G.num, mid(s));
       h += `<g class="rim" role="button" tabindex="0" data-s="${s}" aria-label="Sector ${s}: turn the earth board here"><path d="${seg(G.rimIn, G.out, s)}"/><text x="${x}" y="${y}" dy=".35em" text-anchor="middle">${s}</text><title>Sector ${s}</title></g>`;
     }
+    // Theory track outside the rim, filled in by renderHyp
+    h += '<g class="theo" id="theo"></g>';
     wheel.innerHTML = h;
   }
   const q = sel => [...wheel.querySelectorAll(sel)];
@@ -669,7 +662,9 @@ input.dsel{cursor:text;font-weight:500}
     '</tbody></table></div>' +
     '<span class="ki" title="The object each sector must hold, or how many objects it could still hold">Result ring</span>' +
     `<span class="ki">${icon('theory')}Theory phase</span><span class="ki">${icon('conf')}X₁ conference</span>` +
-    '<span class="ki"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4L20 19H4Z" fill="#f2c230" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>Earth board arrow</span>';
+    '<span class="ki"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4L20 19H4Z" fill="#f2c230" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>Earth board arrow</span>' +
+    '<span class="key-h">Theory track, outside the numbers, from the rim outward</span>' +
+    `<span class="ki">${icon('review')}Peer review</span><span class="ki"><b>2</b>Second space</span><span class="ki"><b>1</b>First space</span><span class="ki">${icon('plus')}Planned (max 1)</span>`;
   const counts = OBJECTS.map((o, r) => keyEl.querySelector(`.ct[data-r="${r}"]`));
 
   let earthAng = null, earthRaf = 0;
@@ -729,10 +724,10 @@ input.dsel{cursor:text;font-weight:500}
     }
     for (const c of cellEls) {
       const r = +c.dataset.r, s = +c.dataset.s, o = OBJECTS[r], v = S.grid[r][s - 1], lk = isLocked(r, s);
-      const txt = `${o.name} in sector ${s}: ${MARKS[v]}${lk ? ' (starting info, locked)' : ''}`;
+      const txt = `${o.name} in sector ${s}: ${MARKS[v]}${startLocked(r, s) ? ' (starting info, locked)' : lk ? ' (confirmed by peer review, locked)' : ''}`;
       c.setAttribute('class', `cell s${v}${lk ? ' lk' : ''}`);
       c.setAttribute('aria-label', txt);
-      c.querySelector('.mk').innerHTML = mark(o, v) + (lk ? LOCK : '');
+      c.querySelector('.mk').innerHTML = mark(o, v);
       c.querySelector('title').textContent = txt;
     }
     OBJECTS.forEach((o, r) => {
@@ -986,7 +981,7 @@ input.dsel{cursor:text;font-weight:500}
     const known = conf.length === 1 ? conf[0] : (conf.length === 0 && cand.length === 1 ? cand[0] : -1);
     return { conf, cand, known, bad:conf.length > 1 || cand.length === 0 };
   }
-  function wheelConfirm(k, s) { const r = OI[k]; OBJECTS.forEach((o, j) => { if (allowed(o, s)) S.grid[j][s - 1] = j === r && !isLocked(j, s) ? 3 : 1; }); }
+  function wheelConfirm(k, s) { const r = OI[k]; OBJECTS.forEach((o, j) => { if (allowed(o, s)) S.grid[j][s - 1] = j === r && !startLocked(j, s) ? 3 : 1; }); }
   function wheelRuleOut(k, s) { const r = OI[k]; if (allowed(OBJECTS[r], s)) S.grid[r][s - 1] = 1; }
 
   function stageOptions(s) {
@@ -1002,8 +997,8 @@ input.dsel{cursor:text;font-weight:500}
     change(() => { S.stage = i >= 0 && i < opts.length ? { s, k:opts[i] } : null; });
     renderHyp();
   }
-  // Hypotheses wheel: rings from the rim inward are +, 1, 2, peer review, result
-  const HB = [[230, 272], [190, 230], [148, 190], [100, 148], [60, 100]], HRIM = 272, HOUT = 300;
+  // Theory track on the sector wheel: spaces +, 1, 2 and peer review, from the outside in toward the rim
+  const HB = [[624, 664], [584, 624], [544, 584], [504, 544]], HOUT = 664;
   // Spread n marks across one cell, shrinking them when they don't fit
   function spread(n, [r0, r1], s, size) {
     const a = mid(s), rm = (r0 + r1) / 2, arc = rm * TAU / N * .86, band = (r1 - r0) * .92;
@@ -1026,15 +1021,11 @@ input.dsel{cursor:text;font-weight:500}
       `${t.st === 'c' ? `<g class="hck" transform="translate(10 10)"><circle r="7"/>${use('check', 11)}</g>` : ''}<title>${tip}</title></g>`;
   }
   function chips(list, ring, s) {
-    const { k, pts } = spread(list.length, HB[ring], s, 31);
+    const { k, pts } = spread(list.length, HB[ring], s, 36), z = k * 1.35;
     return list.map((t, i) => t.plan
-      ? `<g class="hplan" transform="translate(${pts[i]}) scale(${k})"><circle r="13.5"/>${use(obj(t.k).icon, 19)}</g>`
-      : chip(t, pts[i], k)).join('');
+      ? `<g class="hplan" transform="translate(${pts[i]}) scale(${z})"><circle r="13.5"/>${use(obj(t.k).icon, 19)}</g>`
+      : chip(t, pts[i], z)).join('');
   }
-  $('hkey').innerHTML = '<span class="key-h">Rings, from the rim inward</span>' +
-    `<span class="ki">${icon('plus')}Planned (max 1)</span><span class="ki"><b>1</b>First space</span><span class="ki"><b>2</b>Second space</span>` +
-    `<span class="ki">${icon('review')}Peer review</span><span class="ki">${icon('check')}Result</span>`;
-
   function renderHyp() {
     const P = S.players, me = P.me;
     $('me').innerHTML = range(P.count).map(i => `<option value="${i - 1}"${i - 1 === me ? ' selected' : ''}>${CNAME[P.colors[i - 1]]}</option>`).join('');
@@ -1043,11 +1034,11 @@ input.dsel{cursor:text;font-weight:500}
       return `<span class="sup" title="${o.name}: ${Math.max(0, TOKENS[k] - u)} of ${TOKENS[k]} theory tokens left">${icon(o.icon)}` +
         range(TOKENS[k]).map(i => `<i class="${i <= u ? 'u' : i <= u + st ? 'st' : ''}"></i>`).join('') + '</span>';
     }).join('');
-    const fe = document.activeElement, fs = fe && fe.closest && fe.closest('#hgrid') ? fe.dataset.s : null;
+    const fe = document.activeElement, fs = fe && fe.closest && fe.closest('#theo') ? fe.dataset.s : null;
     const f = wrapS(S.earth.abs), sky = range(SKY).map(k => wrapS(f + k - 1));
     let h = '<defs><pattern id="h-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="hatch" width="3" height="8"/></pattern></defs>';
-    h += `<circle class="base" r="${HRIM}"/>`;
-    for (let s = 1; s <= N; s++) h += `<path class="shade${sky.includes(s) ? '' : ' on'}" d="${seg(HB[4][0], HRIM, s)}"/>`;
+    h += `<circle class="tbase" r="${(G.out + HOUT) / 2}" stroke-width="${HOUT - G.out}"/>`;
+    for (let s = 1; s <= N; s++) h += `<path class="shade${sky.includes(s) ? '' : ' on'}" d="${seg(HB[3][0], HOUT, s)}"/>`;
     h += `<circle class="r3" r="${(HB[3][0] + HB[3][1]) / 2}" stroke-width="${HB[3][1] - HB[3][0]}"/>`;
     for (let s = 1; s <= N; s++) {
       const conf = confirmedIn(s), st = S.stage && S.stage.s === s ? S.stage : null;
@@ -1055,33 +1046,18 @@ input.dsel{cursor:text;font-weight:500}
       const label = conf ? `Sector ${s} is confirmed` : st ? `Planned: ${obj(st.k).one} in sector ${s}. Tap to change` : `Plan a theory for sector ${s}`;
       const off = !!conf || (!st && !stageOptions(s).length);
       h += `<g class="stg${off ? ' off' : ''}" role="button" data-s="${s}" aria-label="${label}"${off ? ' aria-disabled="true"' : ' tabindex="0"'}><path class="hit" d="${seg(HB[0][0], HB[0][1], s)}"/>` +
-        (st || outer.length || off ? '' : `<g class="hplus" transform="translate(${xy((HB[0][0] + HB[0][1]) / 2, mid(s))})">${use('plus', 14)}</g>`) +
+        (st || outer.length || off ? '' : `<g class="hplus" transform="translate(${xy((HB[0][0] + HB[0][1]) / 2, mid(s))})">${use('plus', 20)}</g>`) +
         chips((st ? [{ plan:true, k:st.k }] : []).concat(outer), 0, s) + `<title>${label}</title></g>`;
     }
     [1, 2, 3].forEach(pos => {
       for (let s = 1; s <= N; s++) h += chips(S.th.filter(t => t.s === s && t.pos === pos && t.st !== 'w'), pos, s);
     });
-    for (let s = 1; s <= N; s++) {
-      const c = confirmedIn(s);
-      if (c) {
-        const o = c !== '?' ? obj(c) : null;
-        h += `<g class="hres" transform="translate(${xy((HB[4][0] + HB[4][1]) / 2, mid(s))})"><circle r="16"/>${use(o ? o.icon : 'check', 21)}<title>Sector ${s}: ${o ? o.one : 'object'} confirmed by peer review</title></g>`;
-        continue;
-      }
-      const no = [...new Set(S.th.filter(t => t.s === s && t.st === 'w' && t.k).map(t => t.k))], { k, pts } = spread(no.length, HB[4], s, 19);
-      h += no.map((x, i) => `<g class="hno" transform="translate(${pts[i]}) scale(${k})">${use(obj(x).icon, 16)}<path d="M-8 8L8 -8"/><title>Sector ${s}: not ${obj(x).a}</title></g>`).join('');
-    }
     h += '<g class="lines">';
-    for (let s = 0; s < N; s++) h += `<path class="sp" d="M${xy(HB[4][0], s / N * TAU)}L${xy(HRIM, s / N * TAU)}"/>`;
-    for (let i = 1; i < HB.length; i++) h += `<circle class="rl" r="${HB[i][1]}"/>`;
-    h += `<circle class="rs" r="${HB[4][0]}"/><circle class="rs" r="${HRIM}"/></g>`;
-    for (let s = 1; s <= N; s++) {
-      const [x, y] = pt((HRIM + HOUT) / 2, mid(s));
-      h += `<g class="hrim${s === f ? ' focus' : sky.includes(s) ? ' near' : ''}"><path d="${seg(HRIM, HOUT, s)}"/><text x="${x}" y="${y}" dy=".35em" text-anchor="middle">${s}</text></g>`;
-    }
-    h += `<circle class="sun" r="${HB[4][0] - 12}"/>`;
-    $('hgrid').innerHTML = h;
-    if (fs) { const b = $('hgrid').querySelector(`.stg[data-s="${fs}"]`); if (b && !b.classList.contains('off')) b.focus(); }
+    for (let s = 0; s < N; s++) h += `<path class="sp" d="M${xy(HB[3][0], s / N * TAU)}L${xy(HOUT, s / N * TAU)}"/>`;
+    for (let i = 0; i < HB.length - 1; i++) h += `<circle class="rl" r="${HB[i][0]}"/>`;
+    h += `<circle class="rs" r="${HB[3][0]}"/><circle class="rs" r="${HOUT}"/></g>`;
+    $('theo').innerHTML = h;
+    if (fs) { const b = $('theo').querySelector(`.stg[data-s="${fs}"]`); if (b && !b.classList.contains('off')) b.focus(); }
     $('hyp-status').textContent = `${S.phaseNo} theory phase${S.phaseNo === 1 ? '' : 's'} so far · next at sector ${nextTheory()}`;
     const rs = reviewSectors(), rb = $('h-review');
     rb.disabled = !rs.length;
@@ -1096,9 +1072,9 @@ input.dsel{cursor:text;font-weight:500}
       `<button type="button" class="tdel" aria-label="Remove this theory" title="Remove">×</button></div>`).join('');
   }
   const stgAt = t => { const b = t.closest('.stg'); return b && !b.classList.contains('off') ? b : null; };
-  $('hgrid').addEventListener('click', e => { const b = stgAt(e.target); if (b) cycleStage(+b.dataset.s, e.shiftKey ? -1 : 1); });
-  $('hgrid').addEventListener('contextmenu', e => { const b = stgAt(e.target); if (!b) return; e.preventDefault(); cycleStage(+b.dataset.s, -1); });
-  $('hgrid').addEventListener('keydown', e => {
+  $('theo').addEventListener('click', e => { const b = stgAt(e.target); if (b) cycleStage(+b.dataset.s, e.shiftKey ? -1 : 1); });
+  $('theo').addEventListener('contextmenu', e => { const b = stgAt(e.target); if (!b) return; e.preventDefault(); cycleStage(+b.dataset.s, -1); });
+  $('theo').addEventListener('keydown', e => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const b = stgAt(e.target);
     if (b) { e.preventDefault(); cycleStage(+b.dataset.s, e.shiftKey ? -1 : 1); }
@@ -1386,7 +1362,7 @@ input.dsel{cursor:text;font-weight:500}
     const t = task, th = t.kind === 'theory';
     dIn.innerHTML = (th ? head('theory', 'Theory phase done', t.at ? `The earth board reached sector ${t.at}` : 'Started by hand') + stepsBar(TH_STEPS, 3)
         : head('review', 'Peer review done', '')) +
-      `<div class="db">${logHTML(t.log.length ? t.log : ['Nothing needed peer review.'])}<p class="note">Results are marked on your wheel and in the Hypotheses grid. Undo steps back through each one if something went in wrong.</p></div>` +
+      `<div class="db">${logHTML(t.log.length ? t.log : ['Nothing needed peer review.'])}<p class="note">Results are marked on the Sector wheel. Undo steps back through each one if something went in wrong.</p></div>` +
       foot(B('close', 'Continue', 'primary'));
   }
 
