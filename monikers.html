@@ -1,0 +1,614 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Monikers Deckbox</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Figtree:wght@400;600;800&family=Permanent+Marker&display=swap">
+<style>
+/* Layout: one phone-width column; every card is a "HELLO my name is" sticker, coloured by team. */
+:root{
+  --bg:#E9ECF1; --surface:#FFFFFF; --ink:#16181E; --muted:#5B6170; --line:#CCD1DA;
+  --paper:#FBFAF6; --paper-ink:#17181C; --paper-muted:#5C5E66;
+  --red:#D0263B; --blue:#1F55B5; --green:#1F8A5B; --warn:#B4541A;
+  --font-display:"Bowlby One","Arial Black",Impact,sans-serif;
+  --font-marker:"Permanent Marker","Comic Sans MS","Chalkboard SE",cursive;
+  --font-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14161B; --surface:#1F232B; --ink:#ECEEF3; --muted:#A1A7B4; --line:#343A46;
+  --paper:#F3F1EA; --paper-ink:#17181C; --paper-muted:#55575F;
+  --red:#E8445A; --blue:#4F82E0; --green:#35AC78; --warn:#E08A4F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14161B; --surface:#1F232B; --ink:#ECEEF3; --muted:#A1A7B4; --line:#343A46;
+  --paper:#F3F1EA; --paper-ink:#17181C; --paper-muted:#55575F;
+  --red:#E8445A; --blue:#4F82E0; --green:#35AC78; --warn:#E08A4F; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 var(--font-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+*{box-sizing:border-box}
+main{max-width:460px;margin:0 auto;padding-block:20px 40px;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{margin:0;text-wrap:balance}
+h2{font:400 1.6rem/1.1 var(--font-display);letter-spacing:.01em}
+h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:800}
+p{margin:0}
+.muted{color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.stack{display:flex;flex-direction:column;gap:12px}
+.btn{appearance:none;border:2px solid var(--ink);background:var(--surface);color:var(--ink);
+  font:800 1rem/1 var(--font-body);padding:14px 16px;border-radius:12px;cursor:pointer;min-height:48px}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn.big{font-size:1.15rem;padding:18px;width:100%}
+.btn.ghost{border-color:var(--line)}
+.btn.danger{border-color:var(--red);color:var(--red)}
+.btn.small{padding:8px 12px;min-height:36px;font-size:.88rem;border-radius:9px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,.chip:focus-within{outline:3px solid var(--blue);outline-offset:2px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+input[type=text],input[type=number],textarea,select{width:100%;font:16px var(--font-body);color:var(--ink);background:var(--bg);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{min-height:140px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+label.field{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:.9rem}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border:2px solid var(--ink);border-radius:12px;overflow:hidden}
+.seg button{appearance:none;border:0;background:transparent;color:var(--ink);font:800 .95rem var(--font-body);padding:12px 6px;cursor:pointer;min-height:44px}
+.seg button+button{border-left:2px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:var(--bg)}
+.chip input{width:22px;height:22px;accent-color:var(--blue)}
+.chip .t{font-weight:800}
+.chip .c{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted);font-size:.9rem}
+
+/* the name tag */
+.tag{--band:var(--red);background:var(--paper);color:var(--paper-ink);border-radius:18px;overflow:hidden;
+  box-shadow:0 1px 0 rgba(0,0,0,.08),0 10px 30px -12px rgba(0,0,0,.35);border:4px solid var(--band)}
+.tag .band{background:var(--band);height:10px}
+.tag .hello{font:400 2.1rem/1 var(--font-display);letter-spacing:.04em}
+.tag .mni{font:800 .82rem/1 var(--font-body);letter-spacing:.18em;text-transform:uppercase;margin-top:4px}
+.tag .body{padding:22px 18px 16px;display:flex;flex-direction:column;gap:10px;min-height:190px}
+.tag .name{font:400 clamp(1.8rem,8vw,2.5rem)/1.1 var(--font-marker);text-align:center;text-wrap:balance;word-break:break-word;
+  border-bottom:2px dashed color-mix(in srgb,var(--paper-ink) 25%,transparent);padding-bottom:12px}
+.tag .desc{color:var(--paper-muted);font-size:.98rem;text-align:center}
+.tag .foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;font-size:.78rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--paper-muted)}
+.pts{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--band);color:#fff;font:400 1.05rem var(--font-display);letter-spacing:0}
+.t0{--band:var(--red)} .t1{--band:var(--blue)} .tc{--band:var(--green)}
+.tag .pts{display:inline-flex;flex-direction:column;width:auto;height:auto;min-width:46px;padding:6px 8px 4px;border-radius:20px 20px 6px 6px;line-height:1}
+.tag .pts small{font:800 .5rem var(--font-body);letter-spacing:.14em;margin-top:2px}
+.p1{background:#2E9A55!important}.p2{background:#1E8FC9!important}.p3{background:#7B3FA0!important}.p4{background:#E2502F!important}.p5{background:#2A2C33!important}
+.tag .cat{color:var(--band);letter-spacing:.16em}
+.tag .divider{border-top:2px dotted color-mix(in srgb,var(--paper-ink) 25%,transparent);width:70px;align-self:center;margin-top:auto}
+.tag .foot{flex-direction:column;gap:10px;margin-top:0}
+.team0{color:var(--red)} .team1{color:var(--blue)} .teamc{color:var(--green)}
+
+.hero .name{font-size:3rem}
+.rounds{display:grid;gap:8px}
+.rounds div{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:center}
+.rounds b{font:400 1.3rem var(--font-display);text-align:center}
+.timer{font:400 4rem/1 var(--font-display);text-align:center;font-variant-numeric:tabular-nums}
+.timer.low{color:var(--red)}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ink);transition:width .25s linear}
+.turnhead{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:.9rem}
+.actions{display:grid;grid-template-columns:1fr 1.6fr;gap:10px}
+.actions .got{background:var(--green);border-color:var(--green);color:#fff;font-size:1.2rem}
+.score{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-variant-numeric:tabular-nums;align-items:baseline}
+.score .n{font:400 1.8rem var(--font-display)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.item .nm{font:400 1.1rem var(--font-marker);min-width:0;overflow-wrap:anywhere}
+.item .sp{margin-left:auto;display:flex;gap:8px;align-items:center;flex-shrink:0}
+.item.off .nm{text-decoration:line-through;opacity:.5}
+.err{color:var(--red);font-weight:600;font-size:.9rem}
+.ok{color:var(--green);font-weight:600;font-size:.9rem}
+.pill{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+pre{margin:0;white-space:pre-wrap;font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;overflow-x:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.link{appearance:none;border:0;background:none;color:var(--muted);font:600 .95rem var(--font-body);cursor:pointer;padding:6px 0;text-decoration:underline}
+.confirm{border:2px solid var(--red)}
+@media (prefers-reduced-motion:no-preference){.pop{animation:pop .22s ease-out}@keyframes pop{from{transform:scale(.96) rotate(-1deg);opacity:.6}to{transform:none;opacity:1}}}
+</style>
+
+<main id="app" aria-live="polite"></main>
+
+<script>
+/* ---------- built-in sample deck ---------- */
+const SAMPLE = {id:'sample',title:'Starter Deck',builtin:true,cards:[
+["Cleopatra","Last active ruler of Ptolemaic Egypt, allied with Caesar and Mark Antony.",2],
+["Sherlock Holmes","Consulting detective of 221B Baker Street. Deerstalker optional.",1],
+["Someone Who Just Stepped on Lego","Barefoot, in the dark, holding in a scream.",2],
+["Usain Bolt","Jamaican sprinter. Fastest 100 m ever. Famous lightning pose.",1],
+["Napoleon Bonaparte","French emperor, hand tucked in his coat, defeated at Waterloo.",1],
+["Your Nan at a Wedding","First on the dance floor, handbag in the middle.",3],
+["The Loch Ness Monster","Shy Scottish lake creature, mostly seen in blurry photos.",1],
+["Marie Curie","Pioneer of radioactivity. Nobel Prizes in physics and chemistry.",2],
+["Count Dracula","Transylvanian vampire count. Hates garlic, sleeps in a coffin.",1],
+["Robin Hood","Steals from the rich, gives to the poor. Sherwood Forest archer.",1],
+["Medusa","Gorgon with snakes for hair. One look turns you to stone.",1],
+["Arnold Schwarzenegger","Seven-time Mr. Olympia turned action star turned governor.",1],
+["King Arthur","Legendary king who pulled the sword from the stone.",1],
+["A Seagull Stealing Chips","Swoops in at the seaside, no shame at all.",2],
+["Albert Einstein","Wild hair, E equals m c squared, theory of relativity.",1],
+["Frankenstein's Monster","Stitched together and brought to life with lightning.",1],
+["Joan of Arc","French peasant girl who led an army, burned at the stake.",2],
+["The Tooth Fairy","Swaps teeth under your pillow for coins.",1],
+["Leonardo da Vinci","Painted the Mona Lisa, sketched flying machines, wrote backwards.",1],
+["A Bloke Assembling Flat-Pack Furniture","Three screws left over and a wobbly shelf.",3],
+["Houdini","Escape artist. Handcuffs, straitjackets and water tanks.",2],
+["Genghis Khan","Founder of the Mongol Empire, conquered across Asia.",2],
+["Santa Claus","Red suit, sleigh, chimneys, naughty and nice lists.",1],
+["Queen Victoria","Ruled Britain for 63 years and was famously not amused.",2],
+["Bigfoot","Huge, hairy and spotted in the forests of North America.",1],
+["Tutankhamun","Boy pharaoh whose golden tomb was found in 1922.",2],
+["The Pied Piper","Played a pipe to lure rats out of town, then the children.",3],
+["William Shakespeare","Wrote Hamlet and Romeo and Juliet. To be or not to be.",1],
+["A Toddler Who Missed Their Nap","Melting down on the supermarket floor.",2],
+["Neil Armstrong","First person to walk on the Moon in 1969.",1],
+["Hercules","Greek hero, superhuman strength, twelve labours.",1],
+["Amelia Earhart","First woman to fly solo across the Atlantic. Vanished in 1937.",2],
+["Rapunzel","Locked in a tower, lets down her very long hair.",1],
+["Charles Darwin","Sailed on the Beagle, wrote about evolution and finches.",2],
+["A Gym Bro Who Skips Leg Day","Massive arms, tiny chicken legs.",2],
+["Julius Caesar","Roman dictator. Crossed the Rubicon. Stabbed on the Ides of March.",1],
+["Robinson Crusoe","Shipwrecked for years on an island with a man named Friday.",3],
+["The Grim Reaper","Black cloak, scythe, comes for you at the end.",1],
+["Florence Nightingale","The Lady with the Lamp, nursing soldiers in Crimea.",2],
+["Elvis Presley","The King of Rock and Roll. Hips, quiff and Graceland.",1],
+["Captain Cook","British navigator who charted the east coast of Australia.",2],
+["A Lifeguard Running in Slow Motion","Red shorts, very serious, very slow.",3],
+["Mozart","Child-prodigy composer from Salzburg. Wrote over 600 works.",2],
+["Pinocchio","Wooden puppet whose nose grows when he lies.",1],
+["Spartacus","Gladiator who led a slave revolt against Rome.",3],
+["The Invisible Man","Wrapped in bandages and sunglasses so you can see him.",2],
+["Ned Kelly","Australian bushranger who wore homemade iron armour.",2],
+["A Magician Whose Trick Went Wrong","The rabbit is gone and so is your watch.",3],
+["Isaac Newton","An apple fell on his head and gravity was explained.",1],
+["Little Red Riding Hood","Visits Grandma, meets a wolf in disguise.",1],
+["Buddha","Found enlightenment sitting under a bodhi tree.",2],
+["Zeus","King of the Greek gods. Throws thunderbolts from Olympus.",1],
+["Winston Churchill","Wartime British prime minister. Cigar and V for victory.",1],
+["Someone Whose Umbrella Just Flipped Inside Out","Wrestling it in the wind, getting soaked.",3],
+["Mary Poppins","Flying nanny with an umbrella and a bottomless bag.",1],
+["Galileo","Pointed a telescope at Jupiter's moons, argued Earth moves.",3],
+["Big Ben","The great bell in the clock tower at Westminster.",2],
+["Alice in Wonderland","Fell down a rabbit hole, drank the potion, shrank.",1],
+["A Dad Doing a Barbecue","Tongs in hand, refuses all help, everything slightly burnt.",2],
+["Mona Lisa","Painting with the most famous half smile in the Louvre.",1]
+].map(([name,desc,pts])=>({name,desc,pts}))};
+
+/* ---------- storage ---------- */
+const K={lib:'monikers.decks.v1',game:'monikers.game.v1',best:'monikers.best.v1'};
+const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const drop=k=>{try{localStorage.removeItem(k)}catch(e){}};
+
+let library=load(K.lib,[]);
+let G=load(K.game,null);
+if(G&&G.phase==='turn'){G.phase='paused';G.remaining=Math.max(0,Math.round((G.endsAt-Date.now())/1000));}
+let view='home';
+let ui={setup:null,msg:'',msgOk:false,editDeck:null,confirm:null,showFormat:false,exportId:null};
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const allDecks=()=>[SAMPLE,...library];
+const uid=()=>'d'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const persist=()=>{if(G)save(K.game,G);else drop(K.game)};
+
+/* ---------- JSON parsing ---------- */
+function normCard(c,i){
+  if(typeof c==='string')c={name:c};
+  if(!c||typeof c!=='object')throw new Error(`Card ${i+1} is not a name or an object.`);
+  const name=String(c.name??c.title??c.moniker??'').trim();
+  if(!name)throw new Error(`Card ${i+1} has no "name".`);
+  let pts=parseInt(c.points??c.pts??c.score??1,10);
+  if(!Number.isFinite(pts))pts=1;
+  pts=Math.min(5,Math.max(1,pts));
+  const desc=String(c.description??c.desc??c.blurb??c.clue??'').trim();
+  const cat=String(c.category??c.cat??'').trim();
+  return {name,desc,pts,...(cat?{cat}:{})};
+}
+function parseDeck(text,fallbackTitle){
+  let data;
+  try{data=JSON.parse(text)}catch(e){throw new Error('That is not valid JSON. Check for missing commas or quotes. ('+e.message+')')}
+  let title=fallbackTitle||'Custom Deck',cards=data;
+  if(!Array.isArray(data)){
+    if(data&&Array.isArray(data.cards)){cards=data.cards;title=String(data.title||data.name||title).trim()||title}
+    else throw new Error('Expected a list of cards, or an object with a "cards" list.');
+  }
+  const seen=new Set(),out=[];
+  cards.forEach((c,i)=>{const n=normCard(c,i);const key=n.name.toLowerCase();if(!seen.has(key)){seen.add(key);out.push(n)}});
+  if(!out.length)throw new Error('The deck has no cards.');
+  return {title,cards:out};
+}
+function addDeck(d){
+  const existing=library.find(x=>x.title.toLowerCase()===d.title.toLowerCase());
+  if(existing){existing.cards=d.cards;save(K.lib,library);return `Updated "${d.title}" — ${d.cards.length} cards.`}
+  library.push({id:uid(),title:d.title,cards:d.cards});save(K.lib,library);
+  return `Added "${d.title}" — ${d.cards.length} cards.`;
+}
+
+/* ---------- audio + wake lock ---------- */
+let actx=null,wake=null;
+function beep(f=660,d=.15,when=0){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.connect(g);g.connect(actx.destination);const t=actx.currentTime+when;g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.start(t);o.stop(t+d)}catch(e){}}
+async function lockScreen(){try{if('wakeLock' in navigator&&!wake){wake=await navigator.wakeLock.request('screen');wake.addEventListener('release',()=>wake=null)}}catch(e){}}
+
+/* ---------- game logic ---------- */
+const RULES=[
+  ['Say anything','Describe the name any way you like. Do not say any part of the name itself.'],
+  ['One word','Exactly one word per clue. You can repeat that word as often as you want.'],
+  ['Charades','No words at all. Act it out. Sounds and gestures are fine.']
+];
+function teamClass(i){return G&&G.mode==='coop'?'tc':'t'+i}
+function teamText(i){return G&&G.mode==='coop'?'teamc':'team'+i}
+
+function newGame(s){
+  const pool=[],seen=new Set();
+  allDecks().filter(d=>s.decks.includes(d.id)).forEach(d=>d.cards.forEach(c=>{const k=c.name.toLowerCase();if(!seen.has(k)){seen.add(k);pool.push(c)}}));
+  const n=s.size==='all'?pool.length:Math.min(pool.length,+s.size);
+  const cards=shuffle(pool).slice(0,n);
+  G={mode:s.mode,teams:s.mode==='coop'?[{name:s.coopName||'Team'}]:[{name:s.t0||'Red'},{name:s.t1||'Blue'}],
+     cards,round:0,pile:shuffle(cards.map((_,i)=>i)),scores:[[0,0],[0,0],[0,0]],turnTeam:0,turns:0,
+     timer:+s.timer,carry:null,phase:'handoff',turnGot:[],off:[],remaining:0,endsAt:0,roundOver:false,
+     deckKey:s.decks.slice().sort().join('+')+':'+n};
+  persist();view='game';render();
+}
+function startTurn(){
+  G.pile=shuffle(G.pile);G.turnGot=[];G.off=[];G.roundOver=false;
+  const dur=G.carry??G.timer;G.carry=null;G.turns++;
+  G.endsAt=Date.now()+dur*1000;G.dur=dur;G.phase='turn';lockScreen();beep(880,.1);persist();render();tick();
+}
+function gotIt(){
+  if(G.phase!=='turn'||!G.pile.length)return;
+  G.turnGot.push(G.pile.shift());beep(990,.06);
+  if(!G.pile.length){G.remaining=Math.max(0,Math.round((G.endsAt-Date.now())/1000));G.roundOver=true;endTurn(false);return}
+  persist();render();
+}
+function skip(){if(G.phase!=='turn'||G.pile.length<2)return;G.pile.push(G.pile.shift());persist();render()}
+function undo(){if(!G.turnGot.length)return;G.pile.unshift(G.turnGot.pop());persist();render()}
+function pause(){if(G.phase!=='turn')return;G.remaining=Math.max(0,Math.round((G.endsAt-Date.now())/1000));G.phase='paused';persist();render()}
+function resumeTurn(){G.endsAt=Date.now()+G.remaining*1000;G.phase='turn';lockScreen();persist();render();tick()}
+function endTurn(timeUp){
+  if(timeUp){beep(440,.25);beep(330,.4,.25)}
+  G.phase='review';persist();render();
+}
+function toggleOff(idx){const i=G.off.indexOf(idx);if(i>=0)G.off.splice(i,1);else G.off.push(idx);render()}
+function confirmTurn(){
+  G.turnGot.forEach(idx=>{if(G.off.includes(idx))G.pile.push(idx);else G.scores[G.round][G.turnTeam]+=G.cards[idx].pts});
+  if(G.pile.length===0){
+    G.carry=G.roundOver&&G.remaining>=3?G.remaining:null;
+    G.phase=G.round<2?'roundEnd':'over';
+    if(G.phase==='over')recordBest();
+  }else{
+    if(G.mode==='versus')G.turnTeam^=1;
+    G.phase='handoff';
+  }
+  G.turnGot=[];G.off=[];persist();render();
+}
+function nextRound(){G.round++;G.pile=shuffle(G.cards.map((_,i)=>i));G.phase='handoff';persist();render()}
+function total(t){return G.scores.reduce((a,r)=>a+r[t],0)}
+function recordBest(){
+  if(G.mode!=='coop')return;
+  const b=load(K.best,{});const prev=b[G.deckKey];
+  G.newBest=!prev||G.turns<prev;G.prevBest=prev||null;
+  if(G.newBest){b[G.deckKey]=G.turns;save(K.best,b)}
+}
+
+let timerId=null;
+function tick(){
+  clearInterval(timerId);
+  timerId=setInterval(()=>{
+    if(!G||G.phase!=='turn'){clearInterval(timerId);return}
+    const left=Math.max(0,(G.endsAt-Date.now())/1000);
+    const el=document.getElementById('clock'),bar=document.getElementById('clockbar');
+    if(el){el.textContent=Math.ceil(left);el.classList.toggle('low',left<=10)}
+    if(bar)bar.style.width=(left/G.dur*100)+'%';
+    const s=Math.ceil(left);
+    if(s<=5&&s>0&&s!==tick.last){beep(700,.05)}tick.last=s;
+    if(left<=0){clearInterval(timerId);G.remaining=0;endTurn(true)}
+  },200);
+}
+
+/* ---------- views ---------- */
+function tagHTML(card,cls,label){
+  return `<article class="tag ${cls} pop"><div class="band"></div>
+  <div class="body"><div class="name">${esc(card.name)}</div>${card.desc?`<p class="desc">${esc(card.desc)}</p>`:''}
+  <div class="divider"></div>
+  <div class="foot"><span class="cat">${esc(card.cat||label||'Monikers')}</span><span class="pts p${card.pts}" title="${card.pts} point${card.pts>1?'s':''}">${card.pts}<small>POINT${card.pts>1?'S':''}</small></span></div></div></article>`;
+}
+
+function vHome(){
+  const has=G&&G.phase!=='over';
+  return `<article class="tag t0 hero"><div class="band"></div>
+    <div class="body"><div class="name">Monikers</div><p class="desc">Pass-and-play for one phone. Same deck, three rounds. Bring your own cards as JSON.</p>
+    <div class="foot"><span>${allDecks().length} deck${allDecks().length>1?'s':''} in the box</span><span class="pts">3</span></div></div></article>
+  <div class="stack">
+    ${has?`<button class="btn primary big" data-a="resume">Resume game · Round ${G.round+1}</button>`:''}
+    <button class="btn ${has?'':'primary'} big" data-a="setup">New game</button>
+    <button class="btn big" data-a="library">Decks &amp; JSON import</button>
+  </div>
+  <section class="panel"><h3>The three rounds</h3><div class="rounds">
+    ${RULES.map((r,i)=>`<div><b>${i+1}</b><p><strong>${r[0]}.</strong> <span class="muted">${r[1]}</span></p></div>`).join('')}
+  </div></section>`;
+}
+
+function vSetup(){
+  const s=ui.setup;
+  const decks=allDecks();
+  const pool=new Set();decks.filter(d=>s.decks.includes(d.id)).forEach(d=>d.cards.forEach(c=>pool.add(c.name.toLowerCase())));
+  const n=pool.size;
+  const sizes=['30','40','50','all'];
+  return `<div class="topbar"><h2>New game</h2><button class="link" data-a="home">Back</button></div>
+  <section class="panel"><h3>Mode</h3>
+    <div class="seg" role="group" aria-label="Mode">
+      <button data-a="mode" data-v="versus" aria-pressed="${s.mode==='versus'}">Versus</button>
+      <button data-a="mode" data-v="coop" aria-pressed="${s.mode==='coop'}">Co-op</button></div>
+    ${s.mode==='versus'?`<div class="row" style="flex-wrap:nowrap">
+      <label class="field" style="flex:1;min-width:0"><span class="team0">Team 1</span><input type="text" id="t0" value="${esc(s.t0)}" maxlength="20"></label>
+      <label class="field" style="flex:1;min-width:0"><span class="team1">Team 2</span><input type="text" id="t1" value="${esc(s.t1)}" maxlength="20"></label></div>
+      <p class="muted">Most points after three rounds wins.</p>`
+    :`<label class="field"><span class="teamc">Team name</span><input type="text" id="coopName" value="${esc(s.coopName)}" maxlength="20"></label>
+      <p class="muted">One team. Clear all three rounds in as few turns as you can. Your best is saved per deck mix.</p>`}
+  </section>
+  <section class="panel"><h3>Decks</h3><div class="stack">
+    ${decks.map(d=>`<label class="chip"><input type="checkbox" data-a="deck" value="${d.id}" ${s.decks.includes(d.id)?'checked':''}><span class="t">${esc(d.title)}</span><span class="c">${d.cards.length}</span></label>`).join('')}
+    <button class="link" data-a="library" style="align-self:flex-start">Import a JSON deck</button>
+  </div></section>
+  <section class="panel"><h3>Cards in play</h3>
+    <div class="seg" role="group" aria-label="Deck size">${sizes.map(z=>`<button data-a="size" data-v="${z}" aria-pressed="${s.size===z}" ${z!=='all'&&+z>n?'disabled':''}>${z==='all'?'All '+n:z}</button>`).join('')}</div>
+    <h3>Turn length</h3>
+    <div class="seg" role="group" aria-label="Turn length">${['30','45','60','90'].map(z=>`<button data-a="timer" data-v="${z}" aria-pressed="${s.timer===z}">${z}s</button>`).join('')}</div>
+  </section>
+  ${n<8?`<p class="err">Pick decks with at least 8 cards between them.</p>`:''}
+  <button class="btn primary big" data-a="start" ${n<8?'disabled':''}>Deal ${s.size==='all'?n:Math.min(n,+s.size)} cards</button>`;
+}
+
+function scoreline(){
+  if(G.mode==='coop')return `<div class="turnhead"><span class="teamc">${esc(G.teams[0].name)}</span><span>Turn ${G.turns}</span></div>`;
+  return `<div class="turnhead"><span class="team0">${esc(G.teams[0].name)} ${total(0)}</span><span class="pill">Round ${G.round+1}</span><span class="team1">${total(1)} ${esc(G.teams[1].name)}</span></div>`;
+}
+
+function vGame(){
+  const t=G.turnTeam,tn=esc(G.teams[t].name);
+  const left=G.pile.length;
+  switch(G.phase){
+  case 'handoff':{
+    const dur=G.carry??G.timer;
+    return `${scoreline()}
+    <section class="panel ${G.mode==='coop'?'':''}" style="text-align:center;gap:14px">
+      <h3>Round ${G.round+1} of 3 · ${RULES[G.round][0]}</h3>
+      <h2 class="${teamText(t)}" style="font-size:2.2rem">${G.mode==='coop'?'Next clue-giver':'Pass to '+tn}</h2>
+      <p>${RULES[G.round][1]}</p>
+      <p class="muted">${left} card${left===1?'':'s'} left in this round · ${dur}s turn${G.carry?' (time carried over)':''}</p>
+    </section>
+    <button class="btn primary big" data-a="go">Start turn</button>
+    <div class="row" style="justify-content:space-between"><button class="link" data-a="home">Menu</button><button class="link" data-a="quit">End game</button></div>
+    ${ui.confirm==='quit'?confirmBox('End this game? Scores will be lost.','quitYes'):''}`;
+  }
+  case 'turn': case 'paused':{
+    const card=G.cards[G.pile[0]];
+    const leftS=G.phase==='turn'?Math.ceil(Math.max(0,(G.endsAt-Date.now())/1000)):G.remaining;
+    return `${scoreline()}
+    <div id="clock" class="timer ${leftS<=10?'low':''}">${leftS}</div>
+    <div class="bar"><i id="clockbar" style="width:${leftS/G.dur*100}%"></i></div>
+    ${G.phase==='paused'
+      ?`<section class="panel" style="text-align:center"><h2>Paused</h2><p class="muted">The card is hidden while paused.</p></section>
+        <button class="btn primary big" data-a="resumeTurn">Resume · ${G.remaining}s left</button>
+        <button class="btn ghost" data-a="endNow">End turn now</button>`
+      :`${tagHTML(card,teamClass(t),RULES[G.round][0])}
+        <div class="actions"><button class="btn" data-a="skip" ${left<2?'disabled':''}>Skip</button><button class="btn got" data-a="got">Got it</button></div>
+        <div class="row" style="justify-content:space-between">
+          <button class="btn small ghost" data-a="undo" ${G.turnGot.length?'':'disabled'}>Undo last (${G.turnGot.length})</button>
+          <span class="muted" style="font-variant-numeric:tabular-nums">${left} left</span>
+          <button class="btn small ghost" data-a="pause">Pause</button></div>`}`;
+  }
+  case 'review':{
+    const pts=G.turnGot.filter(i=>!G.off.includes(i)).reduce((a,i)=>a+G.cards[i].pts,0);
+    return `${scoreline()}
+    <section class="panel"><h2 class="${teamText(t)}">${G.roundOver?'Deck cleared!':'Time!'}</h2>
+      <p class="muted">${G.turnGot.length?'Tap a card to strike it if the clue broke the rules. Struck cards go back in the pile.':'No cards this turn.'}</p>
+      <div class="list">${G.turnGot.map(i=>{const c=G.cards[i],off=G.off.includes(i);
+        return `<button class="item ${off?'off':''}" data-a="off" data-v="${i}" style="text-align:left;cursor:pointer;color:inherit;font:inherit" aria-pressed="${!off}">
+        <span class="nm">${esc(c.name)}</span><span class="sp"><span class="pts" style="--band:var(--${off?'line':G.mode==='coop'?'green':t?'blue':'red'});width:28px;height:28px;font-size:.9rem">${c.pts}</span></span></button>`}).join('')}</div>
+      <p style="font-weight:800">${G.mode==='coop'?`${G.turnGot.length-G.off.length} card${G.turnGot.length-G.off.length===1?'':'s'} cleared`:`+${pts} point${pts===1?'':'s'} for ${tn}`}</p>
+    </section>
+    <button class="btn primary big" data-a="confirm">${G.roundOver?(G.round<2?'Finish round':'See results'):'Next turn'}</button>`;
+  }
+  case 'roundEnd':{
+    return `<section class="panel"><h3>Round ${G.round+1} done</h3><h2>Up next: ${RULES[G.round+1][0]}</h2><p>${RULES[G.round+1][1]}</p></section>
+    ${G.mode==='versus'?standings():`<section class="panel"><p>${G.turns} turn${G.turns===1?'':'s'} used so far.</p></section>`}
+    <p class="muted">${esc(G.teams[G.turnTeam].name)} cleared the deck, so they start the next round${G.carry?` with ${G.carry}s left over`:''}.</p>
+    <button class="btn primary big" data-a="nextRound">Start round ${G.round+2}</button>`;
+  }
+  case 'over':{
+    let head;
+    if(G.mode==='coop'){
+      head=`<h2 class="teamc">${G.turns} turns</h2><p>${G.newBest?(G.prevBest?`New best! Previous was ${G.prevBest}.`:'First record set for this deck mix.'):`Best for this deck mix is ${G.prevBest}.`}</p>`;
+    }else{
+      const a=total(0),b=total(1);
+      head=a===b?`<h2>It's a tie</h2>`:`<h2 class="${a>b?'team0':'team1'}">${esc(G.teams[a>b?0:1].name)} win</h2>`;
+    }
+    return `<section class="panel"><h3>Game over</h3>${head}</section>
+    ${G.mode==='versus'?standings():''}
+    <button class="btn primary big" data-a="rematch">Play again, same settings</button>
+    <button class="btn big" data-a="homeClear">Main menu</button>`;
+  }}
+}
+function standings(){
+  return `<section class="panel" style="overflow-x:auto"><table><thead><tr><th>Round</th><th class="team0">${esc(G.teams[0].name)}</th><th class="team1">${esc(G.teams[1].name)}</th></tr></thead>
+  <tbody>${G.scores.map((r,i)=>i<=G.round?`<tr><td>${i+1}. ${RULES[i][0]}</td><td>${r[0]}</td><td>${r[1]}</td></tr>`:'').join('')}
+  <tr><td><strong>Total</strong></td><td><strong>${total(0)}</strong></td><td><strong>${total(1)}</strong></td></tr></tbody></table></section>`;
+}
+function confirmBox(text,act){
+  return `<section class="panel confirm"><p style="font-weight:700">${text}</p><div class="row"><button class="btn danger" data-a="${act}">Yes</button><button class="btn ghost" data-a="cancelConfirm">Cancel</button></div></section>`;
+}
+
+const TEMPLATE=`{
+  "title": "Office Party",
+  "cards": [
+    { "name": "Dave from Accounts", "description": "Owns a label maker and loves it.", "points": 2 },
+    { "name": "The Broken Printer", "description": "Paper jam in tray 2. Always.", "points": 1 },
+    "The Boss's Dog"
+  ]
+}`;
+
+function vLibrary(){
+  const ed=ui.editDeck;
+  return `<div class="topbar"><h2>Decks</h2><button class="link" data-a="${ui.setup?'setupBack':'home'}">Back</button></div>
+  <section class="panel"><h3>Import JSON</h3>
+    <label class="btn primary" for="file" style="text-align:center">Choose .json file</label>
+    <input type="file" id="file" accept=".json,application/json,text/plain" multiple hidden>
+    <label class="field">Or paste JSON<textarea id="paste" placeholder='[{"name":"Cleopatra","description":"Queen of the Nile","points":2}]'>${esc(ui.pasteDraft||'')}</textarea></label>
+    <label class="field">Deck name (used if the JSON has no title)<input type="text" id="pasteTitle" value="${esc(ui.pasteTitle||'')}" placeholder="My Deck" maxlength="40"></label>
+    <button class="btn" data-a="importPaste">Add pasted deck</button>
+    ${ui.msg?`<p class="${ui.msgOk?'ok':'err'}" role="status">${esc(ui.msg)}</p>`:''}
+    <button class="link" data-a="fmt" style="align-self:flex-start">${ui.showFormat?'Hide':'Show'} JSON format</button>
+    ${ui.showFormat?`<div class="stack"><p class="muted">A deck is a list of cards, or an object with a <code>title</code> and a <code>cards</code> list. Each card is a plain name, or an object with <code>name</code> (required), <code>description</code>, <code>points</code> (1–5, default 1) and <code>category</code> (shown at the foot of the card, like Celebrity or Et Cetera). Duplicate names are dropped. Importing a deck with the same title replaces it.</p>
+      <pre id="tpl">${esc(TEMPLATE)}</pre><div class="row"><button class="btn small" data-a="copyTpl">Copy template</button><button class="btn small ghost" data-a="useTpl">Paste into box</button></div></div>`:''}
+  </section>
+  <section class="panel"><h3>Your decks</h3><div class="list">
+    ${allDecks().map(d=>`<div class="item"><span class="nm" style="font-family:var(--font-body);font-weight:800;font-size:1rem">${esc(d.title)}</span>
+      <span class="sp"><span class="muted" style="font-variant-numeric:tabular-nums">${d.cards.length}</span>
+      <button class="btn small ghost" data-a="edit" data-v="${d.id}">${d.builtin?'View':'Edit'}</button></span></div>`).join('')}
+  </div><button class="btn" data-a="newDeck">+ Build a deck by hand</button></section>
+  ${ed?vEditor(ed):''}`;
+}
+function vEditor(id){
+  const d=id==='new'?{id:'new',title:'',cards:[]}:allDecks().find(x=>x.id===id);
+  if(!d)return '';
+  const ro=!!d.builtin;
+  const draft=ui.draft;
+  return `<section class="panel" id="editor"><div class="topbar"><h3>${ro?'Viewing':'Editing'}</h3><button class="link" data-a="closeEd">Close</button></div>
+    ${ro?`<h2>${esc(d.title)}</h2>`:`<label class="field">Deck name<input type="text" id="edTitle" value="${esc(draft.title)}" maxlength="40"></label>`}
+    ${ro?'':`<div class="stack" style="gap:8px"><label class="field">Card name<input type="text" id="cName" maxlength="60"></label>
+      <label class="field">Description (optional)<textarea id="cDesc" maxlength="400" style="min-height:70px;font-family:var(--font-body);font-size:15px"></textarea></label>
+      <label class="field">Category (optional)<input type="text" id="cCat" list="cats" maxlength="30" placeholder="Celebrity"><datalist id="cats"><option>Celebrity</option><option>Historical Figure</option><option>Fictional Character</option><option>Et Cetera</option></datalist></label>
+      <div class="row" style="flex-wrap:nowrap"><label class="field" style="width:110px">Points<select id="cPts">${[1,2,3,4,5].map(p=>`<option>${p}</option>`).join('')}</select></label>
+      <button class="btn" data-a="addCard" style="flex:1;align-self:flex-end">Add card</button></div></div>`}
+    <div class="list">${draft.cards.map((c,i)=>`<div class="item"><span style="min-width:0"><span class="nm">${esc(c.name)}</span>${c.desc?`<br><span class="muted" style="font-size:.85rem">${esc(c.desc)}</span>`:''}</span>
+      <span class="sp">${c.cat?`<span class="pill">${esc(c.cat)}</span>`:''}<span class="pill">${c.pts} pt</span>${ro?'':`<button class="btn small ghost" data-a="rmCard" data-v="${i}" aria-label="Remove ${esc(c.name)}">✕</button>`}</span></div>`).join('')||'<p class="muted">No cards yet.</p>'}</div>
+    <div class="row">${ro?'':`<button class="btn primary" data-a="saveDeck">Save deck</button>`}
+      <button class="btn ghost" data-a="exportDeck">${ui.exportOpen?'Hide':'Show'} JSON</button>
+      ${ro||id==='new'?'':`<button class="btn danger" data-a="delDeck">Delete</button>`}</div>
+    ${ui.confirm==='del'?confirmBox(`Delete "${esc(d.title)}"?`,'delYes'):''}
+    ${ui.exportOpen?`<textarea id="exportBox" readonly>${esc(JSON.stringify({title:draft.title||d.title,cards:draft.cards.map(c=>({name:c.name,...(c.desc?{description:c.desc}:{}),points:c.pts,...(c.cat?{category:c.cat}:{})}))},null,2))}</textarea>
+      <button class="btn small" data-a="copyExport">Copy JSON</button><p class="muted">Paste it into a .json file to share or back up the deck.</p>`:''}
+    ${ui.edMsg?`<p class="${ui.edOk?'ok':'err'}">${esc(ui.edMsg)}</p>`:''}
+  </section>`;
+}
+
+function render(){
+  const app=document.getElementById('app');
+  if(view==='game'&&!G)view='home';
+  app.innerHTML=view==='home'?vHome():view==='setup'?vSetup():view==='library'?vLibrary():vGame();
+}
+
+/* ---------- events ---------- */
+function defaultSetup(){
+  const last=load('monikers.setup.v1',null);
+  const ids=allDecks().map(d=>d.id);
+  const s=last||{mode:'versus',t0:'Red',t1:'Blue',coopName:'Us',decks:['sample'],size:'40',timer:'60'};
+  s.decks=s.decks.filter(id=>ids.includes(id));if(!s.decks.length)s.decks=['sample'];
+  return s;
+}
+function copy(text,el){
+  const done=()=>{const m=el;if(m){const o=m.textContent;m.textContent='Copied';setTimeout(()=>m.textContent=o,1200)}};
+  try{navigator.clipboard.writeText(text).then(done,()=>selectFallback())}catch(e){selectFallback()}
+  function selectFallback(){const box=document.getElementById('exportBox')||document.getElementById('paste');if(box){box.focus();box.select()}}
+}
+function syncSetupInputs(){const s=ui.setup;if(!s)return;['t0','t1','coopName'].forEach(k=>{const el=document.getElementById(k);if(el)s[k]=el.value.trim()})}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;
+  const a=b.dataset.a,v=b.dataset.v;
+  if(b.type==='checkbox')return;
+  switch(a){
+    case 'home': syncSetupInputs();view='home';ui.confirm=null;render();break;
+    case 'homeClear': G=null;persist();view='home';render();break;
+    case 'resume': view='game';render();if(G.phase==='turn')tick();break;
+    case 'setup': ui.setup=defaultSetup();view='setup';render();break;
+    case 'setupBack': view='setup';ui.editDeck=null;render();break;
+    case 'library': syncSetupInputs();ui.msg='';ui.editDeck=null;view='library';render();break;
+    case 'mode': syncSetupInputs();ui.setup.mode=v;render();break;
+    case 'size': ui.setup.size=v;syncSetupInputs();render();break;
+    case 'timer': ui.setup.timer=v;syncSetupInputs();render();break;
+    case 'start': syncSetupInputs();save('monikers.setup.v1',ui.setup);newGame(ui.setup);break;
+    case 'go': startTurn();break;
+    case 'got': gotIt();break;
+    case 'skip': skip();break;
+    case 'undo': undo();break;
+    case 'pause': pause();break;
+    case 'resumeTurn': resumeTurn();break;
+    case 'endNow': G.remaining=0;endTurn(false);break;
+    case 'off': toggleOff(+v);break;
+    case 'confirm': confirmTurn();break;
+    case 'nextRound': nextRound();break;
+    case 'quit': ui.confirm='quit';render();break;
+    case 'quitYes': G=null;persist();ui.confirm=null;view='home';render();break;
+    case 'cancelConfirm': ui.confirm=null;render();break;
+    case 'rematch': {const s=defaultSetup();newGame(s);break}
+    case 'fmt': ui.showFormat=!ui.showFormat;stashPaste();render();break;
+    case 'copyTpl': copy(TEMPLATE,b);break;
+    case 'useTpl': ui.pasteDraft=TEMPLATE;render();break;
+    case 'importPaste':{
+      stashPaste();
+      try{const d=parseDeck(ui.pasteDraft||'',ui.pasteTitle||'Custom Deck');ui.msg=addDeck(d);ui.msgOk=true;ui.pasteDraft='';ui.pasteTitle='';if(ui.setup){const nd=library.find(x=>x.title===d.title);if(nd&&!ui.setup.decks.includes(nd.id))ui.setup.decks.push(nd.id)}}
+      catch(err){ui.msg=err.message;ui.msgOk=false}
+      render();break;}
+    case 'edit': openEditor(v);break;
+    case 'newDeck': openEditor('new');break;
+    case 'closeEd': ui.editDeck=null;render();break;
+    case 'addCard':{
+      stashTitle();
+      const n=document.getElementById('cName').value.trim();
+      if(!n){ui.edMsg='Give the card a name.';ui.edOk=false;render();break}
+      if(ui.draft.cards.some(c=>c.name.toLowerCase()===n.toLowerCase())){ui.edMsg='That name is already in this deck.';ui.edOk=false;render();break}
+      {const cat=document.getElementById('cCat').value.trim();
+      ui.draft.cards.push({name:n,desc:document.getElementById('cDesc').value.trim(),pts:+document.getElementById('cPts').value,...(cat?{cat}:{})});}
+      ui.edMsg='';render();document.getElementById('cName')?.focus();break;}
+    case 'rmCard': stashTitle();ui.draft.cards.splice(+v,1);render();break;
+    case 'saveDeck':{
+      stashTitle();
+      if(!ui.draft.title){ui.edMsg='Give the deck a name.';ui.edOk=false;render();break}
+      if(!ui.draft.cards.length){ui.edMsg='Add at least one card.';ui.edOk=false;render();break}
+      if(ui.editDeck==='new'){const d={id:uid(),title:ui.draft.title,cards:ui.draft.cards};library.push(d);ui.editDeck=d.id;if(ui.setup)ui.setup.decks.push(d.id)}
+      else{const d=library.find(x=>x.id===ui.editDeck);d.title=ui.draft.title;d.cards=ui.draft.cards}
+      save(K.lib,library);ui.edMsg='Saved.';ui.edOk=true;render();break;}
+    case 'exportDeck': stashTitle();ui.exportOpen=!ui.exportOpen;render();break;
+    case 'copyExport': copy(document.getElementById('exportBox').value,b);break;
+    case 'delDeck': ui.confirm='del';stashTitle();render();break;
+    case 'delYes': library=library.filter(x=>x.id!==ui.editDeck);save(K.lib,library);if(ui.setup)ui.setup.decks=ui.setup.decks.filter(x=>x!==ui.editDeck);ui.editDeck=null;ui.confirm=null;render();break;
+  }
+});
+function stashPaste(){const p=document.getElementById('paste'),t=document.getElementById('pasteTitle');if(p)ui.pasteDraft=p.value;if(t)ui.pasteTitle=t.value.trim()}
+function stashTitle(){const t=document.getElementById('edTitle');if(t)ui.draft.title=t.value.trim()}
+function openEditor(id){
+  stashPaste();
+  const d=id==='new'?{title:'',cards:[]}:allDecks().find(x=>x.id===id);
+  ui.editDeck=id;ui.draft={title:d.title,cards:d.cards.map(c=>({...c}))};ui.edMsg='';ui.exportOpen=false;ui.confirm=null;
+  render();document.getElementById('editor')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.addEventListener('change',async e=>{
+  const t=e.target;
+  if(t.dataset&&t.dataset.a==='deck'){syncSetupInputs();const s=ui.setup;if(t.checked)s.decks.push(t.value);else s.decks=s.decks.filter(x=>x!==t.value);render();return}
+  if(t.id==='file'){
+    stashPaste();
+    const msgs=[];let ok=true;
+    for(const f of t.files){
+      try{const text=await f.text();const d=parseDeck(text,f.name.replace(/\.json$/i,''));msgs.push(addDeck(d));
+        if(ui.setup){const nd=library.find(x=>x.title===d.title);if(nd&&!ui.setup.decks.includes(nd.id))ui.setup.decks.push(nd.id)}}
+      catch(err){ok=false;msgs.push(`${f.name}: ${err.message}`)}
+    }
+    ui.msg=msgs.join(' ');ui.msgOk=ok;render();
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target.id==='cName'){e.preventDefault();document.querySelector('[data-a="addCard"]')?.click()}
+});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&G&&G.phase==='turn'){wake=null;lockScreen()}});
+
+/* hot reload support */
+window.claude?.hot?.snapshot?.(()=>({view}));
+const boot=d=>{if(d&&d.view&&(d.view!=='game'||G))view=d.view;render();if(G&&G.phase==='turn'&&view==='game')tick()};
+window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
+</script>
+
+</body></html>
