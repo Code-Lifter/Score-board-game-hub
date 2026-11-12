@@ -3,252 +3,489 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCOUT Digital Scoreboard</title>
+    <title>SCOUT Scoreboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Hide native number spinners — we use our own − / + buttons */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+        .fade-in { animation: fade .25s ease-out; }
+        @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    </style>
 </head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
     <!-- Navbar -->
-<div id="nav-placeholder"></div>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-6">
+    <div id="nav-placeholder"></div>
 
-    <div class="max-w-3xl mx-auto bg-slate-800 p-8 rounded-xl shadow-2xl border border-slate-700">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-orange-400 mb-2">🎪 SCOUT Scoreboard 🎪</h1>
-            <p class="text-slate-400">Put together a show that will beat out your rivals.</p>
-        </div>
+    <main class="max-w-3xl mx-auto px-4 py-6 sm:py-10">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl sm:text-4xl font-bold text-orange-400">🎪 SCOUT Scoreboard</h1>
+            <p class="text-slate-400 mt-1">Put together a show that will beat out your rivals.</p>
+        </header>
 
-        <!-- Setup Screen -->
-        <div id="setup-screen" class="space-y-6">
-            <div>
-                <label class="block text-lg font-semibold mb-2">How many circus leaders? (2-5)</label>
-                <input type="number" id="player-count" min="2" max="5" value="3" oninput="updateSetupInstructions()"
-                    class="w-full bg-slate-700 border border-slate-600 rounded p-3 text-white focus:outline-none focus:border-orange-500 transition-colors">
-                
-                <!-- Dynamic Setup Instructions Box -->
-                <div id="setup-instructions" class="mt-4 bg-slate-900 border border-blue-500/50 p-4 rounded-lg shadow-inner text-slate-300 min-h-[100px] flex items-center">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-
-            <button onclick="generatePlayerInputs()" 
-                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded transition-colors">
-                Set Player Names
-            </button>
-            <div id="player-names-container" class="space-y-3 hidden"></div>
-            <button id="start-btn" onclick="startGame()" 
-                class="w-full bg-orange-500 hover:bg-orange-400 text-white font-bold py-3 px-4 rounded transition-colors hidden">
-                Start Game
-            </button>
-        </div>
-
-        <!-- Game Screen -->
-        <div id="game-screen" class="hidden space-y-8">
-            <h2 id="round-header" class="text-2xl font-bold text-center text-blue-400">Round 1</h2>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-700 border-b border-slate-600" id="table-head">
-                            <th class="p-3">Player</th>
-                            <!-- Round headers generated dynamically -->
-                            <th class="p-3 text-right text-orange-400">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body" class="bg-slate-800">
-                        <!-- Player rows generated dynamically -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Current Round Input Form -->
-            <div class="bg-slate-700 p-6 rounded-lg border border-slate-600">
-                <h3 class="text-xl font-bold mb-4 text-center">Score Entry</h3>
-                <div id="score-inputs" class="space-y-6">
-                    <!-- Score inputs generated dynamically -->
-                </div>
-                <button onclick="submitRound()" 
-                    class="w-full mt-6 bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 rounded transition-colors">
-                    Calculate & Next Round
-                </button>
-            </div>
-        </div>
-
-        <!-- Final Results Screen -->
-        <div id="results-screen" class="hidden text-center space-y-6">
-            <h2 class="text-4xl font-bold text-green-400">Game Over!</h2>
-            <div id="winner-announcement" class="text-2xl font-semibold"></div>
-            <button onclick="location.reload()" 
-                class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded transition-colors">
-                Play Again
-            </button>
-        </div>
-    </div>
+        <!-- All screens are rendered into here -->
+        <section id="app" class="bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 p-5 sm:p-8"></section>
+    </main>
 
     <script>
         // --- Navbar ---
-  fetch('nav.html')
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('nav-placeholder').innerHTML = data;
-    });
-        let players = [];
-        let totalRounds = 0;
-        let currentRound = 1;
+        fetch('nav.html')
+            .then(r => (r.ok ? r.text() : ''))
+            .then(html => { if (html) document.getElementById('nav-placeholder').innerHTML = html; })
+            .catch(() => {});
 
-        // --- NEW: Setup Rules Dictionary ---
-        const setupRules = {
-            2: "<strong>🃏 2-Player Setup:</strong><br>• Return the single card with both '9' and '10' to the box.<br>• Give each player <strong>3 Scout chips</strong> (Scout & Show chips are NOT used).<br>• Deal <strong>11 cards</strong> to each player. Set the remaining 22 cards aside for Round 2.",
-            3: "<strong>🃏 3-Player Setup:</strong><br>• Return all <strong>(9 cards) with a '10'</strong> on them to the box.<br>• Give each player <strong>1 Scout & Show chip</strong>.<br>• Deal <strong>12 cards</strong> to each player.",
-            4: "<strong>🃏 4-Player Setup:</strong><br>• Return the single 1 card, with the '9' and '10' on it, to the box.<br>• Give each player <strong>1 Scout & Show chip</strong>.<br>• Deal <strong>11 cards</strong> to each player.",
-            5: "<strong>🃏 5-Player Setup:</strong><br>• Use <strong>all cards</strong> (return none to the box).<br>• Give each player <strong>1 Scout & Show chip</strong>.<br>• Deal <strong>9 cards</strong> to each player."
+        // --- Data ---
+        const STORAGE_KEY = 'scout-scoreboard-v1';
+
+        const SETUP_RULES = {
+            2: ["Return the single card with both <strong>9</strong> and <strong>10</strong> to the box.",
+                "Give each player <strong>3 Scout chips</strong> (Scout &amp; Show chips are not used).",
+                "Deal <strong>11 cards</strong> to each player. Set the remaining 22 cards aside for round 2."],
+            3: ["Return all <strong>9 cards with a 10</strong> on them to the box.",
+                "Give each player <strong>1 Scout &amp; Show chip</strong>.",
+                "Deal <strong>12 cards</strong> to each player."],
+            4: ["Return the single card with both <strong>9</strong> and <strong>10</strong> to the box.",
+                "Give each player <strong>1 Scout &amp; Show chip</strong>.",
+                "Deal <strong>11 cards</strong> to each player."],
+            5: ["Use <strong>all cards</strong> (return none to the box).",
+                "Give each player <strong>1 Scout &amp; Show chip</strong>.",
+                "Deal <strong>9 cards</strong> to each player."]
         };
 
-        function updateSetupInstructions() {
-            const count = parseInt(document.getElementById('player-count').value);
-            const container = document.getElementById('setup-instructions');
-            
-            if (setupRules[count]) {
-                container.innerHTML = `<p class="leading-relaxed">${setupRules[count]}</p>`;
-            } else {
-                container.innerHTML = `<p class="text-red-400 italic">Please select a valid player count between 2 and 5.</p>`;
-            }
+        const PLAYER_COLORS = [
+            'bg-orange-500 text-white',
+            'bg-sky-500 text-white',
+            'bg-emerald-500 text-white',
+            'bg-fuchsia-500 text-white',
+            'bg-amber-300 text-slate-900'
+        ];
+
+        const FIELDS = [
+            { key: 'collected', label: 'Collected cards' },
+            { key: 'scout', label: 'Scout chips' },
+            { key: 'left', label: 'Cards left in hand' }
+        ];
+
+        // --- State (saved to the browser so a refresh doesn't lose the game) ---
+        const app = document.getElementById('app');
+        let state = load() || freshState();
+
+        function freshState(names = ['', '', '', '', ''], count = 3) {
+            return { phase: 'setup', count, names: [...names], players: [], draft: [], endedBy: null };
         }
 
-        // Initialize setup instructions on page load
-        document.addEventListener("DOMContentLoaded", updateSetupInstructions);
-
-        function generatePlayerInputs() {
-            const count = parseInt(document.getElementById('player-count').value);
-            if (count < 2 || count > 5) {
-                alert("Game rules require 2 to 5 players.");
-                return;
-            }
-            totalRounds = count; 
-            
-            const container = document.getElementById('player-names-container');
-            container.innerHTML = '';
-            
-            for (let i = 0; i < count; i++) {
-                container.innerHTML += `
-                    <input type="text" id="player-name-${i}" placeholder="Player ${i + 1} Name" 
-                        class="w-full bg-slate-700 border border-slate-600 rounded p-3 text-white focus:outline-none focus:border-orange-500">
-                `;
-            }
-            container.classList.remove('hidden');
-            document.getElementById('start-btn').classList.remove('hidden');
+        function blankDraft(n) {
+            return Array.from({ length: n }, () => ({ collected: 0, scout: 0, left: 0 }));
         }
 
-        function startGame() {
-            const count = parseInt(document.getElementById('player-count').value);
-            players = [];
-            
-            for (let i = 0; i < count; i++) {
-                let name = document.getElementById(`player-name-${i}`).value || `Player ${i + 1}`;
-                players.push({ name: name, scores: [], total: 0 });
-            }
-
-            document.getElementById('setup-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-            
-            setupScoreTable();
-            renderScoreInputs();
+        function save() {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
         }
 
-        function setupScoreTable() {
-            const head = document.getElementById('table-head');
-            head.innerHTML = '<th class="p-3">Player</th>';
-            for (let i = 1; i <= totalRounds; i++) {
-                head.innerHTML += `<th class="p-3 text-center">R${i}</th>`;
-            }
-            head.innerHTML += '<th class="p-3 text-right text-orange-400">Total</th>';
-            updateScoreTable();
+        function load() {
+            try {
+                const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                return s && ['setup', 'game', 'results'].includes(s.phase) ? s : null;
+            } catch (e) { return null; }
         }
 
-        function updateScoreTable() {
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '';
-            
-            players.forEach(player => {
-                let row = `<tr class="border-b border-slate-700"><td class="p-3 font-semibold">${player.name}</td>`;
-                for (let i = 0; i < totalRounds; i++) {
-                    row += `<td class="p-3 text-center text-slate-300">${player.scores[i] !== undefined ? player.scores[i] : '-'}</td>`;
-                }
-                row += `<td class="p-3 text-right font-bold text-orange-400">${player.total}</td></tr>`;
-                tbody.innerHTML += row;
-            });
+        // --- Helpers ---
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const roundScore = r => r.collected + r.scout - (r.immune ? 0 : r.left);
+        const totalOf = p => p.rounds.reduce((sum, r) => sum + roundScore(r), 0);
+        const roundsPlayed = () => state.players[0]?.rounds.length ?? 0;
+        const totalRounds = () => state.players.length;
+        const signed = n => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : '0');
+        const avatar = (i, size = 'w-7 h-7 text-sm') =>
+            `<span class="${size} shrink-0 rounded-full grid place-items-center font-bold ${PLAYER_COLORS[i]}">${esc(state.players[i]?.name?.[0]?.toUpperCase() || i + 1)}</span>`;
+
+        function render() {
+            if (state.phase === 'setup') renderSetup();
+            else if (state.phase === 'game') renderGame();
+            else renderResults();
+            save();
         }
 
-        function renderScoreInputs() {
-            document.getElementById('round-header').innerText = `Round ${currentRound} of ${totalRounds}`;
-            const container = document.getElementById('score-inputs');
-            container.innerHTML = '';
-
-            players.forEach((player, index) => {
-                container.innerHTML += `
-                    <div class="bg-slate-800 p-4 rounded border border-slate-600 flex flex-wrap items-end gap-4">
-                        <div class="w-full text-lg font-bold text-blue-300">${player.name}</div>
-                        <div class="flex-1 min-w-[120px]">
-                            <label class="block text-sm mb-1 text-slate-400">Collected Cards</label>
-                            <input type="number" id="collected-${index}" min="0" value="0" class="w-full bg-slate-700 border-none rounded p-2 text-white">
-                        </div>
-                        <div class="flex-1 min-w-[120px]">
-                            <label class="block text-sm mb-1 text-slate-400">Scout Chips</label>
-                            <input type="number" id="scout-${index}" min="0" value="0" class="w-full bg-slate-700 border-none rounded p-2 text-white">
-                        </div>
-                        <div class="flex-1 min-w-[120px]">
-                            <label class="block text-sm mb-1 text-slate-400">Cards Left</label>
-                            <input type="number" id="left-${index}" min="0" value="0" class="w-full bg-slate-700 border-none rounded p-2 text-white">
-                        </div>
-                        <div class="w-full mt-2 flex items-center gap-2">
-                            <input type="checkbox" id="immune-${index}" class="w-4 h-4 rounded text-blue-500 focus:ring-blue-500 focus:ring-2">
-                            <label for="immune-${index}" class="text-sm text-slate-400">Immune to negative points (Round ended because everyone else Scouted)</label>
-                        </div>
+        // ================= SETUP =================
+        function renderSetup() {
+            const c = state.count;
+            app.innerHTML = `
+            <div class="space-y-7 fade-in">
+                <div>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">How many circus leaders?</h2>
+                    <div class="grid grid-cols-4 gap-2" role="radiogroup" aria-label="Number of players">
+                        ${[2, 3, 4, 5].map(n => `
+                            <button type="button" role="radio" aria-checked="${n === c}" data-action="count" data-n="${n}"
+                                class="py-3 rounded-lg text-xl font-bold border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400
+                                ${n === c ? 'bg-orange-500 border-orange-400 text-white shadow-lg shadow-orange-500/20'
+                                          : 'bg-slate-700/60 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white'}">${n}</button>`).join('')}
                     </div>
-                `;
-            });
+                </div>
+
+                <div class="rounded-xl bg-slate-900/70 border border-sky-500/30 p-4">
+                    <h3 class="font-semibold text-sky-300 mb-2">🃏 ${c}-player setup</h3>
+                    <ul class="space-y-1.5 text-sm text-slate-300 leading-relaxed">
+                        ${SETUP_RULES[c].map(r => `<li class="flex gap-2"><span class="text-sky-400">•</span><span>${r}</span></li>`).join('')}
+                    </ul>
+                    <p class="mt-3 text-xs text-slate-500">You'll play ${c} rounds — one per player.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Player names</h2>
+                    <div class="grid sm:grid-cols-2 gap-3">
+                        ${Array.from({ length: c }, (_, i) => `
+                            <label class="flex items-center gap-3 bg-slate-700/60 border border-slate-600 rounded-lg px-3 transition focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/30">
+                                <span class="w-7 h-7 shrink-0 rounded-full grid place-items-center text-sm font-bold ${PLAYER_COLORS[i]}">${i + 1}</span>
+                                <input type="text" data-name="${i}" value="${esc(state.names[i])}" placeholder="Player ${i + 1}"
+                                    maxlength="20" autocomplete="off" enterkeyhint="go"
+                                    class="w-full bg-transparent py-3 text-white placeholder-slate-500 focus:outline-none">
+                            </label>`).join('')}
+                    </div>
+                    <p class="mt-2 text-xs text-slate-500">Leave a name blank to use the placeholder.</p>
+                </div>
+
+                <button type="button" data-action="start"
+                    class="w-full bg-orange-500 hover:bg-orange-400 active:scale-[.99] text-white font-bold py-3.5 rounded-lg shadow-lg shadow-orange-500/20 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
+                    Start game →
+                </button>
+            </div>`;
+        }
+
+        function startGame(names) {
+            state.players = names.map((n, i) => ({ name: n.trim() || `Player ${i + 1}`, rounds: [] }));
+            state.draft = blankDraft(names.length);
+            state.endedBy = null;
+            state.phase = 'game';
+            render();
+            app.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ================= SCOREBOARD TABLE =================
+        function scoreboardHTML({ final = false } = {}) {
+            const played = roundsPlayed();
+            const totals = state.players.map(totalOf);
+            const best = Math.max(...totals);
+            const showCrown = played > 0;
+
+            const head = Array.from({ length: totalRounds() }, (_, i) => {
+                const current = !final && i === played;
+                return `<th class="px-2 py-2.5 text-center font-semibold ${current ? 'text-orange-300 bg-orange-500/10' : ''}">R${i + 1}</th>`;
+            }).join('');
+
+            const rows = state.players.map((p, pi) => {
+                const cells = Array.from({ length: totalRounds() }, (_, ri) => {
+                    const r = p.rounds[ri];
+                    const current = !final && ri === played;
+                    if (!r) return `<td class="px-2 py-2.5 text-center text-slate-600 ${current ? 'bg-orange-500/5' : ''}">–</td>`;
+                    const s = roundScore(r);
+                    return `<td class="px-2 py-2.5 text-center tabular-nums ${s < 0 ? 'text-rose-300' : 'text-slate-200'}">${s}${r.immune ? '<span title="Show stood — no penalty" class="ml-0.5 text-xs">🛡️</span>' : ''}</td>`;
+                }).join('');
+                const leader = showCrown && totals[pi] === best;
+                return `
+                <tr class="border-t border-slate-700/70 ${leader ? 'bg-orange-500/5' : ''}">
+                    <td class="sticky left-0 bg-slate-800 px-3 py-2.5">
+                        <div class="flex items-center gap-2 min-w-0">
+                            ${avatar(pi)}
+                            <span class="font-semibold truncate max-w-[9rem]">${esc(p.name)}</span>
+                            ${leader ? '<span title="Leading" aria-label="Leading">👑</span>' : ''}
+                        </div>
+                    </td>
+                    ${cells}
+                    <td class="px-3 py-2.5 text-right font-bold text-lg tabular-nums ${leader ? 'text-orange-300' : 'text-orange-400/80'}">${totals[pi]}</td>
+                </tr>`;
+            }).join('');
+
+            return `
+            <div class="overflow-x-auto rounded-xl border border-slate-700">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-900/60 text-slate-400 text-xs uppercase tracking-wider">
+                        <tr>
+                            <th class="sticky left-0 bg-slate-900 px-3 py-2.5 text-left font-semibold">Player</th>
+                            ${head}
+                            <th class="px-3 py-2.5 text-right font-semibold text-orange-400">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>`;
+        }
+
+        // ================= GAME =================
+        function renderGame() {
+            const round = roundsPlayed() + 1;
+            const total = totalRounds();
+            const last = round === total;
+
+            app.innerHTML = `
+            <div class="space-y-6 fade-in">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Round</p>
+                        <h2 class="text-2xl font-bold text-sky-300">${round} <span class="text-slate-500 text-lg font-medium">of ${total}</span></h2>
+                    </div>
+                    <div class="flex gap-2">
+                        ${round > 1 ? `<button type="button" data-action="undo" class="text-sm px-3 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white transition">↶ Undo round ${round - 1}</button>` : ''}
+                        <button type="button" data-action="new" class="text-sm px-3 py-2 rounded-lg border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition">New game</button>
+                    </div>
+                </div>
+
+                <div class="flex gap-1.5" aria-hidden="true">
+                    ${Array.from({ length: total }, (_, i) => `<div class="h-1.5 flex-1 rounded-full ${i < round - 1 ? 'bg-sky-400' : i === round - 1 ? 'bg-orange-400' : 'bg-slate-700'}"></div>`).join('')}
+                </div>
+
+                ${scoreboardHTML()}
+
+                <div class="rounded-xl bg-slate-900/50 border border-slate-700 p-4 sm:p-5">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-bold">Round ${round} scores</h3>
+                        <p class="text-sm text-slate-400">Collected cards <span class="text-emerald-400">+</span> Scout chips <span class="text-rose-400">−</span> cards left in hand</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        ${state.players.map((p, pi) => entryCardHTML(p, pi)).join('')}
+                    </div>
+
+                    <p id="round-warning" class="hidden mt-4 text-sm text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2"></p>
+
+                    <button type="button" data-action="submit"
+                        class="w-full mt-4 bg-emerald-600 hover:bg-emerald-500 active:scale-[.99] text-white font-bold py-3.5 rounded-lg shadow-lg shadow-emerald-600/20 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
+                        ${last ? 'Save final round & see results 🏆' : `Save round ${round} →`}
+                    </button>
+                </div>
+            </div>`;
+
+            state.players.forEach((_, pi) => updateEntry(pi));
+            updateWarning();
+        }
+
+        function entryCardHTML(p, pi) {
+            const d = state.draft[pi];
+            return `
+            <div class="rounded-lg bg-slate-800 border border-slate-700 p-3 sm:p-4" data-card="${pi}">
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <div class="flex items-center gap-2 min-w-0">
+                        ${avatar(pi, 'w-8 h-8')}
+                        <span class="font-bold text-lg truncate">${esc(p.name)}</span>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <div data-preview="${pi}" class="text-2xl font-bold tabular-nums leading-none"></div>
+                        <div data-breakdown="${pi}" class="text-xs text-slate-500 tabular-nums mt-1"></div>
+                    </div>
+                </div>
+
+                <div class="grid gap-2 sm:grid-cols-3">
+                    ${FIELDS.map(f => `
+                        <div class="flex items-center justify-between gap-3 sm:block">
+                            <label for="f-${pi}-${f.key}" class="text-sm text-slate-400 sm:block sm:mb-1">${f.label}</label>
+                            <div class="flex w-36 sm:w-full rounded-lg bg-slate-900/70 border border-slate-600 overflow-hidden transition focus-within:border-orange-500">
+                                <button type="button" tabindex="-1" data-action="step" data-p="${pi}" data-f="${f.key}" data-d="-1" aria-label="Decrease ${f.label}"
+                                    class="w-10 shrink-0 text-xl text-slate-400 hover:bg-slate-700 hover:text-white active:bg-slate-600 transition">−</button>
+                                <input id="f-${pi}-${f.key}" type="number" inputmode="numeric" min="0" max="99" data-p="${pi}" data-f="${f.key}" value="${d[f.key]}"
+                                    class="w-full min-w-0 bg-transparent text-center text-lg font-semibold py-2 focus:outline-none tabular-nums">
+                                <button type="button" tabindex="-1" data-action="step" data-p="${pi}" data-f="${f.key}" data-d="1" aria-label="Increase ${f.label}"
+                                    class="w-10 shrink-0 text-xl text-slate-400 hover:bg-slate-700 hover:text-white active:bg-slate-600 transition">+</button>
+                            </div>
+                        </div>`).join('')}
+                </div>
+
+                <button type="button" data-action="immune" data-p="${pi}" aria-pressed="false"
+                    class="mt-3 w-full flex items-center gap-2 text-left text-sm rounded-lg border px-3 py-2 transition">
+                    <span data-check class="w-4 h-4 shrink-0 rounded border grid place-items-center text-[10px]"></span>
+                    <span>🛡️ Everyone else scouted ${esc(p.name)}'s show — <span class="opacity-80">no penalty for cards left</span></span>
+                </button>
+            </div>`;
+        }
+
+        // Updates one player's live preview + shield toggle without re-rendering (keeps input focus)
+        function updateEntry(pi) {
+            const d = state.draft[pi];
+            const immune = state.endedBy === pi;
+            const score = roundScore({ ...d, immune });
+
+            const preview = app.querySelector(`[data-preview="${pi}"]`);
+            preview.textContent = signed(score);
+            preview.className = `text-2xl font-bold tabular-nums leading-none ${score > 0 ? 'text-emerald-400' : score < 0 ? 'text-rose-400' : 'text-slate-400'}`;
+            app.querySelector(`[data-breakdown="${pi}"]`).innerHTML =
+                `${d.collected} + ${d.scout} − ${immune ? `<s>${d.left}</s> 0` : d.left}`;
+
+            const btn = app.querySelector(`[data-action="immune"][data-p="${pi}"]`);
+            btn.setAttribute('aria-pressed', immune);
+            btn.className = `mt-3 w-full flex items-center gap-2 text-left text-sm rounded-lg border px-3 py-2 transition ${
+                immune ? 'bg-sky-500/15 border-sky-400/60 text-sky-200' : 'border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200'}`;
+            const check = btn.querySelector('[data-check]');
+            check.textContent = immune ? '✓' : '';
+            check.className = `w-4 h-4 shrink-0 rounded border grid place-items-center text-[10px] ${immune ? 'bg-sky-500 border-sky-400 text-white' : 'border-slate-500'}`;
+        }
+
+        // Gentle sanity check: a round ends when someone empties their hand OR everyone scouts one show
+        function updateWarning() {
+            const el = document.getElementById('round-warning');
+            if (!el) return;
+            const anyEmpty = state.draft.some(d => d.left === 0);
+            const touched = state.draft.some(d => d.collected || d.scout || d.left);
+            const show = touched && !anyEmpty && state.endedBy === null;
+            el.classList.toggle('hidden', !show);
+            el.textContent = "Nobody has 0 cards left. If the round ended because everyone scouted someone's show, tick the 🛡️ box for that player.";
+        }
+
+        function setDraft(pi, key, value) {
+            const v = Math.max(0, Math.min(99, parseInt(value, 10) || 0));
+            state.draft[pi][key] = v;
+            return v;
         }
 
         function submitRound() {
-            players.forEach((player, index) => {
-                const collected = parseInt(document.getElementById(`collected-${index}`).value) || 0;
-                const scoutTokens = parseInt(document.getElementById(`scout-${index}`).value) || 0;
-                const cardsLeft = parseInt(document.getElementById(`left-${index}`).value) || 0;
-                const isImmune = document.getElementById(`immune-${index}`).checked;
+            state.players.forEach((p, pi) => p.rounds.push({ ...state.draft[pi], immune: state.endedBy === pi }));
+            state.draft = blankDraft(state.players.length);
+            state.endedBy = null;
+            state.phase = roundsPlayed() >= totalRounds() ? 'results' : 'game';
+            render();
+            app.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
 
-                const penalty = isImmune ? 0 : cardsLeft;
-                const roundScore = (collected + scoutTokens) - penalty;
-
-                player.scores.push(roundScore);
-                player.total += roundScore;
+        function undoRound() {
+            if (roundsPlayed() === 0) return;
+            state.endedBy = null;
+            state.draft = state.players.map((p, pi) => {
+                const r = p.rounds.pop();
+                if (r.immune) state.endedBy = pi;
+                return { collected: r.collected, scout: r.scout, left: r.left };
             });
-
-            updateScoreTable();
-
-            if (currentRound >= totalRounds) {
-                endGame();
-            } else {
-                currentRound++;
-                renderScoreInputs();
-            }
+            state.phase = 'game';
+            render();
         }
 
-        function endGame() {
-            document.getElementById('game-screen').classList.add('hidden');
-            const results = document.getElementById('results-screen');
-            results.classList.remove('hidden');
+        // ================= RESULTS =================
+        function renderResults() {
+            const ranked = state.players.map((p, i) => ({ ...p, i, total: totalOf(p) })).sort((a, b) => b.total - a.total);
+            const top = ranked[0].total;
+            const winners = ranked.filter(p => p.total === top);
+            const medals = ['🥇', '🥈', '🥉'];
+            let place = 0;
 
-            const sortedPlayers = [...players].sort((a, b) => b.total - a.total);
-            const winner = sortedPlayers[0];
-            
-            const tiedWinners = sortedPlayers.filter(p => p.total === winner.total);
-            
-            if (tiedWinners.length > 1) {
-                const names = tiedWinners.map(w => w.name).join(" & ");
-                document.getElementById('winner-announcement').innerHTML = `It's a tie! <br><span class="text-blue-400 text-4xl">${names}</span> share the taste of victory with ${winner.total} points!`;
-            } else {
-                document.getElementById('winner-announcement').innerHTML = `The best circus leader is <br><span class="text-blue-400 text-5xl block mt-4">${winner.name}</span><br>with ${winner.total} points!`;
-            }
+            app.innerHTML = `
+            <div class="space-y-7 fade-in">
+                <div class="text-center">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Game over</p>
+                    <div class="text-5xl my-3">🏆</div>
+                    ${winners.length > 1
+                        ? `<h2 class="text-3xl sm:text-4xl font-bold text-orange-300">It's a tie!</h2>
+                           <p class="mt-2 text-lg text-slate-300"><span class="font-semibold text-white">${winners.map(w => esc(w.name)).join(' &amp; ')}</span> share the spotlight with ${top} points.</p>`
+                        : `<p class="text-slate-400">The best circus leader is</p>
+                           <h2 class="text-4xl sm:text-5xl font-bold text-orange-300 mt-1 break-words">${esc(winners[0].name)}</h2>
+                           <p class="mt-2 text-lg text-slate-300">with <span class="font-bold text-white">${top}</span> points</p>`}
+                </div>
+
+                <ol class="space-y-2">
+                    ${ranked.map((p, idx) => {
+                        if (idx === 0 || p.total !== ranked[idx - 1].total) place = idx;
+                        return `
+                        <li class="flex items-center gap-3 rounded-lg px-4 py-3 border ${place === 0 ? 'bg-orange-500/10 border-orange-400/40' : 'bg-slate-900/50 border-slate-700'}">
+                            <span class="w-7 text-center text-xl">${medals[place] || `<span class="text-slate-500 text-base font-bold">${place + 1}</span>`}</span>
+                            ${avatar(p.i)}
+                            <span class="font-semibold flex-1 truncate">${esc(p.name)}</span>
+                            <span class="font-bold text-xl tabular-nums ${place === 0 ? 'text-orange-300' : 'text-slate-200'}">${p.total}</span>
+                        </li>`;
+                    }).join('')}
+                </ol>
+
+                ${scoreboardHTML({ final: true })}
+
+                <div class="grid sm:grid-cols-2 gap-3">
+                    <button type="button" data-action="rematch"
+                        class="bg-orange-500 hover:bg-orange-400 text-white font-bold py-3.5 rounded-lg shadow-lg shadow-orange-500/20 transition">↻ Rematch (same players)</button>
+                    <button type="button" data-action="new"
+                        class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3.5 rounded-lg transition">New game</button>
+                </div>
+                <div class="text-center">
+                    <button type="button" data-action="undo" class="text-sm text-slate-400 hover:text-white underline underline-offset-4">Made a mistake? Undo the last round</button>
+                </div>
+            </div>`;
         }
+
+        // ================= EVENTS (one delegated listener per type) =================
+        app.addEventListener('click', e => {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            const pi = Number(btn.dataset.p);
+
+            switch (btn.dataset.action) {
+                case 'count':
+                    state.count = Number(btn.dataset.n);
+                    render();
+                    break;
+                case 'start':
+                    startGame(state.names.slice(0, state.count));
+                    break;
+                case 'step': {
+                    const key = btn.dataset.f;
+                    const v = setDraft(pi, key, state.draft[pi][key] + Number(btn.dataset.d));
+                    app.querySelector(`input[data-p="${pi}"][data-f="${key}"]`).value = v;
+                    updateEntry(pi);
+                    updateWarning();
+                    save();
+                    break;
+                }
+                case 'immune': {
+                    const prev = state.endedBy;
+                    state.endedBy = prev === pi ? null : pi;
+                    if (prev !== null) updateEntry(prev);
+                    updateEntry(pi);
+                    updateWarning();
+                    save();
+                    break;
+                }
+                case 'submit':
+                    submitRound();
+                    break;
+                case 'undo':
+                    undoRound();
+                    break;
+                case 'rematch':
+                    startGame(state.players.map(p => p.name));
+                    break;
+                case 'new':
+                    if (state.phase === 'game' && roundsPlayed() > 0 && !confirm('Start a new game? Current scores will be lost.')) return;
+                    state = freshState(state.players.length ? state.players.map(p => p.name).concat(['', '', '', '', '']).slice(0, 5) : state.names, state.players.length || state.count);
+                    render();
+                    break;
+            }
+        });
+
+        app.addEventListener('input', e => {
+            const t = e.target;
+            if (t.dataset.name !== undefined) {
+                state.names[Number(t.dataset.name)] = t.value;
+                save();
+            } else if (t.dataset.f) {
+                const pi = Number(t.dataset.p);
+                setDraft(pi, t.dataset.f, t.value);
+                updateEntry(pi);
+                updateWarning();
+                save();
+            }
+        });
+
+        // Tidy up typed numbers (e.g. "-3" or "" → clamped value) when leaving the field
+        app.addEventListener('focusout', e => {
+            const t = e.target;
+            if (t.dataset?.f) t.value = state.draft[Number(t.dataset.p)][t.dataset.f];
+        });
+
+        // Select the number on focus so you can just type over it
+        app.addEventListener('focusin', e => {
+            if (e.target.type === 'number') e.target.select();
+        });
+
+        app.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && e.target.dataset?.name !== undefined) {
+                e.preventDefault();
+                startGame(state.names.slice(0, state.count));
+            }
+        });
+
+        render();
     </script>
 </body>
 </html>
