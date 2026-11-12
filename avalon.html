@@ -2,129 +2,200 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1020" />
   <title>Avalon — First Night Script</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
-  
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Lora', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-            display: ['Cinzel', 'ui-serif', 'Georgia', 'serif'],
+            sans: ['Lora', 'Georgia', 'serif'],
+            display: ['Cinzel', 'Georgia', 'serif'],
           },
           colors: {
-            avalon: {
-              boxYellow: '#f5b041',
-              boxOrange: '#dc7633',
-              boxBlue: '#2c3e50',
-              cardBg: '#1a252f',
-              accent: '#f1c40f',
-            }
+            ink:   { 950: '#070a14', 900: '#0b1020', 800: '#131a2e', 700: '#1c2540', 600: '#2a3557' },
+            gold:  { 200: '#f8e7b0', 300: '#f2d27a', 400: '#e9b949', 500: '#d49a2a', 600: '#a8741c' },
+            good:  { 300: '#a9cbff', 400: '#6fa8ff', 500: '#3f86f0' },
+            evil:  { 300: '#ffb0b3', 400: '#ff6b70', 500: '#e5484d' },
           }
         }
       }
     }
   </script>
 
-  <style type="text/tailwindcss">
-    @layer utilities {
-      input[type="checkbox"] {
-        @apply w-6 h-6 accent-avalon-accent bg-avalon-cardBg border-slate-600 rounded cursor-pointer transition-all duration-200;
-      }
-    }
-    
+  <style>
+    :root { color-scheme: dark; }
     body {
-      background: linear-gradient(170deg, #f1c40f 0%, #d35400 35%, #2c3e50 70%, #1a252f 100%);
+      background-color: #0b1020;
+      background-image:
+        radial-gradient(1200px 520px at 50% -120px, rgba(233,185,73,.28), transparent 70%),
+        radial-gradient(800px 600px at 110% 110%, rgba(229,72,77,.10), transparent 60%),
+        radial-gradient(800px 600px at -10% 100%, rgba(63,134,240,.10), transparent 60%);
       background-attachment: fixed;
+    }
+    .title-gold {
+      background: linear-gradient(180deg, #fff6d8 0%, #f2d27a 45%, #c98d22 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 4px 18px rgba(233,185,73,.25));
+    }
+    .panel {
+      background: linear-gradient(180deg, rgba(28,37,64,.72), rgba(19,26,46,.82));
+      border: 1px solid rgba(242,210,122,.16);
+      box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 20px 50px -20px rgba(0,0,0,.7);
+      backdrop-filter: blur(8px);
+    }
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(242,210,122,.35), transparent);
+    }
+
+    /* Role tiles: the real checkbox stays in the DOM (keyboard + screen readers) */
+    .role-tile { transition: border-color .15s, background-color .15s, transform .1s, box-shadow .15s; }
+    .role-tile:active { transform: scale(.985); }
+    .role-tile .check { transition: all .15s; }
+    .role-tile[data-team="good"]:has(input:checked) {
+      border-color: rgba(111,168,255,.7);
+      background: linear-gradient(180deg, rgba(63,134,240,.18), rgba(63,134,240,.06));
+      box-shadow: 0 0 0 1px rgba(111,168,255,.25), 0 8px 24px -10px rgba(63,134,240,.55);
+    }
+    .role-tile[data-team="evil"]:has(input:checked) {
+      border-color: rgba(255,107,112,.7);
+      background: linear-gradient(180deg, rgba(229,72,77,.18), rgba(229,72,77,.06));
+      box-shadow: 0 0 0 1px rgba(255,107,112,.25), 0 8px 24px -10px rgba(229,72,77,.55);
+    }
+    .role-tile:has(input:checked) .check { background: currentColor; border-color: currentColor; }
+    .role-tile:has(input:checked) .check svg { opacity: 1; }
+    .role-tile:has(input:focus-visible),
+    .seg:has(input:focus-visible) { outline: 2px solid #f2d27a; outline-offset: 2px; }
+
+    .seg:has(input:checked) {
+      background: linear-gradient(180deg, #f2d27a, #d49a2a);
+      color: #1a1405; border-color: #f2d27a;
+      box-shadow: 0 6px 18px -8px rgba(233,185,73,.8);
+    }
+
+    .pill { display: inline-block; padding: .05em .55em; border-radius: 9999px; font-weight: 700; white-space: nowrap; }
+    .pill-good { color: #a9cbff; background: rgba(63,134,240,.18); box-shadow: inset 0 0 0 1px rgba(111,168,255,.35); }
+    .pill-evil { color: #ffb0b3; background: rgba(229,72,77,.18); box-shadow: inset 0 0 0 1px rgba(255,107,112,.35); }
+    .pill-all  { color: #f8e7b0; background: rgba(233,185,73,.14); box-shadow: inset 0 0 0 1px rgba(242,210,122,.3); }
+
+    .step.is-current { border-color: rgba(242,210,122,.6); background: rgba(233,185,73,.08); }
+
+    #narrator .line { transition: opacity .25s ease, transform .25s ease; }
+    #narrator .line.out { opacity: 0; transform: translateY(8px); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
     }
   </style>
 </head>
-<body class="text-slate-200 font-sans min-h-screen p-4 sm:p-8">
+<body class="text-slate-200 font-sans min-h-screen antialiased">
 
-  <main class="max-w-3xl mx-auto" role="main">
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 pt-4 pb-16" role="main">
     <div id="nav-placeholder"></div>
-    <a href="index.html" class="inline-flex items-center text-slate-900 hover:text-white font-bold mb-6 transition-colors drop-shadow-md">
-      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-      </svg>
+
+    <a href="index.html" class="inline-flex items-center gap-2 text-sm text-gold-300/80 hover:text-gold-200 mt-2 mb-6 transition-colors rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
       Return Home
     </a>
 
-    <header class="text-center mb-8">
-      <h1 class="text-6xl sm:text-7xl font-display text-white font-black tracking-wider mb-2 drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">Avalon</h1>
-      <p class="text-slate-900 font-bold text-lg sm:text-xl drop-shadow-sm border-t border-b border-slate-900/20 inline-block px-4 py-1">Moderator Tool &bull; First Night Script</p>
+    <header class="text-center mb-10">
+      <p class="font-display text-gold-400/80 tracking-[0.35em] text-xs sm:text-sm uppercase mb-2">Moderator Tool</p>
+      <h1 class="title-gold text-6xl sm:text-7xl font-display font-black tracking-wider">Avalon</h1>
+      <p class="mt-3 text-slate-400 italic">Pick the table, choose the roles, then let the script lead the first night.</p>
     </header>
 
-    <section class="bg-avalon-cardBg/95 backdrop-blur-sm border-2 border-[#34495e] rounded-xl p-6 sm:p-8 shadow-2xl mb-8" aria-labelledby="rolesHeading">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-[#34495e] pb-2 gap-4">
-        <h2 id="rolesHeading" class="text-2xl font-display text-avalon-accent m-0">Roles in play</h2>
-        <div id="setupAnalyzer" class="text-sm font-bold px-4 py-2 rounded bg-slate-800 border border-slate-600 shadow-inner flex flex-col items-end">
-          <span id="playerCountReq" class="text-slate-300">Minimum Players: 5</span>
-          <span id="balanceStatus" class="text-avalon-accent">Status: Standard</span>
-        </div>
+    <!-- 1. Players -->
+    <section class="panel rounded-2xl p-5 sm:p-7 mb-6" aria-labelledby="playersHeading">
+      <div class="flex items-baseline justify-between gap-4 mb-4">
+        <h2 id="playersHeading" class="font-display text-xl text-gold-300"><span class="text-gold-500/70 mr-2">I.</span>Players</h2>
+        <span id="teamSplit" class="text-sm text-slate-400"></span>
+      </div>
+      <div id="playerSeg" class="grid grid-cols-6 gap-2" role="radiogroup" aria-label="Number of players"></div>
+      <div id="pips" class="flex flex-wrap justify-center gap-1.5 mt-5" aria-hidden="true"></div>
+    </section>
+
+    <!-- 2. Roles -->
+    <section class="panel rounded-2xl p-5 sm:p-7 mb-6" aria-labelledby="rolesHeading">
+      <div class="flex items-baseline justify-between gap-4 mb-5">
+        <h2 id="rolesHeading" class="font-display text-xl text-gold-300"><span class="text-gold-500/70 mr-2">II.</span>Special roles</h2>
+        <button id="resetBtn" type="button" class="text-sm text-slate-400 hover:text-gold-200 underline-offset-4 hover:underline rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300">Reset to default</button>
       </div>
 
-      <form id="roleForm" class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-        <fieldset class="border border-slate-600 rounded-lg p-5 bg-slate-800/40 shadow-inner">
-          <legend class="text-avalon-accent font-display font-bold px-3 text-xl tracking-wide drop-shadow-md">Forces of Good</legend>
-          <div class="flex flex-col gap-4 mt-2">
-            <label class="flex items-center gap-3 cursor-pointer group text-lg">
-              <input type="checkbox" name="role" value="Merlin" data-team="good" class="peer"> 
-              <span class="group-hover:text-white transition-colors">Merlin</span>
-            </label>
-            <label class="flex items-center gap-3 cursor-pointer group text-lg">
-              <input type="checkbox" name="role" value="Percival" data-team="good"> 
-              <span class="group-hover:text-white transition-colors">Percival</span>
-            </label>
-          </div>
+      <form id="roleForm" class="grid grid-cols-1 sm:grid-cols-2 gap-6" onsubmit="return false">
+        <fieldset>
+          <legend class="font-display text-sm tracking-widest uppercase text-good-400 mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-good-400"></span> Loyal Servants of Arthur
+            <span id="goodCount" class="ml-auto normal-case tracking-normal font-sans text-xs text-slate-400"></span>
+          </legend>
+          <div id="goodRoles" class="flex flex-col gap-2.5"></div>
         </fieldset>
-
-        <fieldset class="border border-slate-600 rounded-lg p-5 bg-slate-800/40 shadow-inner">
-          <legend class="text-red-500 font-display font-bold px-3 text-xl tracking-wide drop-shadow-md">Minions of Mordred</legend>
-          <div class="flex flex-col gap-4 mt-2">
-            <label class="flex items-center gap-3 cursor-pointer group text-lg">
-              <input type="checkbox" name="role" value="Assassin" data-team="evil" class="peer"> 
-              <span class="group-hover:text-white transition-colors">Assassin</span>
-            </label>
-            <label class="flex items-center gap-3 cursor-pointer group text-lg">
-              <input type="checkbox" name="role" value="Morgana" data-team="evil"> 
-              <span class="group-hover:text-white transition-colors">Morgana</span>
-            </label>
-            <label class="flex items-center gap-3 cursor-pointer group text-lg">
-              <input type="checkbox" name="role" value="Mordred" data-team="evil"> 
-              <span class="group-hover:text-white transition-colors">Mordred</span>
-            </label>
-            <label class="flex items-center gap-3 cursor-pointer group text-lg">
-              <input type="checkbox" name="role" value="Oberon" data-team="evil"> 
-              <span class="group-hover:text-white transition-colors">Oberon</span>
-            </label>
-          </div>
+        <fieldset>
+          <legend class="font-display text-sm tracking-widest uppercase text-evil-400 mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-evil-400"></span> Minions of Mordred
+            <span id="evilCount" class="ml-auto normal-case tracking-normal font-sans text-xs text-slate-400"></span>
+          </legend>
+          <div id="evilRoles" class="flex flex-col gap-2.5"></div>
         </fieldset>
       </form>
 
-      <div class="flex flex-wrap gap-4 mt-8">
-        <button id="generateFirstNightBtn" type="button" class="flex-1 sm:flex-none bg-avalon-accent hover:bg-yellow-300 text-slate-900 font-display font-bold text-lg py-3 px-8 rounded-lg shadow-[0_4px_14px_rgba(241,196,15,0.4)] transition-all active:scale-95 border border-yellow-200">
-          Generate Script
-        </button>
-        <button id="resetBtn" type="button" class="flex-1 sm:flex-none bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-lg transition-colors border border-slate-500 shadow-md">
-          Reset Roles
-        </button>
+      <div class="divider my-6"></div>
+
+      <!-- Setup analysis -->
+      <div aria-live="polite">
+        <div class="flex flex-wrap items-center gap-3">
+          <span id="balanceStatus" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold"></span>
+          <span id="composition" class="text-sm text-slate-400"></span>
+        </div>
+        <ul id="warnings" class="mt-3 space-y-1.5 text-sm"></ul>
       </div>
     </section>
 
-    <section id="firstNightSection" class="bg-avalon-cardBg border-2 border-avalon-accent rounded-xl p-6 sm:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hidden mb-12 scroll-mt-6" aria-labelledby="firstNightHeading">
-      <h2 id="firstNightHeading" class="text-3xl font-display text-avalon-accent mb-8 border-b border-slate-600 pb-4 text-center">The First Night</h2>
-      <ol id="firstNightList" class="list-decimal pl-6 sm:pl-10 space-y-6 text-xl sm:text-2xl leading-relaxed text-slate-300 marker:text-avalon-accent marker:font-bold" aria-live="polite" aria-label="First Night Steps"></ol>
+    <!-- 3. Script -->
+    <section id="firstNightSection" class="panel rounded-2xl p-5 sm:p-7 scroll-mt-6" aria-labelledby="firstNightHeading">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+        <h2 id="firstNightHeading" class="font-display text-xl text-gold-300"><span class="text-gold-500/70 mr-2">III.</span>The First Night</h2>
+        <button id="startBtn" type="button" class="inline-flex items-center justify-center gap-2 font-display font-bold tracking-wide text-ink-950 bg-gradient-to-b from-gold-300 to-gold-500 hover:from-gold-200 hover:to-gold-400 px-6 py-3 rounded-xl shadow-[0_8px_24px_-8px_rgba(233,185,73,.8)] active:scale-[.98] transition disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 focus-visible:ring-gold-200">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          Begin narration
+        </button>
+      </div>
+      <ol id="firstNightList" class="space-y-2" aria-label="First night steps"></ol>
+      <p class="text-xs text-slate-500 mt-5 text-center">Tip: in narration mode, tap the screen or press <kbd class="px-1.5 py-0.5 rounded bg-ink-700 text-slate-300">Space</kbd> for the next line.</p>
     </section>
 
+    <footer class="mt-10 text-center text-xs text-slate-500 leading-relaxed">
+      Portraits (public domain, via Wikimedia Commons): Merlin, Percival &amp; Morgana — Howard Pyle (1903) ·
+      Mordred — H. J. Ford (1902) · Assassin — Paul Delaroche · Oberon — Joseph Noel Paton.
+    </footer>
   </main>
+
+  <!-- Narration overlay -->
+  <div id="narrator" class="fixed inset-0 z-50 hidden flex-col bg-ink-950/[.97] backdrop-blur" role="dialog" aria-modal="true" aria-labelledby="narratorCount">
+    <div class="h-1 bg-ink-700"><div id="narratorBar" class="h-full bg-gradient-to-r from-gold-500 to-gold-300 transition-all duration-300" style="width:0"></div></div>
+    <div class="flex items-center justify-between px-4 sm:px-8 py-4">
+      <span id="narratorCount" class="font-display text-gold-400 tracking-widest text-sm"></span>
+      <button id="closeNarrator" type="button" class="p-2 -m-2 text-slate-400 hover:text-white rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300" aria-label="Close narration">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-width="2" d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <button id="narratorStage" type="button" class="flex-1 flex items-center justify-center px-6 sm:px-16 text-center cursor-pointer focus:outline-none" aria-label="Next line">
+      <p id="narratorLine" class="line font-sans text-3xl sm:text-5xl leading-snug sm:leading-tight text-slate-100 max-w-3xl" aria-live="assertive"></p>
+    </button>
+    <div class="px-4 sm:px-8 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-2">
+      <div class="max-w-xl mx-auto grid grid-cols-2 gap-3">
+        <button id="prevBtn" type="button" class="py-4 rounded-xl bg-ink-800 border border-ink-600 text-slate-200 font-semibold hover:bg-ink-700 disabled:opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300">← Back</button>
+        <button id="nextBtn" type="button" class="py-4 rounded-xl bg-gradient-to-b from-gold-300 to-gold-500 text-ink-950 font-bold hover:from-gold-200 hover:to-gold-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-200">Next →</button>
+      </div>
+    </div>
+  </div>
 
   <script id="rolesData" type="application/json">
   {
@@ -164,203 +235,286 @@
         "Merlin, put your thumbs up so Percival can see you.",
         "Percival, close your eyes.",
         "Merlin, put your thumbs down."
+      ],
+      "endFirstNight": [
+        "Everyone, put your fists down and open your eyes."
       ]
     }
   }
   </script>
 
   <script>
-// --- Navbar ---
-  fetch('nav.html')
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('nav-placeholder').innerHTML = data;
-    });
-    
+    // --- Navbar ---
+    fetch('nav.html')
+      .then(r => r.ok ? r.text() : '')
+      .then(html => { document.getElementById('nav-placeholder').innerHTML = html; })
+      .catch(() => {});
+
     (function () {
       "use strict";
 
       const qs  = (sel) => document.querySelector(sel);
       const qsa = (sel) => Array.from(document.querySelectorAll(sel));
       const STORAGE_KEY = "avalonSelectedRoles";
+      const PLAYERS_KEY = "avalonPlayerCount";
+
+      const TEAM_SIZES = { 5: [3, 2], 6: [4, 2], 7: [4, 3], 8: [5, 3], 9: [6, 3], 10: [6, 4] };
+
+      const ROLES = [
+        { name: "Merlin",   team: "good", blurb: "Sees the Minions of Mordred. Must stay hidden from the Assassin." },
+        { name: "Percival", team: "good", blurb: "Knows who Merlin is — unless Morgana muddies the waters." },
+        { name: "Assassin", team: "evil", blurb: "If Good wins, gets one shot at naming Merlin." },
+        { name: "Morgana",  team: "evil", blurb: "Appears as Merlin to Percival." },
+        { name: "Mordred",  team: "evil", blurb: "Hidden from Merlin's sight." },
+        { name: "Oberon",   team: "evil", blurb: "Unknown to evil, and doesn't know them either." },
+      ];
+
+      const store = {
+        get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+        set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+        del(k) { try { localStorage.removeItem(k); } catch {} },
+      };
 
       function getRolesConfig() {
         const el = document.getElementById("rolesData");
-        if (!el) return null;
         try { return JSON.parse(el.textContent); }
         catch (e) { console.error("roles JSON parse failed", e); return null; }
       }
 
-      function collectSelectedRoles() {
-        return new Set(qsa('input[name="role"]:checked').map(cb => cb.value));
+      // ---------- Rendering of controls ----------
+      function renderPlayerControls() {
+        const seg = qs("#playerSeg");
+        seg.innerHTML = Object.keys(TEAM_SIZES).map(n => `
+          <label class="seg relative flex items-center justify-center h-12 rounded-xl border border-ink-600 bg-ink-800/70 font-display font-bold text-lg text-slate-300 cursor-pointer hover:border-gold-500/60 transition">
+            <input type="radio" name="players" value="${n}" class="sr-only">${n}
+          </label>`).join("");
       }
 
-      // --- Setup Analyzer Logic ---
-      function updateAnalyzer() {
-        const selected = collectSelectedRoles();
-        let evilCount = 0;
-        let goodCount = 0;
-
-        qsa('input[name="role"]:checked').forEach(cb => {
-          if (cb.dataset.team === 'evil') evilCount++;
-          if (cb.dataset.team === 'good') goodCount++;
-        });
-
-        let minPlayers = 5;
-        if (evilCount === 3) minPlayers = 7;
-        if (evilCount > 3) minPlayers = 10;
-        
-        if (minPlayers === 5 && goodCount > 3) minPlayers = 6;
-        if (minPlayers === 7 && goodCount > 4) minPlayers = 8;
-
-        const countUI = qs("#playerCountReq");
-        const statusUI = qs("#balanceStatus");
-
-        if (evilCount > 4) {
-          countUI.textContent = "Error: Too many Evil roles";
-          statusUI.textContent = "Status: Invalid Setup";
-          statusUI.className = "text-red-500 font-bold";
-          return;
-        }
-
-        countUI.textContent = `Min Players: ${minPlayers}`;
-
-        if (selected.has("Oberon")) {
-          statusUI.textContent = "Status: High Chaos 🌪️";
-          statusUI.className = "text-purple-400 font-bold";
-        } else if (selected.has("Percival") && selected.has("Morgana") && selected.has("Mordred")) {
-          statusUI.textContent = "Status: Advanced Meta ⚔️";
-          statusUI.className = "text-orange-400 font-bold";
-        } else if (selected.has("Percival") && !selected.has("Morgana")) {
-          statusUI.textContent = "Status: Heavily Favors Good 🛡️";
-          statusUI.className = "text-blue-400 font-bold";
-        } else if (selected.has("Mordred") && !selected.has("Percival")) {
-          statusUI.textContent = "Status: Heavily Favors Evil 😈";
-          statusUI.className = "text-red-400 font-bold";
-        } else if (selected.has("Percival") && selected.has("Morgana")) {
-          statusUI.textContent = "Status: Balanced (Standard Expansion)";
-          statusUI.className = "text-green-400 font-bold";
-        } else {
-          statusUI.textContent = "Status: Vanilla Balance";
-          statusUI.className = "text-avalon-accent font-bold";
-        }
+      function roleTile(r) {
+        const c = r.team === "good" ? "text-good-400" : "text-evil-400";
+        const crest = r.team === "good" ? "from-good-500/30 to-good-500/5 ring-good-400/40" : "from-evil-500/30 to-evil-500/5 ring-evil-400/40";
+        return `
+          <label class="role-tile flex items-center gap-3 p-3 rounded-xl border border-ink-600 bg-ink-800/50 hover:border-slate-500 cursor-pointer select-none" data-team="${r.team}">
+            <input type="checkbox" name="role" value="${r.name}" data-team="${r.team}" class="sr-only">
+            <span class="relative shrink-0 w-14 h-14 rounded-full overflow-hidden grid place-items-center bg-gradient-to-b ${crest} ring-2 font-display font-black text-xl ${c}" aria-hidden="true">
+              ${r.name[0]}
+              <img src="img/avalon/${r.name.toLowerCase()}.jpg" alt="" loading="lazy" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">
+            </span>
+            <span class="flex-1 min-w-0">
+              <span class="block font-semibold text-slate-100">${r.name}</span>
+              <span class="block text-xs text-slate-400 leading-snug">${r.blurb}</span>
+            </span>
+            <span class="check ${c} shrink-0 w-6 h-6 rounded-full border-2 border-slate-600 grid place-items-center" aria-hidden="true">
+              <svg class="w-3.5 h-3.5 text-ink-950 opacity-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 111.4-1.4L8 12.6l7.3-7.3a1 1 0 011.4 0z" clip-rule="evenodd"/></svg>
+            </span>
+          </label>`;
       }
 
-      function saveRolesToStorage() {
-        const selected = Array.from(collectSelectedRoles());
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(selected));
+      function renderRoleTiles() {
+        qs("#goodRoles").innerHTML = ROLES.filter(r => r.team === "good").map(roleTile).join("");
+        qs("#evilRoles").innerHTML = ROLES.filter(r => r.team === "evil").map(roleTile).join("");
       }
 
-      function loadRolesFromStorage() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          try {
-            const selectedArr = JSON.parse(saved);
-            qsa('input[name="role"]').forEach(cb => {
-              cb.checked = selectedArr.includes(cb.value);
-            });
-          } catch (e) {
-            console.error("Failed to parse local storage", e);
-          }
-        } else {
-          const defaults = ["Merlin", "Assassin"];
-          qsa('input[name="role"]').forEach(cb => {
-            cb.checked = defaults.includes(cb.value);
-          });
-        }
-        updateAnalyzer();
+      // ---------- State ----------
+      const collectSelectedRoles = () => new Set(qsa('input[name="role"]:checked').map(cb => cb.value));
+      const getPlayers = () => Number((qs('input[name="players"]:checked') || {}).value || 5);
+
+      function saveState() {
+        store.set(STORAGE_KEY, JSON.stringify([...collectSelectedRoles()]));
+        store.set(PLAYERS_KEY, String(getPlayers()));
       }
 
-      // --- Text Parser Logic ---
+      function applyState(roles, players) {
+        qsa('input[name="role"]').forEach(cb => { cb.checked = roles.includes(cb.value); });
+        qsa('input[name="players"]').forEach(r => { r.checked = Number(r.value) === players; });
+      }
+
+      function loadState() {
+        let roles = ["Merlin", "Assassin"];
+        let players = 5;
+        try {
+          const saved = JSON.parse(store.get(STORAGE_KEY));
+          if (Array.isArray(saved)) roles = saved;
+        } catch {}
+        const p = Number(store.get(PLAYERS_KEY));
+        if (TEAM_SIZES[p]) players = p;
+        applyState(roles, players);
+      }
+
+      // ---------- Analysis ----------
+      function analyze() {
+        const sel = collectSelectedRoles();
+        const players = getPlayers();
+        const [goodTotal, evilTotal] = TEAM_SIZES[players];
+        const goodSpecial = ROLES.filter(r => r.team === "good" && sel.has(r.name)).map(r => r.name);
+        const evilSpecial = ROLES.filter(r => r.team === "evil" && sel.has(r.name)).map(r => r.name);
+
+        // Players header + pips
+        qs("#teamSplit").innerHTML = `<span class="text-good-400 font-semibold">${goodTotal} Good</span> · <span class="text-evil-400 font-semibold">${evilTotal} Evil</span>`;
+        qs("#pips").innerHTML =
+          Array.from({ length: goodTotal }, (_, i) => `<span class="w-4 h-4 rounded-full ${i < goodSpecial.length ? "bg-good-400" : "bg-good-500/30 ring-1 ring-good-400/40"}"></span>`).join("") +
+          `<span class="w-3"></span>` +
+          Array.from({ length: evilTotal }, (_, i) => `<span class="w-4 h-4 rounded-full ${i < evilSpecial.length ? "bg-evil-400" : "bg-evil-500/30 ring-1 ring-evil-400/40"}"></span>`).join("");
+
+        qs("#goodCount").textContent = `${goodSpecial.length} / ${goodTotal}`;
+        qs("#evilCount").textContent = `${evilSpecial.length} / ${evilTotal}`;
+
+        // Composition sentence
+        const servants = goodTotal - goodSpecial.length;
+        const minions  = evilTotal - evilSpecial.length;
+        const plural = (n, s, p) => `${n} ${n === 1 ? s : p}`;
+        const goodParts = [...goodSpecial]; if (servants > 0) goodParts.push(plural(servants, "Loyal Servant", "Loyal Servants"));
+        const evilParts = [...evilSpecial]; if (minions > 0) evilParts.push(plural(minions, "Minion", "Minions"));
+        qs("#composition").innerHTML = `Deal: <span class="text-good-300">${goodParts.join(", ") || "—"}</span> · <span class="text-evil-300">${evilParts.join(", ") || "—"}</span>`;
+
+        // Warnings
+        const errors = [], tips = [];
+        if (goodSpecial.length > goodTotal) errors.push(`Too many Good roles for ${players} players (max ${goodTotal}).`);
+        if (evilSpecial.length > evilTotal) errors.push(`Too many Evil roles for ${players} players (max ${evilTotal}).`);
+        if (sel.has("Merlin") && !sel.has("Assassin")) tips.push("Merlin without the Assassin — Good has no endgame threat.");
+        if (sel.has("Assassin") && !sel.has("Merlin")) tips.push("The Assassin has no Merlin to hunt.");
+        if (sel.has("Percival") && !sel.has("Merlin")) tips.push("Percival has nobody to find without Merlin.");
+        if (sel.has("Morgana") && !sel.has("Percival")) tips.push("Morgana only matters when Percival is in play.");
+
+        qs("#warnings").innerHTML =
+          errors.map(t => `<li class="flex gap-2 text-evil-300"><span aria-hidden="true">⛔</span>${t}</li>`).join("") +
+          tips.map(t => `<li class="flex gap-2 text-gold-200/80"><span aria-hidden="true">⚠️</span>${t}</li>`).join("");
+
+        // Balance status
+        let label, cls;
+        if (errors.length) { label = "Invalid setup"; cls = "bg-evil-500/15 text-evil-300 ring-evil-400/40"; }
+        else if (sel.has("Oberon")) { label = "High chaos 🌪️"; cls = "bg-purple-500/15 text-purple-300 ring-purple-400/40"; }
+        else if (sel.has("Percival") && sel.has("Morgana") && sel.has("Mordred")) { label = "Advanced meta ⚔️"; cls = "bg-orange-500/15 text-orange-300 ring-orange-400/40"; }
+        else if (sel.has("Percival") && !sel.has("Morgana")) { label = "Favours Good 🛡️"; cls = "bg-good-500/15 text-good-300 ring-good-400/40"; }
+        else if (sel.has("Mordred") && !sel.has("Percival")) { label = "Favours Evil 😈"; cls = "bg-evil-500/15 text-evil-300 ring-evil-400/40"; }
+        else if (sel.has("Percival") && sel.has("Morgana")) { label = "Balanced ⚖️"; cls = "bg-emerald-500/15 text-emerald-300 ring-emerald-400/40"; }
+        else { label = "Classic balance"; cls = "bg-gold-400/15 text-gold-200 ring-gold-300/40"; }
+        const status = qs("#balanceStatus");
+        status.className = `inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold ring-1 ${cls}`;
+        status.textContent = label;
+
+        qs("#startBtn").disabled = errors.length > 0;
+        return errors.length === 0;
+      }
+
+      // ---------- Script ----------
       function formatScriptLine(line) {
-        const goodRegex = /\b(Merlin|Percival)\b/g;
-        const evilRegex = /\b(Minions of Mordred|Mordred|Morgana|Oberon|Assassin)\b/g;
-        
-        let formatted = line;
-        
-        // Wrap good characters in Blue Pills
-        formatted = formatted.replace(goodRegex, '<span class="text-blue-400 bg-slate-700 px-3 py-1 rounded-full font-bold whitespace-nowrap drop-shadow-sm">$1</span>');
-        
-        // Wrap evil characters in Red Pills
-        formatted = formatted.replace(evilRegex, '<span class="text-red-400 bg-slate-700 px-3 py-1 rounded-full font-bold whitespace-nowrap drop-shadow-sm">$1</span>');
-        
-        return formatted;
-      }
-
-      function renderList(targetOl, lines) {
-        targetOl.innerHTML = "";
-        lines.forEach(line => {
-          const li = document.createElement("li");
-          li.innerHTML = formatScriptLine(line); // Replaced textContent with innerHTML to render our new spans
-          targetOl.appendChild(li);
+        return line.replace(/\b(Everyone|Minions of Mordred|Mordred|Morgana|Oberon|Assassin|Merlin|Percival)\b/g, (m) => {
+          const cls = m === "Everyone" ? "pill-all" : (m === "Merlin" || m === "Percival") ? "pill-good" : "pill-evil";
+          return `<span class="pill ${cls}">${m}</span>`;
         });
       }
 
       function buildFirstNight(selected, cfg) {
-        const out = [];
-        out.push(...cfg.scriptPieces.baseFirstNight);
-        
-        if (selected.has("Oberon")) {
-          out.push(...cfg.scriptPieces.evilWakeWithOberon);
-        } else {
-          out.push(...cfg.scriptPieces.evilWakeNoOberon);
-        }
-        out.push(...cfg.scriptPieces.evilClose);
-
-        if (selected.has("Merlin")) {
-          if (selected.has("Mordred")) {
-            out.push(...cfg.scriptPieces.merlinSeesEvilWithMordred);
-          } else {
-            out.push(...cfg.scriptPieces.merlinSeesEvil);
-          }
-        }
-
-        if (selected.has("Percival")) {
-          if (selected.has("Morgana")) {
-            out.push(...cfg.scriptPieces.percivalBlock);
-          } else {
-            out.push(...cfg.scriptPieces.percivalOnlyMerlin);
-          }
-        }
+        const p = cfg.scriptPieces;
+        const out = [...p.baseFirstNight];
+        out.push(...(selected.has("Oberon") ? p.evilWakeWithOberon : p.evilWakeNoOberon));
+        out.push(...p.evilClose);
+        if (selected.has("Merlin")) out.push(...(selected.has("Mordred") ? p.merlinSeesEvilWithMordred : p.merlinSeesEvil));
+        if (selected.has("Percival")) out.push(...(selected.has("Morgana") ? p.percivalBlock : p.percivalOnlyMerlin));
+        out.push(...p.endFirstNight);
         return out;
       }
 
+      function renderList(lines) {
+        qs("#firstNightList").innerHTML = lines.map((line, i) => `
+          <li class="step flex gap-4 items-start p-3 sm:p-4 rounded-xl border border-transparent hover:border-ink-600 hover:bg-ink-800/40 cursor-pointer transition" data-i="${i}">
+            <span class="shrink-0 w-8 h-8 rounded-full grid place-items-center font-display font-bold text-sm text-gold-300 bg-ink-800 ring-1 ring-gold-500/30">${i + 1}</span>
+            <span class="text-lg sm:text-xl leading-relaxed text-slate-200 pt-0.5">${formatScriptLine(line)}</span>
+          </li>`).join("");
+      }
+
+      // ---------- Narrator ----------
+      const narrator = {
+        lines: [], i: 0, wakeLock: null,
+        el: null,
+
+        open(lines, start = 0) {
+          this.lines = lines; this.el = qs("#narrator");
+          this.el.classList.remove("hidden"); this.el.classList.add("flex");
+          document.body.style.overflow = "hidden";
+          this.requestWakeLock();
+          this.show(start);
+          qs("#nextBtn").focus();
+        },
+        close() {
+          this.el.classList.add("hidden"); this.el.classList.remove("flex");
+          document.body.style.overflow = "";
+          if (this.wakeLock) { this.wakeLock.release().catch(() => {}); this.wakeLock = null; }
+          qsa(".step").forEach(s => s.classList.remove("is-current"));
+          qs("#startBtn").focus();
+        },
+        show(i) {
+          this.i = Math.max(0, Math.min(i, this.lines.length - 1));
+          const lineEl = qs("#narratorLine");
+          lineEl.classList.add("out");
+          setTimeout(() => {
+            lineEl.innerHTML = formatScriptLine(this.lines[this.i]);
+            lineEl.classList.remove("out");
+          }, 120);
+          const last = this.i === this.lines.length - 1;
+          qs("#narratorCount").textContent = `STEP ${this.i + 1} OF ${this.lines.length}`;
+          qs("#narratorBar").style.width = `${((this.i + 1) / this.lines.length) * 100}%`;
+          qs("#prevBtn").disabled = this.i === 0;
+          qs("#nextBtn").textContent = last ? "Finish ✓" : "Next →";
+          qsa(".step").forEach((s, k) => s.classList.toggle("is-current", k === this.i));
+        },
+        next() { if (this.i >= this.lines.length - 1) return this.close(); this.show(this.i + 1); },
+        prev() { if (this.i > 0) this.show(this.i - 1); },
+        async requestWakeLock() {
+          try { if ("wakeLock" in navigator) this.wakeLock = await navigator.wakeLock.request("screen"); } catch {}
+        },
+      };
+
+      // ---------- Init ----------
       function init() {
         const cfg = getRolesConfig();
         if (!cfg) return;
 
-        const generateBtn  = qs("#generateFirstNightBtn");
-        const resetBtn     = qs("#resetBtn");
-        const firstNightSec = qs("#firstNightSection");
-        const firstNightOl = qs("#firstNightList");
+        renderPlayerControls();
+        renderRoleTiles();
+        loadState();
 
-        loadRolesFromStorage();
+        let lines = [];
+        const refresh = () => {
+          analyze();
+          lines = buildFirstNight(collectSelectedRoles(), cfg);
+          renderList(lines);
+        };
+        refresh();
 
-        qsa('input[name="role"]').forEach(cb => {
-          cb.addEventListener('change', () => {
-            saveRolesToStorage();
-            updateAnalyzer();
-          });
+        qs("#roleForm").addEventListener("change", () => { saveState(); refresh(); });
+        qs("#playerSeg").addEventListener("change", () => { saveState(); refresh(); });
+
+        qs("#resetBtn").addEventListener("click", () => {
+          store.del(STORAGE_KEY); store.del(PLAYERS_KEY);
+          applyState(["Merlin", "Assassin"], 5);
+          refresh();
         });
 
-        generateBtn.addEventListener("click", () => {
-          const selected = collectSelectedRoles();
-          const lines = buildFirstNight(selected, cfg);
-          renderList(firstNightOl, lines);
-          
-          firstNightSec.classList.remove("hidden");
-          firstNightSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        qs("#startBtn").addEventListener("click", () => narrator.open(lines, 0));
+        qs("#firstNightList").addEventListener("click", (e) => {
+          const li = e.target.closest(".step");
+          if (li && !qs("#startBtn").disabled) narrator.open(lines, Number(li.dataset.i));
         });
 
-        resetBtn.addEventListener("click", () => {
-          qs("#roleForm").reset();
-          qsa('input[name="role"]').forEach(cb => cb.checked = false);
-          localStorage.removeItem(STORAGE_KEY);
-          firstNightOl.innerHTML = "";
-          updateAnalyzer();
-          
-          firstNightSec.classList.add("hidden");
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+        qs("#nextBtn").addEventListener("click", () => narrator.next());
+        qs("#prevBtn").addEventListener("click", () => narrator.prev());
+        qs("#narratorStage").addEventListener("click", () => narrator.next());
+        qs("#closeNarrator").addEventListener("click", () => narrator.close());
+
+        document.addEventListener("keydown", (e) => {
+          if (qs("#narrator").classList.contains("hidden")) return;
+          if (e.key === "Escape") { e.preventDefault(); narrator.close(); }
+          else if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
+            if (e.target.tagName === "BUTTON" && e.target.id !== "narratorStage" && e.key !== "ArrowRight") return;
+            e.preventDefault(); narrator.next();
+          }
+          else if (e.key === "ArrowLeft") { e.preventDefault(); narrator.prev(); }
+        });
+
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible" && !qs("#narrator").classList.contains("hidden")) narrator.requestWakeLock();
         });
       }
 
